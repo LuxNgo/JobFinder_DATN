@@ -1,250 +1,260 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MetaData } from '../components/MetaData'
-import { useSelector, useDispatch } from 'react-redux';
-import { JobCard } from '../components/JobCard';
-import { getAllJobs } from '../actions/JobActions';
-import Testimonials from '../components/Testimonials/Testimonials.jsx';
-
-
+import { useSelector, useDispatch } from 'react-redux'
+import { JobCard } from '../components/JobCard'
+import { getAllJobs } from '../actions/JobActions'
+import Testimonials from '../components/Testimonials/Testimonials.jsx'
+import jobSearchImage from '../assets/images/image.job.search.svg';
+import coporateImage from '../assets/images/image.coperate.png';
 
 export const Home = () => {
-
-    const [num, setNum] = useState(2);
     const dispatch = useDispatch()
     const { loading, allJobs } = useSelector(state => state.job)
-    const [jobs, setJobs] = useState([])
-
-
-    const data = [
-        {
-            link: "/images/JobData/1.jpg"
-        },
-        {
-            link: "/images/JobData/2.jpg"
-        },
-        {
-            link: "/images/JobData/3.jpg"
-        },
-        {
-            link: "/images/JobData/4.jpg"
-        },
-        {
-            link: "/images/JobData/5.jpg"
-        },
-        {
-            link: "/images/JobData/6.jpg"
-        },
-        {
-            link: "/images/JobData/7.jpg"
-        },
-        {
-            link: "/images/JobData/8.jpg"
-        },
-        {
-            link: "/images/JobData/9.jpg"
-        },
-        {
-            link: "/images/JobData/10.jpg"
-        },
-        {
-            link: "/images/JobData/11.jpg"
-        },
-        {
-            link: "/images/JobData/12.jpg"
-        },
-        {
-            link: "/images/JobData/13.jpg"
-        },
-        {
-            link: "/images/JobData/14.jpg"
-        },
-        {
-            link: "/images/JobData/15.jpg"
-        },
-        {
-            link: "/images/JobData/16.jpg"
-        },
-        {
-            link: "/images/JobData/17.jpg"
-        },
-        {
-            link: "/images/JobData/18.jpg"
-        },
-        {
-            link: "/images/JobData/19.jpg"
-        },
-        {
-            link: "/images/JobData/20.jpg"
-        }
-    ]
-
 
     useEffect(() => {
         dispatch(getAllJobs())
-
-    }, [])
-
-
+    }, [dispatch])
 
     const convertDateFormat = (inputDate) => {
-        const parts = inputDate.split('-');
-        if (parts.length !== 3) {
-            return "Invalid date format";
-        }
-
-        const day = parts[2];
-        const month = parts[1];
-        const year = parts[0];
-
-        return `${day}-${month}-${year}`;
+        const parts = inputDate.split('-')
+        if (parts.length !== 3) return "Invalid date"
+        return `${parts[2]}-${parts[1]}-${parts[0]}`
     }
 
+    const companyLogos = Array.from({ length: 20 }, (_, i) => ({
+        link: `/images/JobData/${i + 1}.jpg`
+    }))
+
     return (
-
-
         <>
-            <MetaData title="JobLane" />
-            <div className='min-h-screen md:px-20 px-3  pt-14 flex   text-white bg-gray-950'>
-                <div className='  w-full  flex  pt-28 flex-col justify-start  items-center gap-4'>
-
-                    <div className='flex md:flex-row flex-col items-center justify-center md:gap-10 gap-1'>
-                        <div className='md:text-8xl text-6xl titleT'>JOBLANE</div>
-                        <div className=' flex justify-center items-center pt-1'>
-                            <Link to="/jobs" className='font-semibold md:text-2xl text-lg blueCol  md:py-3 py-2 px-6 md:px-10 '>Browse Jobs</Link>
-                        </div>
-                    </div>
-                    <div>
-                        <p className='md:text-xl text-sm'>Your <span className='text-yellow-500'>gateway</span> to job opportunities.</p>
-                        
-                    </div>
-
-
-                    <div className='pt-[8rem] md:px-[1rem] px-[0rem] w-full'>
-                        <div className='titleT pb-6 text-2xl'>
-                            <p className='titleT'>Featured Jobs</p>
-                        </div>
-                        <div>
-                            {
-                                loading ? 
-                                <div className='w-full  flex justify-center items-center'>
-                                    
-                                    <span class="loader1"></span> 
-
-                                </div> :
-                                    <div>
-                                        <div className='flex md:flex-row flex-col gap-3'>
-
-                                            {allJobs && allJobs.length >= 4 ? (
-                                               <>
-                                                 <Link to={`/details/${allJobs[3]._id}`} className='flex gap-2 shadow-sm shadow-gray-800 border border-gray-700 md:w-[26rem] w-[21rem] p-2 flex-col hover:border-rose-500 transition duration-300 hover:scale-[1.02] hover:bg-slate-950'>
-                                                    <div className='flex gap-3'>
-                                                        <div className='w-[5rem] flex justify-center items-center' >
-                                                            <img src={allJobs[3].companyLogo.url} alt={allJobs[3].title} className='w-[4rem]' />
-                                                        </div>
-                                                        <div>
-                                                            <p className='text-xl'>{allJobs[3].title}</p>
-                                                            <p className='text-lg'>{allJobs[3].companyName}</p>
-                                                            <p className='text-sm'>{allJobs[3].description.slice(0, 30) + "..."}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex text-sm gap-8'>
-                                                        <span>{convertDateFormat(allJobs[3].createdAt.slice(0,10))}</span>
-                                                        <span>
-                                                            {allJobs[3].employmentType}
-                                                        </span>
-                                                        <span>
-                                                            {allJobs[3].location}
-                                                        </span>
-                                                    </div>
-
-                                                </Link>
-                                                 <Link  to={`/details/${allJobs[5]._id}`} className='flex gap-2 shadow-sm shadow-gray-800 border border-gray-700 md:w-[26rem] w-[21rem] p-2 flex-col hover:border-rose-500 transition duration-300 hover:scale-[1.02] hover:bg-slate-950'>
-                                                    <div className='flex gap-3 '>
-                                                        <div className='w-[5rem]  flex justify-center items-center' >
-                                                            <img src={allJobs[5].companyLogo.url} alt={allJobs[5].title} className="w-[4rem]" />
-                                                        </div>
-                                                        <div>
-                                                            <p className='text-xl'>{allJobs[5].title}</p>
-                                                            <p className='text-lg'>{allJobs[5].companyName}</p>
-                                                            <p className='text-sm'>{allJobs[5].description.slice(0, 30) + "..."}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex text-sm gap-8'>
-                                                        <span>{convertDateFormat(allJobs[3].createdAt.slice(0,10))}</span>
-                                                        <span>
-                                                            {allJobs[5].employmentType}
-                                                        </span>
-                                                        <span>
-                                                            {allJobs[5].location}
-                                                        </span>
-                                                    </div>
-
-                                                </Link>
-                                                 <Link  to={`/details/${allJobs[2]._id}`} className='flex gap-2 shadow-sm shadow-gray-800 border border-gray-700 md:w-[26rem] w-[21rem] p-2 flex-col hover:border-rose-500 transition duration-300 hover:scale-[1.02] hover:bg-slate-950'>
-                                                    <div className='flex gap-3'>
-                                                        <div className='w-[5rem]  flex justify-center items-center' >
-                                                            <img src={allJobs[2].companyLogo.url} alt={allJobs[2].title} className="w-[4rem]" />
-                                                        </div>
-                                                        <div>
-                                                            <p className='text-xl'>{allJobs[2].title}</p>
-                                                            <p className='text-lg'>{allJobs[2].companyName}</p>
-                                                            <p className='text-sm'>{allJobs[2].description.slice(0, 30) + "..."}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex text-sm gap-8'>
-                                                        <span>{convertDateFormat(allJobs[2].createdAt.slice(0,10))}</span>
-                                                        <span>
-                                                            {allJobs[2].employmentType}
-                                                        </span>
-                                                        <span>
-                                                            {allJobs[2].location}
-                                                        </span>
-                                                    </div>
-
-                                                </Link>
-                                               
-                                               </>
-                                            ) : null}
-
-
-                                        </div>
-
-                                    </div>
-                            }
-                        </div>
-
-                    </div>
-
-
-                    <div className='pt-20 flex flex-col gap-4 md:px-[1rem] px-[1rem] '>
-                        <div className='text-2xl titleT '>
-                            Companies on our site
-                        </div>
-                        <div className="flex flex-wrap gap-3 ">
-                            {
-                                data.map((e, i) => (
-                                    <div key={i}>
-                                        <img src={e.link} className='w-[4rem] ' alt="" />
-                                    </div>
-                                ))
-                            }
-                        </div>
+            <MetaData title="JobLane - Find Your Dream Job" />
+            <div className='min-h-screen flex flex-col text-black'>
+                {/* Hero Section */}
+                <div className='relative w-full bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 overflow-hidden'>
+                    {/* Decorative Elements */}
+                    <div className='absolute inset-0 overflow-hidden'>
+                        <div className='absolute -right-1/4 -top-1/4 w-1/2 h-1/2 bg-blue-400 rounded-full opacity-10 blur-3xl'></div>
+                        <div className='absolute -left-1/4 -bottom-1/4 w-1/2 h-1/2 bg-blue-300 rounded-full opacity-10 blur-3xl'></div>
                     </div>
                     
-
-                    <Testimonials />
-                    
-                    <div className="pt-[7rem] pb-[10rem] md:px-[14rem] px-[1rem]   text-center">
-                        <p>Discover the Power of Possibility with JobLane: Where Your Professional Journey Takes Flight, Guided by a Network of Diverse Opportunities!</p>
+                    <div className='relative min-h-[700px] flex items-center'>
+                        <div className='container mx-auto px-4 py-20 flex flex-col lg:flex-row items-center gap-12'>
+                            {/* Hero Content */}
+                            <div className='flex-1 text-center lg:text-left space-y-8 z-10'>
+                                <h1 className='text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight'>
+                                    Find Your <span className='text-blue-400'>Dream Job</span> Today
+                                </h1>
+                                <p className='text-xl md:text-2xl text-blue-100 max-w-3xl'>
+                                    Connect with top employers and discover opportunities that match your skills and aspirations.
+                                </p>
+                                <div className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'>
+                                    <Link 
+                                        to="/jobs" 
+                                        className='px-8 py-4 text-lg font-semibold text-white bg-blue-500 rounded-full 
+                                                 hover:bg-blue-600 transition-all duration-300 shadow-lg hover:shadow-blue-500/50
+                                                 flex items-center gap-2 group hover:-translate-y-1'
+                                    >
+                                        Browse Jobs
+                                        <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" 
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                                  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                        </svg>
+                                    </Link>
+                                    <Link 
+                                        to="/post-job" 
+                                        className='px-8 py-4 text-lg font-semibold text-blue-500 bg-white rounded-full 
+                                                 hover:bg-blue-50 transition-all duration-300 shadow-lg
+                                                 flex items-center gap-2 hover:-translate-y-1'
+                                    >
+                                        Post a Job
+                                    </Link>
+                                </div>
+                            </div>
+                            {/* Hero Image */}
+                            <div className='flex-1 relative'>
+                                {/* Blob shapes */}
+                                <div className="absolute top-0 right-0 w-72 h-72 bg-blue-400/30 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+                                <div className="absolute top-0 right-32 w-72 h-72 bg-purple-400/30 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+                                <div className="absolute -bottom-8 right-20 w-72 h-72 bg-pink-400/30 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+                                
+                                {/* Image container */}
+                                <div className="relative z-10 backdrop-blur-sm bg-white/10 rounded-2xl p-6">
+                                    <img 
+                                        src={jobSearchImage} 
+                                        alt="Job Search Illustration" 
+                                        className="w-full max-w-[600px] mx-auto 
+                                                 relative z-10 
+                                                 transition-all duration-500
+                                                 hover:transform hover:scale-102
+                                                 rounded-xl" 
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-
                 </div>
 
+                {/* Stats Section */}
+                <div className='bg-white py-12 -mt-16 relative z-10'>
+                    <div className='container mx-auto px-4'>
+                        <div className='grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8'>
+                            <div className='text-center'>
+                                <div className='text-4xl font-bold text-blue-500 mb-2'>10K+</div>
+                                <div className='text-gray-600'>Active Jobs</div>
+                            </div>
+                            <div className='text-center'>
+                                <div className='text-4xl font-bold text-blue-500 mb-2'>5K+</div>
+                                <div className='text-gray-600'>Companies</div>
+                            </div>
+                            <div className='text-center'>
+                                <div className='text-4xl font-bold text-blue-500 mb-2'>1M+</div>
+                                <div className='text-gray-600'>Job Seekers</div>
+                            </div>
+                            <div className='text-center'>
+                                <div className='text-4xl font-bold text-blue-500 mb-2'>8K+</div>
+                                <div className='text-gray-600'>Hired</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Featured Jobs Section */}
+                <section className='py-20 px-4 bg-gray-50'>
+                    <div className='container mx-auto'>
+                        <div className='text-center mb-12'>
+                            <h2 className='text-4xl font-bold text-gray-900 mb-4'>Featured Opportunities</h2>
+                            <div className='h-1 w-20 bg-blue-500 mx-auto'></div>
+                            <p className='mt-4 text-gray-600 text-lg'>Discover hand-picked positions from top companies</p>
+                        </div>
+
+                        {loading ? (
+                            <div className='w-full h-40 flex justify-center items-center'>
+                                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500'></div>
+                            </div>
+                        ) : (
+                            <div className='grid md:grid-cols-3 gap-8'>
+                                {allJobs && allJobs.length >= 4 && [3, 5, 2].map((index) => (
+                                    <Link
+                                        key={allJobs[index]._id}
+                                        to={`/details/${allJobs[index]._id}`}
+                                        className='group bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 
+                                                 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]'
+                                    >
+                                        <div className='flex gap-4'>
+                                            <div className='w-16 h-16 flex justify-center items-center bg-gray-50 rounded-lg p-2 overflow-hidden'>
+                                                <img
+                                                    src={allJobs[index].companyLogo.url}
+                                                    alt={allJobs[index].title}
+                                                    className='w-full h-full object-contain group-hover:scale-110 transition-transform'
+                                                />
+                                            </div>
+                                            <div className='flex-1'>
+                                                <h3 className='text-xl font-semibold text-gray-900 group-hover:text-blue-500 
+                                                           transition-colors duration-300 line-clamp-2'
+                                                >
+                                                    {allJobs[index].title}
+                                                </h3>
+                                                <p className='text-lg text-gray-700 font-medium'>
+                                                    {allJobs[index].companyName}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <p className='text-sm text-gray-600 mt-4 line-clamp-2'>
+                                            {allJobs[index].description}
+                                        </p>
+                                        <div className='flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-gray-100'>
+                                            <span className='px-3 py-1 text-sm text-gray-600 bg-gray-100 rounded-full'>
+                                                {convertDateFormat(allJobs[index].createdAt.slice(0,10))}
+                                            </span>
+                                            <span className='px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-full'>
+                                                {allJobs[index].employmentType}
+                                            </span>
+                                            <span className='px-3 py-1 text-sm text-green-600 bg-green-50 rounded-full'>
+                                                {allJobs[index].location}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </section>
+
+                {/* Companies Section with Image Grid */}
+                <section className='py-20 bg-white'>
+                    <div className='container mx-auto px-4'>
+                        <div className='text-center mb-12'>
+                            <h2 className='text-4xl font-bold text-gray-900 mb-4'>Trusted by Leading Companies</h2>
+                            <div className='h-1 w-20 bg-blue-500 mx-auto'></div>
+                            <p className='mt-4 text-gray-600 text-lg'>Join thousands of companies that trust us with their hiring needs</p>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
+                            {companyLogos.map((logo, i) => (
+                                <div key={i} 
+                                     className="relative group w-32 h-32 p-4 bg-white rounded-xl shadow-md 
+                                              hover:shadow-xl transition-all duration-300 overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 
+                                                  opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <img 
+                                        src={logo.link} 
+                                        className='w-full h-full object-contain filter grayscale group-hover:grayscale-0 
+                                                 transition-all duration-300 group-hover:scale-110' 
+                                        alt="Company logo" 
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Testimonials Section */}
+                <Testimonials />
+
+                {/* About Section with Image */}
+                <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
+                    <div className="container mx-auto px-4">
+                        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+                            <div className="flex-1">
+                                <img 
+                                    src={coporateImage} 
+                                    alt="About JobLane" 
+                                    className="w-full max-w-[500px] mx-auto rounded-xl shadow-xl 
+                                              transition-all duration-500
+                                             object-cover hover:shadow-2xl"
+                                />
+                            </div>
+                            <div className="flex-1 text-center lg:text-left">
+                                <h2 className='text-4xl font-bold text-gray-900 mb-6'>About JobLane</h2>
+                                <p className="text-xl text-gray-600 leading-relaxed mb-8">
+                                    Discover the Power of Possibility with JobLane: Where Your Professional Journey Takes Flight, 
+                                    Guided by a Network of Diverse Opportunities! We connect talented professionals with 
+                                    forward-thinking companies to create meaningful career relationships.
+                                </p>
+                                <Link 
+                                    to="/about" 
+                                    className="inline-flex items-center gap-2 text-blue-500 font-semibold hover:text-blue-600 
+                                             transition-colors duration-300"
+                                >
+                                    Learn More About Us
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                              d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-
-
         </>
     )
 }
+
+
+
+
+
+
+
