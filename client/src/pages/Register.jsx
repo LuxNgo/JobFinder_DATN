@@ -9,63 +9,25 @@ import { TbLoader2 } from 'react-icons/tb'
 import { registerUser } from '../actions/UserActions'
 import { useDispatch, useSelector } from 'react-redux'
 
-
-
 export const Register = () => {
-
   const { loading, isLogin } = useSelector(state => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const [eyeTog, setEyeTog] = useState(false)
+  const [focusedInput, setFocusedInput] = useState("")
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [skills, setSkills] = useState("");
-
   const [avatar, setAvatar] = useState("")
   const [avatarName, setAvatarName] = useState("")
-
   const [resume, setResume] = useState("")
   const [resumeName, setResumeName] = useState("")
 
-
-
-  const avatarChange = (e) => {
-    if (e.target.name === "avatar") {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setAvatar(reader.result);
-          setAvatarName(e.target.files[0].name)
-        }
-      };
-
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  }
-
-
-
-  const resumeChange = (e) => {
-    if (e.target.name === "resume") {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setResume(reader.result);
-          setResumeName(e.target.files[0].name)
-        }
-      };
-
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  }
-
-
   const registerHandler = (e) => {
     e.preventDefault()
-
     const skillsArr = skills.split(",")
     const data = {
       name,
@@ -75,9 +37,7 @@ export const Register = () => {
       resume,
       skills: skillsArr
     }
-
     dispatch(registerUser(data))
-
     setName("")
     setEmail("")
     setPassword("")
@@ -86,10 +46,7 @@ export const Register = () => {
     setResume("")
     setResumeName("")
     setSkills("")
-
   }
-
-
 
   useEffect(() => {
     if (isLogin) {
@@ -100,111 +57,288 @@ export const Register = () => {
   return (
     <>
       <MetaData title="Register" />
-      <div className='bg-gray-950 min-h-screen pt-14 md:px-20 px-3  text-white'>
-        <div className=' flex justify-center w-full items-start pt-6'>
-          <form onSubmit={registerHandler} className='flex flex-col md:w-1/3 shadow-gray-700  w-full md:mx-0 mx-8' action="">
+      <div className='min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
+        <div className='max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg mt-10'>
+          <div className='text-center space-y-2'>
+            <h2 className='text-3xl font-bold text-gray-900'>Create Account</h2>
+            <p className='text-gray-500'>Please fill in your details to register</p>
+          </div>
 
-            <div className='md:px-10 px-2 pt-4 pb-20 w-full flex flex-col gap-4'>
-              <div className='text-center'>
-                <p className='text-4xl  font-medium'>Register</p>
-              </div>
-
-              {/* Name */}
-              <div className='bg-white flex justify-center items-center'>
-                <div className='text-gray-600 px-2'>
-                  <MdPermIdentity size={20} />
-                </div>
-                <input value={name} onChange={(e) => setName(e.target.value)} required placeholder='Full name' type="text" className='outline-none bold-placeholder w-full text-black px-1 pr-3 py-2' />
-              </div>
-
-
-              {/* Mail */}
-              <div className='bg-white flex justify-center items-center'>
-                <div className='text-gray-600 px-2'>
-                  <AiOutlineMail size={20} />
-                </div>
-                <input value={email} onChange={(e) => setEmail(e.target.value)} required placeholder='Email' type="email" className='outline-none bold-placeholder w-full text-black px-1 pr-3 py-2' />
-              </div>
-
-              {/* Password */}
-              <div className='bg-white flex justify-center items-center'>
-                <div className='text-gray-600 px-2'>
-                  <AiOutlineUnlock size={20} />
-                </div>
-                <input value={password} onChange={(e) => setPassword(e.target.value)} required placeholder='Password' type={eyeTog ? "text" : "password"} className='outline-none bold-placeholder w-full text-black px-1 pr-3 py-2' />
-                <div className='text-gray-600 px-2 cursor-pointer' >
-                  {eyeTog ?
-                    <AiOutlineEye size={20} onClick={() => setEyeTog(!eyeTog)} /> : <AiOutlineEyeInvisible size={20} onClick={() => setEyeTog(!eyeTog)} />
-                  }
-                </div>
-              </div>
-
-              {/* Profile */}
-              <div>
-                <div className='bg-white flex justify-center items-center'>
-                  <div className='text-gray-600 px-2'>
-                   {avatar.length === 0 ? <CgProfile size={20} />
-                   : <img src={avatar} className='w-[3em] h-[2.5em]'/> 
-                   }
+          <form onSubmit={registerHandler} className='mt-8 space-y-6'>
+            <div className='space-y-5'>
+              {/* Name Input */}
+              <div className='space-y-2'>
+                <label
+                  htmlFor="name"
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Full Name
+                </label>
+                <div className='relative'>
+                  <div className={`
+                    absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none
+                    ${focusedInput === 'name' ? 'text-blue-600' : 'text-gray-400'}
+                  `}>
+                    <MdPermIdentity className='h-5 w-5' />
                   </div>
-                  <label htmlFor='avatar' className='outline-none w-full cursor-pointer text-black px-1 pr-3 py-2 '>
-                    {avatarName.length === 0 ? <span className='text-gray-500 font-medium'>Select Profile Pic...</span>
-                      : avatarName}
-                  </label>
-                  <input id='avatar' name='avatar' required
-                    onChange={avatarChange}
-                    placeholder='Profile' accept="image/*" type="file" className='outline-none  w-full hidden text-black px-1 pr-3 py-2' />
-
-
+                  <input
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onFocus={() => setFocusedInput('name')}
+                    onBlur={() => setFocusedInput('')}
+                    className={`
+                      w-full pl-12 pr-4 py-3 text-gray-900 text-base
+                      border rounded-lg outline-none transition-all duration-200
+                      ${focusedInput === 'name' 
+                        ? 'border-blue-600 ring-1 ring-blue-600' 
+                        : 'border-gray-300 hover:border-gray-400'}
+                    `}
+                    placeholder="Enter your full name"
+                    required
+                  />
                 </div>
-                <p className='bg-gray-950 text-white text-xs'>Please select Image file</p>
               </div>
 
-
-              {/* Resume */}
-              <div>
-                <div className='bg-white flex justify-center items-center'>
-                  <div className='text-gray-600 px-2'>
-                    <BsFileEarmarkText size={20} />
+              {/* Email Input */}
+              <div className='space-y-2'>
+                <label
+                  htmlFor="email"
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Email Address
+                </label>
+                <div className='relative'>
+                  <div className={`
+                    absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none
+                    ${focusedInput === 'email' ? 'text-blue-600' : 'text-gray-400'}
+                  `}>
+                    <AiOutlineMail className='h-5 w-5' />
                   </div>
-                  <label className='outline-none w-full text-black px-1 pr-3 py-2' htmlFor="resume">
-                    {resumeName.length === 0 ? <span className='text-gray-500 cursor-pointer font-medium'>Select Resume...</span> : resumeName}
-                  </label>
-                  <input required
-                    onChange={resumeChange}
-                    placeholder='Resume' id='resume' name='resume' accept="image/*" type="file" className='outline-none hidden w-full text-black px-1 pr-3 py-2' />
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setFocusedInput('email')}
+                    onBlur={() => setFocusedInput('')}
+                    className={`
+                      w-full pl-12 pr-4 py-3 text-gray-900 text-base
+                      border rounded-lg outline-none transition-all duration-200
+                      ${focusedInput === 'email' 
+                        ? 'border-blue-600 ring-1 ring-blue-600' 
+                        : 'border-gray-300 hover:border-gray-400'}
+                    `}
+                    placeholder="Enter your email address"
+                    required
+                  />
                 </div>
-                <p className='bg-gray-950 text-white text-xs'>Please select Image file</p>
               </div>
 
-              {/* Skills */}
-              <div className='bg-white flex justify-center items-center'>
-                <div className='text-gray-600 md:pb-12 pb-8 px-2'>
-                  <MdOutlineFeaturedPlayList size={20} />
+              {/* Password Input */}
+              <div className='space-y-2'>
+                <label
+                  htmlFor="password"
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Password
+                </label>
+                <div className='relative'>
+                  <div className={`
+                    absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none
+                    ${focusedInput === 'password' ? 'text-blue-600' : 'text-gray-400'}
+                  `}>
+                    <AiOutlineUnlock className='h-5 w-5' />
+                  </div>
+                  <input
+                    type={eyeTog ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setFocusedInput('password')}
+                    onBlur={() => setFocusedInput('')}
+                    className={`
+                      w-full pl-12 pr-12 py-3 text-gray-900 text-base
+                      border rounded-lg outline-none transition-all duration-200
+                      ${focusedInput === 'password'
+                        ? 'border-blue-600 ring-1 ring-blue-600'
+                        : 'border-gray-300 hover:border-gray-400'}
+                    `}
+                    placeholder="Create a password"
+                    required
+                  />
+                  <button 
+                    type="button"
+                    className='absolute inset-y-0 right-0 flex items-center pr-4 
+                             text-gray-400 hover:text-gray-600 transition-colors duration-200'
+                    onClick={() => setEyeTog(!eyeTog)}
+                  >
+                    {eyeTog ? 
+                      <AiOutlineEye className='h-5 w-5' /> : 
+                      <AiOutlineEyeInvisible className='h-5 w-5' />
+                    }
+                  </button>
                 </div>
-                <textarea value={skills} onChange={(e) => setSkills(e.target.value)} placeholder='Skills' type="text" className='outline-none w-full text-black bold-placeholder px-1 pr-3 py-2' />
               </div>
 
-
-              <div>
-                <button disabled={loading} className='blueCol flex justify-center items-center px-8 w-full py-2 font-semibold' >
-                  {loading ? <TbLoader2 className='animate-spin' size={24} /> : "Register"}</button>
+              {/* Skills Input */}
+              <div className='space-y-2'>
+                <label
+                  htmlFor="skills"
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Skills (comma-separated)
+                </label>
+                <div className='relative'>
+                  <div className={`
+                    absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none
+                    ${focusedInput === 'skills' ? 'text-blue-600' : 'text-gray-400'}
+                  `}>
+                    <MdOutlineFeaturedPlayList className='h-5 w-5' />
+                  </div>
+                  <textarea
+                    id="skills"
+                    value={skills}
+                    onChange={(e) => setSkills(e.target.value)}
+                    onFocus={() => setFocusedInput('skills')}
+                    onBlur={() => setFocusedInput('')}
+                    className={`
+                      w-full pl-12 pr-4 py-3 text-gray-900 text-base
+                      border rounded-lg outline-none transition-all duration-200 min-h-[100px]
+                      ${focusedInput === 'skills'
+                        ? 'border-blue-600 ring-1 ring-blue-600'
+                        : 'border-gray-300 hover:border-gray-400'}
+                    `}
+                    placeholder="Enter your skills (e.g., JavaScript, React, Node.js)"
+                    required
+                  />
+                </div>
               </div>
 
-              <div className='text-center text-sm pt-2'>
-                <p>Already have a account,<Link to="/login" className='text-yellow-400 underline'>Login</Link> here. </p>
+              {/* Avatar Upload */}
+              <div className='space-y-2'>
+                <label
+                  htmlFor="avatar"
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Profile Picture
+                </label>
+                <div className='relative'>
+                  <div className={`
+                    absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none
+                    ${focusedInput === 'avatar' ? 'text-blue-600' : 'text-gray-400'}
+                  `}>
+                    <CgProfile className='h-5 w-5' />
+                  </div>
+                  <input
+                    type="file"
+                    id="avatar"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      setAvatarName(file.name);
+                      const reader = new FileReader();
+                      reader.readAsDataURL(file);
+                      reader.onload = () => {
+                        setAvatar(reader.result);
+                      };
+                    }}
+                    className='hidden'
+                  />
+                  <div
+                    className={`
+                      w-full pl-12 pr-4 py-3 text-gray-900 text-base
+                      border rounded-lg outline-none transition-all duration-200 cursor-pointer
+                      ${focusedInput === 'avatar'
+                        ? 'border-blue-600 ring-1 ring-blue-600'
+                        : 'border-gray-300 hover:border-gray-400'}
+                    `}
+                    onClick={() => document.getElementById('avatar').click()}
+                  >
+                    {avatarName || "Choose profile picture"}
+                  </div>
+                </div>
               </div>
 
+              {/* Resume Upload */}
+              <div className='space-y-2'>
+                <label
+                  htmlFor="resume"
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Resume
+                </label>
+                <div className='relative'>
+                  <div className={`
+                    absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none
+                    ${focusedInput === 'resume' ? 'text-blue-600' : 'text-gray-400'}
+                  `}>
+                    <BsFileEarmarkText className='h-5 w-5' />
+                  </div>
+                  <input
+                    type="file"
+                    id="resume"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      setResumeName(file.name);
+                      const reader = new FileReader();
+                      reader.readAsDataURL(file);
+                      reader.onload = () => {
+                        setResume(reader.result);
+                      };
+                    }}
+                    className='hidden'
+                  />
+                  <div
+                    className={`
+                      w-full pl-12 pr-4 py-3 text-gray-900 text-base
+                      border rounded-lg outline-none transition-all duration-200 cursor-pointer
+                      ${focusedInput === 'resume'
+                        ? 'border-blue-600 ring-1 ring-blue-600'
+                        : 'border-gray-300 hover:border-gray-400'}
+                    `}
+                    onClick={() => document.getElementById('resume').click()}
+                  >
+                    {resumeName || "Upload your resume"}
+                  </div>
+                </div>
+              </div>
             </div>
 
+            {/* Register Button */}
+            <button
+              type="submit"
+              disabled={loading || !email || !password || !name || !skills}
+              className='w-full flex justify-center items-center px-4 py-3.5
+                       bg-blue-600 hover:bg-blue-700 
+                       text-white font-medium text-base rounded-lg
+                       transition-all duration-200 ease-in-out
+                       disabled:opacity-50 disabled:cursor-not-allowed
+                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+            >
+              {loading ? (
+                <TbLoader2 className='animate-spin h-5 w-5' />
+              ) : (
+                'Create Account'
+              )}
+            </button>
 
-
+            {/* Sign In Link */}
+            <div className='text-center text-sm text-gray-500'>
+              Already have an account?{' '}
+              <Link 
+                to="/login" 
+                className='font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200'
+              >
+                Sign in here
+              </Link>
+            </div>
           </form>
         </div>
-
-
       </div>
-
     </>
   )
 }
+
