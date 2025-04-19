@@ -3,20 +3,16 @@ import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Loader } from '../components/Loader'
 import { MetaData } from '../components/MetaData'
-import { getSingleApplication } from '../actions/ApplicationActions'
-import { Link } from 'react-router-dom'
+import { getSingleApplication, deleteApplication } from '../actions/ApplicationActions'
+import { Link, useNavigate } from 'react-router-dom'
 import { TbLoader2 } from 'react-icons/tb'
-import {deleteApplication} from '../actions/ApplicationActions'
-import { useNavigate } from 'react-router'
+import { FaBuilding, FaMapMarkerAlt, FaBriefcase, FaUser, FaEnvelope, FaFileAlt, FaClock, FaTrash, FaArrowLeft, FaSuitcase, FaGraduationCap } from 'react-icons/fa'
 
 export const ApplicationDetails = () => {
-
     const { applicationDetails, loading } = useSelector(state => state.application)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
     const { id } = useParams()
-
 
     const deleteApplicationHandler = () => {
         dispatch(deleteApplication(id))
@@ -25,136 +21,169 @@ export const ApplicationDetails = () => {
 
     useEffect(() => {
         dispatch(getSingleApplication(id))
-        
     }, [])
 
-
-    const toUpperFirst = (str = "") => {
-        return str.substring(0, 1).toUpperCase() + str.substring(1)
-    }
-
-
-    const convertDateFormat = (inputDate) => {
-        const parts = inputDate.split('-');
-        if (parts.length !== 3) {
-            return "Invalid date format";
+    const getStatusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'pending':
+                return 'bg-yellow-100 text-yellow-800'
+            case 'accepted':
+                return 'bg-green-100 text-green-800'
+            case 'rejected':
+                return 'bg-red-100 text-red-800'
+            default:
+                return 'bg-gray-100 text-gray-800'
         }
-
-        const day = parts[2];
-        const month = parts[1];
-        const year = parts[0];
-
-        return `${day}-${month}-${year}`;
     }
 
-    function extractTime(inputString) {
-        // Parse the input string as a Date object
-        const dateTimeObj = new Date(inputString);
-
-        // Extract the hours, minutes, and seconds
-        const hours = dateTimeObj.getHours();
-        const minutes = dateTimeObj.getMinutes();
-        const seconds = dateTimeObj.getSeconds();
-
-        // Convert to 12-hour format
-        const period = hours >= 12 ? 'PM' : 'AM';
-        const hours12 = hours % 12 || 12;
-
-        // Format the time
-        const time12hr = `${hours12.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`;
-
-        return time12hr;
+    const formatDateTime = (dateString) => {
+        const date = new Date(dateString)
+        return {
+            date: date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            }),
+            time: date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            })
+        }
     }
-
-
 
     return (
         <>
-
             <MetaData title="Application Details" />
-            <div className='bg-gray-950 min-h-screen pt-14 md:px-20 px-3 text-white'>
-                {
-                    loading ?
-
+            <div className='min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8'>
+                <div className='max-w-4xl mx-auto mt-10'>
+                    {loading ? (
                         <Loader />
+                    ) : (
+                        <>
+                            {/* Back Button */}
+                            <Link 
+                                to="/applied" 
+                                className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
+                            >
+                                <FaArrowLeft className='mr-2' />
+                                Back to Applications
+                            </Link>
 
-                        :
-
-                        <div>
-                            <div className='py-3  text-2xl md:text-4xl'>Application #{id}</div>
-
-                            <div className='pt-4 pb-3'>
-                                <p className='text-2xl pb-2'>Job Details:</p>
-                                <div>
-                                    <ul>
-                                        <li className='flex gap-4 items-center'>Role: <div>{applicationDetails.job.title}</div></li>
-                                        <li className='flex gap-4 items-center'>Company: <div>{applicationDetails.job.companyName}</div></li>
-                                        <li className='flex gap-4 items-center'>Location: <div>{applicationDetails.job.location}</div></li>
-                                        <li className='flex gap-4 items-center'>Experience: <div>{applicationDetails.job.experience}</div></li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div className='pt-4 pb-6'>
-                                <p className='text-2xl pb-2'>Applicants Details:</p>
-                                <div>
-                                    <ul>
-                                        <li className='flex gap-4 items-center'>Name: <div>{applicationDetails.applicant.name}</div></li>
-                                        <li className='flex gap-4 items-center'>Email: <div>{applicationDetails.applicant.email}</div></li>
-                                        <li className='flex gap-4 items-center'>Resume: <Link path="_blank" to={applicationDetails.applicantResume.url} target="_blank"
-                                            rel="noreferrer" className='text-blue-500 underline cursor-pointer'>{applicationDetails.applicant.name} resume</Link></li>
-                                    </ul>
+                            <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
+                                {/* Header */}
+                                <div className='bg-blue-600 text-white px-8 py-6'>
+                                    <h1 className='text-2xl font-bold'>Application #{id}</h1>
+                                    <div className='mt-2'>
+                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(applicationDetails?.status)}`}>
+                                            {applicationDetails?.status?.charAt(0).toUpperCase() + applicationDetails?.status?.slice(1)}
+                                        </span>
+                                    </div>
                                 </div>
 
+                                <div className='p-8'>
+                                    {/* Job Details Section */}
+                                    <div className='mb-8'>
+                                        <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
+                                            <FaBriefcase className='mr-2' />
+                                            Job Details
+                                        </h2>
+                                        <div className='bg-gray-50 rounded-lg p-6 space-y-3'>
+                                            <div className='flex items-center text-gray-700'>
+                                                <FaSuitcase className='mr-2' />
+                                                <span className='font-medium w-24'>Role:</span>
+                                                <span>{applicationDetails?.job?.title}</span>
+                                            </div>
+                                            <div className='flex items-center text-gray-700'>
+                                                <FaBuilding className='mr-2' />
+                                                <span className='font-medium w-24'>Company:</span>
+                                                <span>{applicationDetails?.job?.companyName}</span>
+                                            </div>
+                                            <div className='flex items-center text-gray-700'>
+                                                <FaMapMarkerAlt className='mr-2' />
+                                                <span className='font-medium w-24'>Location:</span>
+                                                <span>{applicationDetails?.job?.location}</span>
+                                            </div>
+                                            <div className='flex items-center text-gray-700'>
+                                                <FaGraduationCap className='mr-2' />
+                                                <span className='font-medium w-24'>Experience:</span>
+                                                <span>{applicationDetails?.job?.experience}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Applicant Details Section */}
+                                    <div className='mb-8'>
+                                        <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
+                                            <FaUser className='mr-2' />
+                                            Applicant Details
+                                        </h2>
+                                        <div className='bg-gray-50 rounded-lg p-6 space-y-3'>
+                                            <div className='flex items-center text-gray-700'>
+                                                <FaUser className='mr-2' />
+                                                <span className='font-medium w-24'>Name:</span>
+                                                <span>{applicationDetails?.applicant?.name}</span>
+                                            </div>
+                                            <div className='flex items-center text-gray-700'>
+                                                <FaEnvelope className='mr-2' />
+                                                <span className='font-medium w-24'>Email:</span>
+                                                <span>{applicationDetails?.applicant?.email}</span>
+                                            </div>
+                                            <div className='flex items-center text-gray-700'>
+                                                <FaFileAlt className='mr-2' />
+                                                <span className='font-medium w-24'>Resume:</span>
+                                                <Link 
+                                                    to={applicationDetails?.applicantResume?.url} 
+                                                    target="_blank"
+                                                    rel="noreferrer" 
+                                                    className='text-blue-600 hover:text-blue-800 underline'
+                                                >
+                                                    View Resume
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Application Timeline */}
+                                    <div className='mb-8'>
+                                        <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
+                                            <FaClock className='mr-2' />
+                                            Application Timeline
+                                        </h2>
+                                        <div className='bg-gray-50 rounded-lg p-6'>
+                                            <div className='flex items-center text-gray-700'>
+                                                <span className='font-medium'>Created:</span>
+                                                <span className='ml-2'>
+                                                    {formatDateTime(applicationDetails?.createdAt).date} at {formatDateTime(applicationDetails?.createdAt).time}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className='border-t border-gray-200 pt-6'>
+                                        <button
+                                            onClick={deleteApplicationHandler}
+                                            className='flex items-center justify-center w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200'
+                                            disabled={loading}
+                                        >
+                                            {loading ? (
+                                                <TbLoader2 className='animate-spin mx-2' size={20} />
+                                            ) : (
+                                                <>
+                                                    <FaTrash className='mr-2' />
+                                                    Delete Application
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div className='pt-2 pb-2'>
-                                <div className='flex gap-3  items-center text-xl'>Status: <span className={`${applicationDetails.status === "pending" ? "text-blue-600" :
-                                        applicationDetails.status === "rejected" ? "text-red-600" : "text-green-600"
-
-                                    } font-medium`}>{toUpperFirst(applicationDetails.status)}</span> </div>
-
-                            </div>
-
-
-                            <div className='pt-2 pb-2'>
-                                <div className='flex gap-3  items-center text-xl'>
-                                    Application Created At: {
-                                        convertDateFormat(applicationDetails.createdAt.substr(0, 10))} on {extractTime(applicationDetails.createdAt)}</div>
-
-                            </div>
-
-
-
-                            <div className='py- pb-40 '>
-
-                                {!loading? <button onClick={()=>{
-                                    deleteApplicationHandler()
-                                }} className='bg-red-600 hover:bg-red-800 py-2.5 text-sm  px-8 font-medium'>
-
-                                    Delete Application
-
-                                </button>
-                                    :
-                                <button className='bg-red-600 py-2   px-4 flex items-center font-bold justify-center '>
-
-                                    <TbLoader2 className='animate-spin mx-16' size={23} />
-
-                                </button>}
-
-                            </div>
-
-
-
-
-                        </div>
-                }
-
-
-
-
+                        </>
+                    )}
+                </div>
             </div>
-
         </>
     )
 }
+
+

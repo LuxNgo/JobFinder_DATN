@@ -1,74 +1,79 @@
 import React, { useEffect } from 'react'
 import { MetaData } from '../components/MetaData'
-import {getSavedJobs} from '../actions/JobActions'
-import {useDispatch, useSelector} from 'react-redux'
-import {Loader} from '../components/Loader'
+import { getSavedJobs } from '../actions/JobActions'
+import { useDispatch, useSelector } from 'react-redux'
+import { Loader } from '../components/Loader'
 import { SaveJobCard } from '../components/SaveJobCard'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { FaBookmark, FaBriefcase } from 'react-icons/fa'
 
 export const SavedJobs = () => {
+  const dispatch = useDispatch()
+  const { savedJobs, saveJobLoading, loading } = useSelector(state => state.job)
 
-  const dispatch = useDispatch(0)
-
-  const {savedJobs, saveJobLoading, loading} = useSelector(state => state.job)
-
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getSavedJobs())
-  },[saveJobLoading])
+  }, [saveJobLoading])
 
-  const reverseArr = (savedJobs) => {
-      let l = 0 ;
-      let e = savedJobs.length - 1 ;
-
-      while(l <= e){
-        let t = savedJobs[l] ;
-        savedJobs[l] = savedJobs[e] ;
-        savedJobs[e] = t ;
-
-        l++ ;
-        e-- ;
-      }
-      return savedJobs ;
-  }
-  
   return (
     <>
+      <MetaData title="Saved Jobs" />
+      <div className='min-h-screen bg-neutral-50 py-12 px-4 sm:px-6 lg:px-8'>
+        <div className='max-w-5xl mx-auto mt-10'>
+          {loading ? (
+            <Loader />
+          ) : (
+            <div className='space-y-6'>
+              {/* Header */}
+              {savedJobs.length > 0 && (
+                <div className='text-center'>
+                  <h1 className='text-3xl font-bold text-neutral-900 flex items-center justify-center gap-3'>
+                    <FaBookmark />
+                    Saved Jobs
+                  </h1>
+                  <p className='mt-2 text-neutral-600'>
+                    You have {savedJobs.length} saved job{savedJobs.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+              )}
 
-<MetaData title="Saved Jobs" />
-      <div className='bg-gray-950 min-h-screen pt-14 md:px-20 px-3  text-white'>
-
-            {loading ? <Loader/> :
-              
-              <div className='pt-6 md:px-28  px-1 pb-32' >
-                  {savedJobs.length !== 0 && <div className='text-center text-3xl pb-4 font-medium'>Saved Jobs</div>}
-                {
-                 <div className='flex flex-col gap-4'>
-                   {savedJobs.slice().reverse().map((job,i)=>(
-                    <SaveJobCard key={i} job={job}/>
+              {/* Job Cards */}
+              {savedJobs.length > 0 ? (
+                <div className='space-y-4'>
+                  {savedJobs.slice().reverse().map((job, i) => (
+                    <SaveJobCard key={i} job={job} />
                   ))}
-                 </div>
-                }
-                {
-                  savedJobs.length === 0 && 
-                  <div className='pt-10 text-center flex flex-col justify-center items-center'>
-
-
-                        <div>
-                          <img src="/images/jobEmpty.svg" className='w-52 h-52' alt="" />
-                        </div>
-                      <p className='md:text-3xl pb-3 pt-4 text-xl '>You don't have any saved jobs !</p>
-                      <Link to="/jobs" className='blueCol px-5 py-1'>Browse Jobs</Link>
+                </div>
+              ) : (
+                <div className='text-center py-16 px-4 rounded-lg bg-white shadow-sm border border-neutral-200'>
+                  <div className='flex justify-center'>
+                    <img 
+                      src="/images/jobEmpty.svg" 
+                      className='w-52 h-52 object-contain' 
+                      alt="No saved jobs" 
+                    />
                   </div>
-                }
-
+                  <h2 className='mt-6 text-2xl font-semibold text-neutral-900'>
+                    No Saved Jobs Yet
+                  </h2>
+                  <p className='mt-2 text-neutral-600 max-w-sm mx-auto'>
+                    Start exploring and save jobs that interest you to build your collection
+                  </p>
+                  <Link 
+                    to="/jobs" 
+                    className='mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white blueCol hover:bg-blue-700 transition-colors duration-200'
+                  >
+                    <FaBriefcase className="mr-2" />
+                    Browse Jobs
+                  </Link>
+                </div>
+              )}
             </div>
-            
-            }
-
-
+          )}
         </div>
-    
-    
+      </div>
     </>
   )
 }
+
+
