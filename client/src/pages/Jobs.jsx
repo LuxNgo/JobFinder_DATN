@@ -5,11 +5,13 @@ import { Loader } from '../components/Loader'
 import { JobCard } from '../components/JobCard'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllJobs, getSingleJob } from '../actions/JobActions'
-import { Slider } from '@mantine/core';
+import { Slider } from '@mantine/core'
 import { RxCross2 } from 'react-icons/rx'
-import { Pagination } from '@mantine/core';
 import useIsMobile from '../hooks/useIsMobile'
-
+import { motion, AnimatePresence } from 'framer-motion';
+import { BiSearch } from 'react-icons/bi';
+import { IoClose } from 'react-icons/io5';
+import { IoLocationOutline } from 'react-icons/io5';
 
 export const Jobs = () => {
 
@@ -23,9 +25,18 @@ export const Jobs = () => {
   const [salary, setSalary] = useState(0);
   const [company, setCompany] = useState("");
   const [search, setSearch] = useState("");
+  const [location, setLocation] = useState("");
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedExperience, setSelectedExperience] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const handleKeySubmit = (e) => {
+    if (e.key === 'Enter') {
+      searchHandler();
+    }
+  };
 
   const isMobile = useIsMobile()
 
@@ -52,44 +63,82 @@ export const Jobs = () => {
     setBaseJobs(allJobs); // Set base jobs when allJobs changes
   }, [allJobs])
 
-  useEffect(() => {
-    const searchArr = baseJobs.filter((e) => (
-      e.title.toLowerCase().includes(search.toLowerCase().trim())
-    ))
+  // Remove or comment out this useEffect since we don't want auto-filtering while typing
+  // useEffect(() => {
+  //   const searchArr = baseJobs.filter((e) => (
+  //     e.title.toLowerCase().includes(search.toLowerCase().trim())
+  //   ))
 
-    if (search === "") {
-
-      setJobs(baseJobs)
-    } else {
-
-      setJobs(searchArr)
-    }
-
-  }, [search, baseJobs])
-
-
-
-
-
+  //   if (search === "") {
+  //     setJobs(baseJobs)
+  //   } else {
+  //     setJobs(searchArr)
+  //   }
+  // }, [search, baseJobs])
 
   const searchHandler = () => {
+    let searchResults = [...baseJobs];
 
-    console.log(search);
-
-    const searchArr = baseJobs.filter((e) => (
-      e.title.toLowerCase().includes(search.toLowerCase())
-    ))
-
-
-
-    if (search !== "") {
-      setJobs(searchArr)
-    }
-    else if (searchArr.length === 0) {
-      setJobs(baseJobs)
+    // Filter by title/keyword search
+    if (search.trim()) {
+      searchResults = searchResults.filter((job) =>
+        job.title.toLowerCase().includes(search.toLowerCase().trim())
+      );
     }
 
-  }
+    // Filter by location
+    if (location.trim()) {
+      searchResults = searchResults.filter((job) =>
+        job.location && job.location.toLowerCase().includes(location.toLowerCase().trim())
+      );
+    }
+
+    // Filter by job type
+    if (selectedTypes.length > 0) {
+      searchResults = searchResults.filter((job) =>
+        selectedTypes.includes(job.type)
+      );
+    }
+
+    // Filter by experience level
+    if (selectedExperience.length > 0) {
+      searchResults = searchResults.filter((job) =>
+        selectedExperience.includes(job.experienceLevel)
+      );
+    }
+
+    // Filter by category
+    if (category) {
+      searchResults = searchResults.filter(
+        (job) => job.category.toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    // Filter by company
+    if (company) {
+      searchResults = searchResults.filter(
+        (job) => job.companyName.toLowerCase() === company.toLowerCase()
+      );
+    }
+
+    // Filter by salary
+    if (salary > 0) {
+      searchResults = searchResults.filter(
+        (job) => parseInt(job.salary) >= salary
+      );
+    }
+
+    setJobs(searchResults);
+    setCurrentPage(1); // Reset to first page after search
+  };
+
+  // Clear search fields function
+  const clearSearch = () => {
+    setSearch("");
+    setLocation("");
+    setJobs(baseJobs);
+    setCurrentPage(1);
+  };
 
   const leftFilter = (jobsList) => {
     if (category == "" && salary == 0) {
@@ -127,10 +176,43 @@ export const Jobs = () => {
     setCurrentPage(1)
   }
 
+  const handleJobTypeChange = (type) => {
+    setSelectedTypes(prev => {
+      const newTypes = prev.includes(type) 
+        ? prev.filter(t => t !== type) 
+        : [...prev, type];
+      
+      // Store the new types temporarily
+      const updatedTypes = newTypes;
+      
+      // Update the state and then trigger search
+      setTimeout(() => {
+        setSelectedTypes(updatedTypes);
+        searchHandler();
+      }, 0);
+      
+      return newTypes;
+    });
+  };
 
-
-
-
+  const handleExperienceChange = (level) => {
+    setSelectedExperience(prev => {
+      const newLevels = prev.includes(level) 
+        ? prev.filter(l => l !== level) 
+        : [...prev, level];
+      
+      // Store the new levels temporarily
+      const updatedLevels = newLevels;
+      
+      // Update the state and then trigger search
+      setTimeout(() => {
+        setSelectedExperience(updatedLevels);
+        searchHandler();
+      }, 0);
+      
+      return newLevels;
+    });
+  };
 
   // Pagination 
 
@@ -180,164 +262,280 @@ export const Jobs = () => {
   return (
     <>
       <MetaData title="Jobs" />
-      <div className='bg-white min-h-screen pt-14 sm:px-20 px-3 text-black'>
-        {loading ? <Loader /> :
-          <>
-            <div className='flex-col flex justify-center items-center w-full'>
-              <div className='text-center pt-8 sm:text-3xl text-2xl font-medium'>
-                <p>Find your dream job now</p>
-              </div>
-              <div className='py-3 pt-4 w-full flex justify-center items-center'>
-                <div className='flex justify-center w-full items-center'>
-                  <div className='bg-neutral-100 flex sm:w-2/5 w-4/5'>
-                    <div className='flex justify-center items-center pl-2 text-black'> <FiSearch size={19} /> </div>
-                    <input value={search} placeholder='Search Jobs ' onChange={(e) => setSearch(e.target.value)} type="text" className='outline-none bold-placeholder bg-neutral-100 text-black px-2 pl-3 sm:h-10 w-full h-8 py-1 text-sm' />
-                    <div className='text-black items-center flex justify-center px-2'><RxCross2 onClick={() => setSearch("")} size={19} className={`cursor-pointer ${search.length !== 0 ? "flex" : "hidden"}`} /></div>
-                    <button onClick={() => searchHandler()} className='bg-primary text-white sm:text-sm text-xs px-4 sm:h-10 h-8 py-1'>Search</button>
-                  </div>
-                </div>
+      <div className='min-h-screen bg-slate-50'>
+        {loading ? <Loader /> : (
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+            {/* Hero Section */}
+            <div className='mb-12 mt-8'>
+              <div className='text-center mb-12'>
+                <h1 className='text-5xl font-bold text-gray-900 mb-4'>
+                  Find Your Dream Job
+                </h1>
+                <p className='text-gray-600 text-lg max-w-2xl mx-auto'>
+                  {jobs.length}+ opportunities waiting for you
+                </p>
               </div>
 
-              <div className='flex flex-col pt-1 justify-between sm:flex-row w-full'>
-                {!isMobile && <div className='filter1 flex flex-col'>
-                  <div className='flex justify-start flex-col filter'>
-                    <p className='text-xl underline underline-offset-4'>Categories</p>
-                    <ul className='flex pt-3 flex-col gap-3'>
-                      {data.map((e, i) => (
-                        <li key={i} onClick={() => setCategory(e)} className={`hover:text-primary cursor-pointer ${category === e ? "text-primary" : ""}`}>{e}</li>
+              {/* Enhanced Search Bar */}
+              <div className='max-w-4xl mx-auto'>
+                <div className='bg-white rounded-2xl shadow-lg border border-gray-100 p-6'>
+                  <div className='flex flex-col md:flex-row gap-4'>
+                    {/* What Search */}
+                    <div className='flex-1 relative'>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>What</label>
+                      <div className='relative'>
+                        <BiSearch className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5' />
+                        <input
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              searchHandler();
+                            }
+                          }}
+                          placeholder='Job title or keyword'
+                          className='w-full pl-12 pr-4 py-3.5 text-gray-700 bg-gray-50 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all'
+                        />
+                        {search && (
+                          <button
+                            onClick={() => {
+                              setSearch('');
+                              searchHandler();
+                            }}
+                            className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'
+                          >
+                            <IoClose className='w-5 h-5' />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Where Search */}
+                    <div className='flex-1 relative'>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>Where</label>
+                      <div className='relative'>
+                        <IoLocationOutline className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5' />
+                        <input
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              searchHandler();
+                            }
+                          }}
+                          placeholder='City or remote'
+                          className='w-full pl-12 pr-4 py-3.5 text-gray-700 bg-gray-50 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all'
+                        />
+                        {location && (
+                          <button
+                            onClick={() => {
+                              setLocation('');
+                              searchHandler();
+                            }}
+                            className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'
+                          >
+                            <IoClose className='w-5 h-5' />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Search Button */}
+                    <div className='flex items-end'>
+                      <button
+                        onClick={searchHandler}
+                        className='bg-blue-600 text-white px-8 py-3.5 rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap font-medium'
+                      >
+                        <BiSearch className='w-5 h-5' />
+                        Search Jobs
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Quick Filters */}
+                  <div className='flex flex-wrap items-center gap-3 mt-6'>
+                    <span className='text-sm font-medium text-gray-700'>Popular:</span>
+                    <div className='flex flex-wrap gap-2'>
+                      {['Remote', 'Full-time', 'Part-time', 'Contract', 'Entry Level', 'Senior'].map((filter) => (
+                        <button
+                          key={filter}
+                          className='px-4 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors font-medium'
+                        >
+                          {filter}
+                        </button>
                       ))}
-                    </ul>
-                    <div className='pt-5'>
-                      <p className='text-xl pb-3 underline underline-offset-4'>Salary</p>
-                      <Slider
-                        color="blue"
-                        className='outline-none w-44'
-                        onChange={setSalary}
-                        value={salary}
-                        min={0}
-                        max={2000000}
-                      />
-                    </div>
-
-                    <div className='flex flex-col gap-4 w-2/3 pt-5'>
-                      <button onClick={() => leftFilter(jobs)} className='bg-primary text-black px-1 py-1 text-xs'>Apply Filter</button>
-                      <button onClick={() => removeLeftFilter()} className='bg-primary text-black px-1 py-1 text-xs'>Remove Filter</button>
-                    </div>
-                  </div>
-                </div>}
-
-                <div className='sm:w-2/4 pb-20 pt-2'>
-                  <div className='flex flex-col sm:overflow-y-auto sm:max-h-[30em] gap-4'>
-                    {jobs && displayedData
-                      .filter(job => job._id)
-                      .sort((a, b) => {
-                        const dateA = new Date(a.createdAt);
-                        const dateB = new Date(b.createdAt);
-                        return dateB - dateA;
-                      }).map((job, i) => (
-                        <JobCard onClick={() => {
-                          dispatch(getSingleJob(job._id))
-                        }}
-                          key={i}
-                          job={job} />
-                      ))
-                    }
-
-                    <div className={`${jobs.length == 0 ? "flex" : "hidden"} w-full justify-center items-center text-center pt-16 pb-12 sm:text-xl text-lg`}>
-                      No Jobs available according to your preferences
-                    </div>
-                  </div>
-
-                  <div className='justify-center pt-20 items-center'>
-                    <div className='flex flex-col'>
-                      <div className="flex justify-center mt-1">
-                        <button
-                          onClick={handlePrevPage}
-                          disabled={currentPage === 1}
-                          className="bg-neutral-100 border border-neutral-200 hover:bg-neutral-200 text-black font-bold py-2 px-4 mr-2"
-                        >
-                          Previous
-                        </button>
-
-                        {pageButtons}
-
-                        <button
-                          onClick={handleNextPage}
-                          disabled={currentPage === totalPageCount}
-                          className="bg-neutral-100 border border-neutral-200 hover:bg-neutral-200 text-black font-bold py-2 px-4 ml-2"
-                        >
-                          Next
-                        </button>
-                      </div>
-
-                      {/* Mobile Filters */}
-                      <div className='flex justify-between pt-10 px-6'>
-                        <div className='filter1 sm:hidden flex flex-col'>
-                          <div className='flex justify-start flex-col filter'>
-                            <p className='text-lg underline underline-offset-4'>Categories</p>
-                            <ul className='flex pt-3 text-sm flex-col gap-3'>
-                              {data.map((e, i) => (
-                                <li key={i} onClick={() => setCategory(e)} className={`hover:text-primary cursor-pointer ${category === e ? "text-primary" : ""}`}>{e}</li>
-                              ))}
-                            </ul>
-                            <div className='pt-5'>
-                              <p className='text-xl pb-3 underline underline-offset-4'>Salary</p>
-                              <Slider
-                                color="blue"
-                                className='outline-none w-32'
-                                onChange={setSalary}
-                                value={salary}
-                                min={0}
-                                max={2000000}
-                              />
-                            </div>
-
-                            <div className='flex text-sm flex-col gap-4 w-2/3 pt-5'>
-                              <button onClick={() => leftFilter(jobs)} className='bg-primary text-black px-1 py-1 text-xs'>Apply Filter</button>
-                              <button onClick={() => removeLeftFilter()} className='bg-primary text-black px-1 py-1 text-xs'>Remove Filter</button>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className='filter2 sm:hidden flex flex-col ml-16'>
-                          <div className='flex justify-end flex-col filter'>
-                            <p className='text-lg underline underline-offset-4'>Companies</p>
-                            <div className='pt-3 flex flex-col justify-end text-right gap-3'>
-                              {companyData.map(e => (
-                                <div onClick={() => setCompany(e)} className={`${company === e ? "text-primary" : ""} cursor-pointer text-sm hover:text-primary`}>{e}</div>
-                              ))}
-                            </div>
-                            <div className='flex text-sm flex-col gap-4 pt-5'>
-                              <button onClick={() => rightFilter(jobs)} className='bg-primary text-black px-1 py-1 text-xs'>Apply Search</button>
-                              <button onClick={() => removeRightFilter()} className='bg-primary text-black px-1 py-1 text-xs'>Remove Search</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
-
-                {!isMobile && <div className='filter2 flex flex-col ml-16'>
-                  <div className='flex justify-end flex-col filter'>
-                    <p className='text-xl underline underline-offset-4'>Companies</p>
-                    <div className='pt-3 flex flex-col justify-end text-right gap-3'>
-                      {companyData.map(e => (
-                        <div onClick={() => setCompany(e)} className={`${company === e ? "text-primary" : ""} cursor-pointer hover:text-primary`}>{e}</div>
-                      ))}
-                    </div>
-                    <div className='flex flex-col gap-4 pt-5'>
-                      <button onClick={() => rightFilter(jobs)} className='bg-primary text-black px-1 py-1 text-xs'>Apply Search</button>
-                      <button onClick={() => removeRightFilter()} className='bg-primary text-black px-1 py-1 text-xs'>Remove Search</button>
-                    </div>
-                  </div>
-                </div>}
               </div>
             </div>
-          </>
-        }
+
+            {/* Main Content */}
+            <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12'>
+              {/* Enhanced Filters Sidebar */}
+              {!isMobile && (
+                <div className='lg:col-span-3 space-y-6'>
+                  <div className='bg-white rounded-2xl shadow-sm border border-gray-200 p-6'>
+                    <div className='flex justify-between items-center mb-6'>
+                      <h2 className='text-lg font-semibold text-gray-900'>Filters</h2>
+                      <button
+                        onClick={() => {
+                          removeLeftFilter();
+                          removeRightFilter();
+                        }}
+                        className='text-sm text-blue-600 hover:text-blue-700'
+                      >
+                        Clear all
+                      </button>
+                    </div>
+                    
+                    {/* Experience Level */}
+                    <div className='mb-8'>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Experience Level</h3>
+                      <div className='space-y-3'>
+                        {['Entry Level', 'Mid Level', 'Senior', 'Lead', 'Executive'].map((level) => (
+                          <label key={level} className='flex items-center gap-3 cursor-pointer group'>
+                            <input
+                              type='checkbox'
+                              checked={selectedExperience.includes(level)}
+                              onChange={() => {
+                                handleExperienceChange(level);
+                                searchHandler();
+                              }}
+                              className='w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                            />
+                            <span className='text-sm text-gray-600 group-hover:text-gray-900'>{level}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Job Type */}
+                    <div className='mb-8'>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Job Type</h3>
+                      <div className='space-y-3'>
+                        {['Full-time', 'Part-time', 'Contract', 'Temporary', 'Internship'].map((type) => (
+                          <label key={type} className='flex items-center gap-3 cursor-pointer group'>
+                            <input
+                              type='checkbox'
+                              checked={selectedTypes.includes(type)}
+                              onChange={() => {
+                                handleJobTypeChange(type);
+                                searchHandler();
+                              }}
+                              className='w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                            />
+                            <span className='text-sm text-gray-600 group-hover:text-gray-900'>{type}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Categories */}
+                    <div className='mb-8'>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Categories</h3>
+                      <div className='space-y-3'>
+                        {data.map((category) => (
+                          <label key={category} className='flex items-center gap-3 cursor-pointer group'>
+                            <input
+                              type='radio'
+                              name='category'
+                              value={category}
+                              checked={category === category}
+                              onChange={(e) => setCategory(e.target.value)}
+                              className='w-5 h-5 border-gray-300 text-blue-600 focus:ring-blue-500'
+                            />
+                            <span className='text-sm text-gray-600 group-hover:text-gray-900'>{category}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Companies */}
+                    <div className='mb-8'>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Companies</h3>
+                      <div className='space-y-3'>
+                        {companyData.map((comp) => (
+                          <label key={comp} className='flex items-center gap-3 cursor-pointer group'>
+                            <input
+                              type='radio'
+                              name='company'
+                              value={comp}
+                              checked={company === comp}
+                              onChange={(e) => setCompany(e.target.value)}
+                              className='w-5 h-5 border-gray-300 text-blue-600 focus:ring-blue-500'
+                            />
+                            <span className='text-sm text-gray-600 group-hover:text-gray-900'>{comp}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Salary Range */}
+                    <div>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Salary Range</h3>
+                      <input
+                        type="range"
+                        min="0"
+                        max="200000"
+                        step="10000"
+                        value={salary}
+                        onChange={(e) => setSalary(e.target.value)}
+                        className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer'
+                      />
+                      <div className='flex justify-between mt-2'>
+                        <span className='text-sm text-gray-600'>$0</span>
+                        <span className='text-sm text-gray-600'>${salary.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Job Listings */}
+              <div className='lg:col-span-9'>
+                <div className='space-y-6'>
+                  {displayedData.map((job, index) => (
+                    <div key={index} >
+                      <JobCard job={job} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Enhanced Pagination */}
+                {jobs.length > itemsPerPage && (
+                  <div className='flex justify-center items-center gap-3 mt-12'>
+                    <button
+                      onClick={handlePrevPage}
+                      disabled={currentPage === 1}
+                      className='px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                      Previous
+                    </button>
+                    {pageButtons}
+                    <button
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPageCount}
+                      className='px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
 }
+
+
+
+
+
+
+
+
 
