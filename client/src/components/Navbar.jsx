@@ -1,125 +1,234 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Avatar } from '@mantine/core';
-import { FaBars } from 'react-icons/fa';
-import { RxCross1 } from 'react-icons/rx';
-import { MdOutlineBusinessCenter, MdOutlineDashboard } from 'react-icons/md';
 import { Menu } from '@mantine/core';
-import { FaUserCircle, FaSave } from 'react-icons/fa';
-import { MdDoneAll } from 'react-icons/md';
-import { RiLogoutBoxFill } from 'react-icons/ri';
-import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import { logOrNot } from '../actions/UserActions';
-import { useNavigate } from 'react-router-dom';
 import { logoutClearState } from '../slices/UserSlice';
-import { motion } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import useIsMobile from '../hooks/useIsMobile';
+
+// Icons
+import { MdOutlineBusinessCenter, MdOutlineDashboard, MdDoneAll } from 'react-icons/md';
+import { FaUserCircle, FaSave } from 'react-icons/fa';
+import { RiLogoutBoxFill } from 'react-icons/ri';
+import { HiMenu, HiX } from 'react-icons/hi';
 
 export const Navbar = () => {
     const { isLogin, me } = useSelector(state => state.user);
     const [toggle, setToggle] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const isMobile = useIsMobile();
+    const location = useLocation();
 
+    // Handle scroll effect
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
-    const isMobile = useIsMobile()
+    // Close mobile menu on route change
+    useEffect(() => {
+        setToggle(false);
+    }, [location]);
 
     const LogOut = () => {
         localStorage.removeItem('userToken');
         localStorage.removeItem('role');
         dispatch(logOrNot());
         navigate('/');
-        toast.success("Logout Successful !");
+        toast.success("Logout Successful!");
         dispatch(logoutClearState());
-    }
+    };
+
+    const navLinks = [
+        { path: '/', label: 'Home' },
+        { path: '/jobs', label: 'Jobs' },
+        { path: '/contact', label: 'Contact' },
+        { path: '/about', label: 'About' }
+    ];
+
+    const isActivePath = (path) => location.pathname === path;
 
     return (
-        <>
-            <div className='text-white z-20 fixed min-w-full bg-gray-950'>
-              {!isMobile &&  <ul className='sm:flex  justify-center items-center gap-24 pt-4 pb-3 font-semibold text-xl'>
-                    <Link to="/" className='flex fixed left-24 justify-center items-center titleT'>
-                        <MdOutlineBusinessCenter size={19} />  JOBLANE
-                    </Link>
-
-                    <Link to="/" className='cool-link'>Home</Link>
-                    <Link to="/jobs" className='cool-link'>Jobs</Link>
-                    <Link to='/contact' className='cool-link'>Contact</Link>
-                    <Link to='/about' className='cool-link'>About</Link>
-
-                    {isLogin ? (
-                        <Menu shadow="md" width={200}>
-                            <Menu.Target>
-                                <Avatar className='cursor-pointer fixed right-32' radius="xl" src={me.avatar.url} alt="it's me" />
-                            </Menu.Target>
-
-                            <Menu.Dropdown>
-                                <Link to="/profile"><Menu.Item icon={<FaUserCircle size={14} />}>My Profile</Menu.Item></Link>
-                                {me.role === "admin" && <Link to="/admin/dashboard"><Menu.Item icon={<MdOutlineDashboard size={14} />}>Dashboard</Menu.Item></Link>}
-                                <Link to="/applied"><Menu.Item icon={<MdDoneAll size={14} />}>Applied Jobs</Menu.Item></Link>
-                                <Link to="/saved"><Menu.Item icon={<FaSave size={14} />}>Saved Jobs</Menu.Item></Link>
-                                <Menu.Divider />
-                                <Menu.Item onClick={LogOut} color="red" icon={<RiLogoutBoxFill size={14} />}>Logout</Menu.Item>
-                            </Menu.Dropdown>
-                        </Menu>
-                    ) : (
-                        <span className='fixed right-24 flex gap-3'>
-                            <Link className='cursor-pointer text-sm px-3 py-1 rounded-xl blueCol' to="/login">Login</Link>
-                            <Link className='cursor-pointer text-sm px-3 py-1 rounded-xl blueCol' to="/register">Register</Link>
+        <header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'shadow-header backdrop-blur-sm bg-white/90' : 'bg-white'}`}>
+            <nav className="flex h-[68px] px-4 lg:px-8 items-center">
+                <div className="container mx-auto flex items-center justify-between">
+                    {/* Logo */}
+                    <Link 
+                        to="/" 
+                        className="flex items-center gap-2 hover:no-underline group transition-transform duration-300 hover:scale-105"
+                    >
+                        <div className="p-2 rounded-lg bg-gradient-primary group-hover:shadow-lg transition-all duration-300">
+                            <MdOutlineBusinessCenter className="text-white" size={24} />
+                        </div>
+                        <span className="font-montserrat font-semibold text-18 bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+                            JOBFINDER
                         </span>
-                    )}
-                </ul>}
-
-                <div className='py-3 px-3 md:hidden justify-between items-center flex'>
-                    <Link to="/" className='text-lg titleT flex justify-center items-center gap-1'>
-                        <MdOutlineBusinessCenter size={19} /> JOBLANE
                     </Link>
-                    <div className='flex justify-center items-center'>
-                        <div className='pr-12'>
-                            {isLogin ? (
-                                <Menu shadow="md" width={200}>
-                                    <Menu.Target>
-                                        <Avatar size={28} className='cursor-pointer' radius="xl" src={me.avatar.url} alt="it's me" />
-                                    </Menu.Target>
 
-                                    <Menu.Dropdown>
-                                        <Link to="/profile"><Menu.Item icon={<FaUserCircle size={14} />}>My Profile</Menu.Item></Link>
-                                        {me.role === "admin" && <Link to="/admin/dashboard"><Menu.Item icon={<MdOutlineDashboard size={14} />}>Dashboard</Menu.Item></Link>}
-                                        <Link to="/applied"><Menu.Item icon={<MdDoneAll size={14} />}>Applied Jobs</Menu.Item></Link>
-                                        <Link to="/saved"><Menu.Item icon={<FaSave size={14} />}>Saved Jobs</Menu.Item></Link>
-                                        <Menu.Divider />
-                                        <Menu.Item onClick={LogOut} color="red" icon={<RiLogoutBoxFill size={14} />}>Logout</Menu.Item>
-                                    </Menu.Dropdown>
-                                </Menu>
-                            ) : (
-                                <span className='flex gap-3 fixed top-3 right-16'>
-                                    <Link className='cursor-pointer text-sm px-3 py-1 rounded-xl blueCol' to="/login">Login</Link>
-                                    <Link className='cursor-pointer text-sm px-3 py-1 rounded-xl blueCol' to="/register">Register</Link>
-                                </span>
-                            )}
+                    {/* Desktop Navigation */}
+                    {!isMobile && (
+                        <div className="flex items-center gap-8">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    className={`relative px-2 py-1 text-text-primary hover:text-primary-600 transition-colors duration-300
+                                        ${isActivePath(link.path) ? 'text-primary-600' : ''}
+                                        after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5
+                                        after:bg-primary-600 after:scale-x-0 after:origin-right after:transition-transform
+                                        hover:after:scale-x-100 hover:after:origin-left
+                                        ${isActivePath(link.path) ? 'after:scale-x-100' : ''}`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                         </div>
+                    )}
 
-                        <div className='pr-1'>
-                            {toggle ? (
-                                <RxCross1 size={24} className='cursor-pointer' onClick={() => setToggle(!toggle)} />
-                            ) : (
-                                <FaBars size={24} className='cursor-pointer' onClick={() => setToggle(!toggle)} />
-                            )}
-                        </div>
+                    {/* Auth Section */}
+                    <div className="flex items-center gap-4">
+                        {isLogin ? (
+                            <Menu 
+                                shadow="lg"
+                                width={240}
+                                position="bottom-end"
+                                transition="scale-y"
+                                transitionDuration={200}
+                            >
+                                <Menu.Target>
+                                    <button className="flex items-center gap-2 p-1.5 rounded-full hover:bg-neutral-50 transition-colors duration-300">
+                                        <Avatar 
+                                            className="border-2 border-primary-500 shadow-sm" 
+                                            radius="xl" 
+                                            size={40}
+                                            src={me.avatar.url} 
+                                            alt="Profile"
+                                        />
+                                        {!isMobile && (
+                                            <span className="text-text-primary font-medium">
+                                                {me.name}
+                                            </span>
+                                        )}
+                                    </button>
+                                </Menu.Target>
+
+                                <Menu.Dropdown className="p-2">
+                                    <Menu.Item 
+                                        component={Link} 
+                                        to="/profile"
+                                        icon={<FaUserCircle size={16} className="text-primary-600" />}
+                                        className="p-2 hover:bg-neutral-50 rounded-lg"
+                                    >
+                                        My Profile
+                                    </Menu.Item>
+                                    {me.role === "admin" && (
+                                        <Menu.Item 
+                                            component={Link} 
+                                            to="/admin/dashboard"
+                                            icon={<MdOutlineDashboard size={16} className="text-primary-600" />}
+                                            className="p-2 hover:bg-neutral-50 rounded-lg"
+                                        >
+                                            Dashboard
+                                        </Menu.Item>
+                                    )}
+                                    <Menu.Item 
+                                        component={Link} 
+                                        to="/applied"
+                                        icon={<MdDoneAll size={16} className="text-primary-600" />}
+                                        className="p-2 hover:bg-neutral-50 rounded-lg"
+                                    >
+                                        Applied Jobs
+                                    </Menu.Item>
+                                    <Menu.Item 
+                                        component={Link} 
+                                        to="/saved"
+                                        icon={<FaSave size={16} className="text-primary-600" />}
+                                        className="p-2 hover:bg-neutral-50 rounded-lg"
+                                    >
+                                        Saved Jobs
+                                    </Menu.Item>
+                                    <Menu.Divider className="my-2" />
+                                    <Menu.Item 
+                                        onClick={LogOut} 
+                                        icon={<RiLogoutBoxFill size={16} className="text-destructive" />}
+                                        className="p-2 hover:bg-destructive/5 rounded-lg text-destructive"
+                                    >
+                                        Logout
+                                    </Menu.Item>
+                                </Menu.Dropdown>
+                            </Menu>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <Link 
+                                    to="/login"
+                                    className="px-4 py-2 text-primary-600 hover:bg-primary-500/5 rounded-lg transition-all duration-300"
+                                >
+                                    Login
+                                </Link>
+                                <Link 
+                                    to="/register"
+                                    className="px-4 py-2 bg-gradient-primary text-white rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105"
+                                >
+                                    Register
+                                </Link>
+                            </div>
+                        )}
+
+                        {/* Mobile Menu Button */}
+                        {isMobile && (
+                            <button
+                                onClick={() => setToggle(!toggle)}
+                                className="p-2 hover:bg-neutral-50 rounded-lg transition-colors duration-300"
+                                aria-label="Toggle menu"
+                            >
+                                {toggle ? (
+                                    <HiX size={24} className="text-text-primary" />
+                                ) : (
+                                    <HiMenu size={24} className="text-text-primary" />
+                                )}
+                            </button>
+                        )}
                     </div>
                 </div>
+            </nav>
 
-                <div className='bg-white border-b md:mx-20 mx-3'></div>
-
-                <div className={` ${toggle ? "flex" : "hidden"} absolute w-screen h-screen z-20 md:hidden`}>
-                    <ul className='bg-gray-950 bg-opacity-95 flex flex-col gap-20 text-2xl justify-start w-screen pt-20 items-center'>
-                        <Link onClick={() => setToggle(!toggle)} to="/" className='cool-link'>Home</Link>
-                        <Link onClick={() => setToggle(!toggle)} to="/jobs" className='cool-link'>Jobs</Link>
-                        <Link onClick={() => setToggle(!toggle)} to='/contact' className='cool-link'>Contact</Link>
-                        <Link onClick={() => setToggle(!toggle)} to='/about' className='cool-link'>About</Link>
-                    </ul>
+            {/* Mobile Menu */}
+            {isMobile && (
+                <div 
+                    className={`fixed inset-0 top-[68px] bg-white/90 backdrop-blur-sm transform transition-transform duration-300 ease-in-out ${
+                        toggle ? 'translate-x-0' : 'translate-x-full'
+                    }`}
+                >
+                    <nav className="container mx-auto py-6">
+                        <div className="flex flex-col items-center gap-6">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    className={`text-lg font-medium ${
+                                        isActivePath(link.path)
+                                            ? 'text-primary-600'
+                                            : 'text-text-primary hover:text-primary-600'
+                                    } transition-colors duration-300`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+                    </nav>
                 </div>
-            </div>
-        </>
+            )}
+        </header>
     );
 }
+
+
+

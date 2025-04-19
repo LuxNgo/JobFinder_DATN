@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        destructive: '#EB5146',
         primary: {
           '500': '#3B82F6',
           '600': '#2563EB',
@@ -20,6 +21,8 @@ module.exports = {
           '700': '#334155',
           '900': '#0F172A',
         },
+        // Added new text colors
+          disabled: '#9BA0AE'  // Matching your --text-disable variable
       },
       backgroundImage: {
         'search': "url('../assets/images/image.job.search.png')",
@@ -41,3 +44,5 @@ module.exports = {
   },
   plugins: [],
 }
+
+

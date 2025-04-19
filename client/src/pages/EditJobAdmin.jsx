@@ -117,7 +117,7 @@ export const EditJobAdmin = () => {
     return (
         <>
 
-            <MetaData title="Edit Job Details" />
+            <MetaData title="JobFinder - Edit Job Details" />
             <div className='bg-gray-950 min-h-screen pt-14 md:px-20 px-3 text-white'>
                 {
                     loading ? <Loader /> :
@@ -477,3 +477,4 @@ export const EditJobAdmin = () => {
         </>
     )
 }
+
