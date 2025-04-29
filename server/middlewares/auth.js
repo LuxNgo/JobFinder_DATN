@@ -6,7 +6,7 @@ exports.createToken = (id, email) => {
     const token = jwt.sign(
         {
             id, email
-        }, process.env.SECRET,
+        }, process.env.JWT_SECRET,
         {
             expiresIn: '5d'
         }
@@ -30,7 +30,7 @@ exports.isAuthenticated = (req, res, next) => {
             })
         }
 
-        jwt.verify(token, process.env.SECRET, async(err, user)=>{
+        jwt.verify(token, process.env.JWT_SECRET, async(err, user)=>{
             if(err){
                 return res.status(400).json({
                     success: false,

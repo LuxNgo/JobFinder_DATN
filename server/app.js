@@ -4,17 +4,22 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const fileUpload = require('express-fileupload')
 
-dotenv.config({path:'./config/config.env'})
+dotenv.config({path: './.env'})
 
-app.use(express.json({ limit: '10mb' }))
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ limit: '50mb', extended: true }))
 
 app.use(cors({
     origin: "*",
     credentials: true
 }))
 
-app.use(fileUpload())
-
+app.use(fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+    useTempFiles: true,
+    tempFileDir: '/tmp/',
+    createParentPath: true
+}))
 
 const User = require('./routes/UserRoutes')
 const Job = require('./routes/JobRoutes')

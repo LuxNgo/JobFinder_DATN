@@ -1,11 +1,14 @@
 const mongoose = require('mongoose')
 
 const databaseConnection = () => {
-    mongoose.connect(process.env.DB,{
+    mongoose.connect(process.env.MONGODB_URI,{
         useNewUrlParser: true,
         useUnifiedTopology: true
     }).then((data)=>{
-        console.log(`database connected successfully at server ${data.connection.host}`)
+        console.log(`Database connected successfully at server ${data.connection.host}`)
+    }).catch((error) => {
+        console.error('Database connection error:', error)
+        process.exit(1)
     })
 }
 

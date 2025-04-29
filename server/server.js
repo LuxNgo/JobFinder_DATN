@@ -1,20 +1,58 @@
 const app = require('./app')
 const databaseConnection = require('./config/database')
-const cloudinary  = require('cloudinary')
+const cloudinary = require('cloudinary')
 const dotenv = require('dotenv')
-dotenv.config({path:"./config/config.sample.env"})
 
+try {
+    // Test Cloudinary connection
+    try {
+        cloudinary.v2.api.resource('sample', (err, result) => {
+            if (err) {
+                console.error('Cloudinary connection test failed:', err);
+                throw new Error('Cloudinary configuration failed');
+            } else {
+                console.log('Cloudinary connection test successful');
+            }
+        });
+    } catch (err) {
+        console.error('Cloudinary connection test failed:', err);
+        throw new Error('Cloudinary configuration failed');
+    }
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME ,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-}) 
+    // Connect to database
+    databaseConnection();
+    console.log('Database connection successful');
 
-databaseConnection()
+    // Start server
+    const PORT = process.env.PORT || 3000;
 
+    const server = app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 
+    // Handle server errors
+    server.on('error', (error) => {
+        console.error('Server error:', error);
+        process.exit(1);
+    });
 
-app.listen(process.env.PORT,()=>{
-    console.log(`server is running on port ${process.env.PORT}`)
-})
+    // Handle unhandled rejections
+    process.on('unhandledRejection', (error) => {
+        console.error('Unhandled rejection:', error);
+        server.close(() => {
+            process.exit(1);
+        });
+    });
+
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+        console.error('Uncaught exception:', error);
+        server.close(() => {
+            process.exit(1);
+        });
+    });
+
+} catch (err) {
+    console.error('Error starting server:', err);
+    process.exit(1);
+}
