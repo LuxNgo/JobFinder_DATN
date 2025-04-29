@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { MetaData } from "../components/MetaData";
 import { BsFacebook } from "react-icons/bs";
 import {
@@ -6,89 +6,124 @@ import {
   AiOutlineTwitter,
   AiTwotoneMail,
 } from "react-icons/ai";
-import { BiMinus, BiPlus } from "react-icons/bi";
-import  Card  from "../components/Card"; // New Card component
-import Accordion from "../components/Accordion";// New Accordion component
+import { MdEmail, MdPhone, MdLocationOn, MdSend } from 'react-icons/md';
 
 export const Contact = () => {
-  const [que1, setQue1] = useState(false);
-  const [que2, setQue2] = useState(false);
-  const [que3, setQue3] = useState(false);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+  };
 
   return (
     <>
       <MetaData title="Contact" />
-      <div className="bg-gray-950 min-h-screen pt-14 md:px-20 px-3 text-white">
-        <div className="flex flex-col gap-5 md:px-0 px-2 md:pt-8 pt-4 pb-20">
-          <div>
-            <p className="text-4xl pb-3 underline underline-offset-8 underPur font-bold text-center">
-              Contact Us
-            </p>
-
-            <p>
-              We're excited to hear from you! If you have any questions,
-              inquiries, or feedback, feel free to reach out to us using the
-              contact information provided below. Your satisfaction and
-              engagement with our platform are our top priorities, and we're
-              here to assist you in any way we can.
+      <div className="bg-gray-50 min-h-screen">
+        {/* Hero Section */}
+        <div className="bg-primary-800 text-white py-20">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
+            <p className="text-white text-lg max-w-2xl mx-auto">
+              We're excited to hear from you! Get in touch with us for any questions or support.
             </p>
           </div>
+        </div>
 
-          <div>
-            <p class="text-2xl text-yellow-500">Contact Information</p>
+        {/* Contact Cards */}
+        <div className="container mx-auto px-4 -mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="text-primary-3 mb-4">
+                <MdLocationOn className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Address</h3>
+              <p className="text-gray-2">JobLane, Wall Street</p>
+              <p className="text-gray-2">New York, 123, United States</p>
+            </div>
 
-            <Card
-              title="Address"
-              content="JobLane, Wall Street, New York, 123, United States"
-            />
-            <Card
-              title="Email"
-              content={[
-                "General Inquiries: info@joblane.com",
-                "Support: support@joblane.com",
-                "Job Applications: jobs@joblane.com",
-              ]}
-            />
-            <Card
-              title="Phone"
-              content={[
-                "Customer Support: +123-456-7890",
-                "HR & Job Inquiries: +123-456-7891",
-              ]}
-            />
+            <div className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="text-primary-3 mb-4">
+                <MdEmail className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Email</h3>
+              <p className="text-gray-2">info@joblane.com</p>
+              <p className="text-gray-2">support@joblane.com</p>
+            </div>
 
-          <p className="text-xl pt-3 pb-1">Social Media:</p>
-<ul>
-  <div className="flex gap-5 pt-1 items-center">
-    <BsFacebook className="hover:text-blue-600" size={26} />
-    <AiFillInstagram className="hover:text-pink-500" size={30} />
-    <AiOutlineTwitter className="hover:text-blue-400" size={30} />
-    <AiTwotoneMail className="hover:text-red-600" size={28} />
-  </div>
-</ul>
-</div>
-        
+            <div className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="text-primary-3 mb-4">
+                <MdPhone className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Phone</h3>
+              <p className="text-gray-2">+123-456-7890</p>
+              <p className="text-gray-2">+123-456-7891</p>
+            </div>
+          </div>
+        </div>
 
-          <div>
-            <p className="text-2xl pb-4 text-yellow-500">
-              Frequently Asked Questions (FAQs):
-            </p>
+        {/* Contact Form */}
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+            <h2 className="text-3xl font-bold mb-8 text-center">Send us a Message</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-3 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Email
+                  </label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-3 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Message
+                </label>
+                <textarea
+                  rows="6"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-3 focus:border-transparent"
+                  required
+                ></textarea>
+              </div>
+              <div className="text-center">
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-6 py-3 bg-primary-3 text-white font-semibold rounded-lg hover:bg-primary-800 transition duration-300"
+                >
+                  <MdSend className="mr-2" />
+                  Send Message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
 
-            <Accordion
-              question="How do I create an account on your job application platform?"
-              answer="To create an account, click on the 'Register' button located at the top right corner of the homepage. Fill in your personal information, including your name, email address, and a secure password. Once your account is created, you can start exploring jobs."
-            />
-            <Accordion
-              question="What should I include in my job application?"
-              answer="Crafting an effective job application is crucial to stand out to potential employers. Make sure to include a tailored resume that highlights your relevant experience and skills. Additionally, write a resume that showcases how your qualifications align with the job requirements."
-            />
-            <Accordion
-              question="How can I check the status of my job application?"
-              answer="After submitting your applications, you can log in to your account dashboard. Here, you'll find a section that lists your submitted applications along with their current statuses.The statuses may include accepted, rejected or pending."
-            />
+        {/* Social Media */}
+        <div className="container mx-auto px-4 pb-20">
+          <div className="text-center">
+            <h3 className="text-2xl font-semibold mb-6">Connect With Us</h3>
+            <div className="flex justify-center gap-6">
+              <BsFacebook className="w-8 h-8 text-gray-600 hover:text-primary-3 cursor-pointer transition-colors" />
+              <AiFillInstagram className="w-8 h-8 text-gray-600 hover:text-primary-3 cursor-pointer transition-colors" />
+              <AiOutlineTwitter className="w-8 h-8 text-gray-600 hover:text-primary-3 cursor-pointer transition-colors" />
+              <AiTwotoneMail className="w-8 h-8 text-gray-600 hover:text-primary-3 cursor-pointer transition-colors" />
+            </div>
           </div>
         </div>
       </div>
     </>
   );
 };
+

@@ -12,6 +12,9 @@ module.exports = {
           '500': '#3B82F6',
           '600': '#2563EB',
           '700': '#1D4ED8',
+          '2': '#101115',
+          '3': '#2652B9',
+          '800': '#0F4ABE',
         },
         neutral: {
           '50': '#F8FAFC',
@@ -21,8 +24,12 @@ module.exports = {
           '700': '#334155',
           '900': '#0F172A',
         },
-        // Added new text colors
-          disabled: '#9BA0AE'  // Matching your --text-disable variable
+        gray: {
+          '1': '#202939',
+          '2': '#727688',
+          'active-sidebar': 'rgba(255, 255, 255, 0.1)',
+        },
+        disabled: '#9BA0AE'
       },
       backgroundImage: {
         'search': "url('../assets/images/image.job.search.png')",
@@ -44,5 +51,6 @@ module.exports = {
   },
   plugins: [],
 }
+
 
 
