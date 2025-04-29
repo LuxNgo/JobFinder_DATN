@@ -15,6 +15,8 @@ import {
 import axios from 'axios'
 import {toast} from 'react-toastify'
 
+const API_BASE_URL = 'http://localhost:3000'
+
 export const getAllJobsAdmin = () => async (dispatch) => {
     try{
         dispatch(getAllJobsRequest()) ;
@@ -25,12 +27,13 @@ export const getAllJobsAdmin = () => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get("https://joblane-backend.onrender.com/api/v1/admin/allJobs",config) ;
+        const {data} = await axios.get(`${API_BASE_URL}/api/v1/admin/allJobs`,config) ;
 
         dispatch(getAllJobsSuccess(data.jobs))
 
     }catch(err){
-        dispatch(getAllJobsFail(err.response.data.message)) ;
+        dispatch(getAllJobsFail(err.response?.data?.message || 'Failed to fetch jobs')) ;
+        toast.error(err.response?.data?.message || 'Failed to fetch jobs')
     }
 }
 
@@ -44,15 +47,15 @@ export const getAllUsersAdmin = () => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get("https://joblane-backend.onrender.com/api/v1/admin/allUsers",config) ;
+        const {data} = await axios.get(`${API_BASE_URL}/api/v1/admin/allUsers`,config) ;
 
         dispatch(getAllUsersSuccess(data.users))
 
     }catch(err){
-        dispatch(getAllUsersFail(err.response.data.message)) ;
+        dispatch(getAllUsersFail(err.response?.data?.message || 'Failed to fetch users')) ;
+        toast.error(err.response?.data?.message || 'Failed to fetch users')
     }
 }
-
 
 export const getAllAppAdmin = () => async (dispatch) => {
     try{
@@ -64,15 +67,15 @@ export const getAllAppAdmin = () => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get("https://joblane-backend.onrender.com/api/v1/admin/allApp",config) ;
+        const {data} = await axios.get(`${API_BASE_URL}/api/v1/admin/allApp`,config) ;
 
         dispatch(getAllAppSuccess(data.applications))
 
     }catch(err){
-        dispatch(getAllAppFail(err.response.data.message)) ;
+        dispatch(getAllAppFail(err.response?.data?.message || 'Failed to fetch applications')) ;
+        toast.error(err.response?.data?.message || 'Failed to fetch applications')
     }
 }
-
 
 export const getAppData = (id) => async (dispatch) => {
     try{
@@ -84,15 +87,15 @@ export const getAppData = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get(`https://joblane-backend.onrender.com/api/v1/admin/getApplication/${id}`,config)
+        const {data} = await axios.get(`${API_BASE_URL}/api/v1/admin/getApplication/${id}`,config)
         
         dispatch(getAppSuccess(data.application))
 
     }catch(err){
-        dispatch(getAppFail(err.response.data.message))
+        dispatch(getAppFail(err.response?.data?.message || 'Failed to fetch application'))
+        toast.error(err.response?.data?.message || 'Failed to fetch application')
     }
 }
-
 
 export const updateApplication = (id,dataBody) => async (dispatch) => {
     try{    
@@ -109,7 +112,7 @@ export const updateApplication = (id,dataBody) => async (dispatch) => {
              } 
          } 
 
-         const {data} = await axios.put(`https://joblane-backend.onrender.com/api/v1/admin/updateApplication/${id}`,dataBody,config)
+         const {data} = await axios.put(`${API_BASE_URL}/api/v1/admin/updateApplication/${id}`,dataBody,config)
         
          dispatch(updateAppSuccess())
          dispatch(getAppData(id))
@@ -117,14 +120,14 @@ export const updateApplication = (id,dataBody) => async (dispatch) => {
         }
         
     }catch(err){
-        dispatch(updateAppFail(err.response.data.message))
+        dispatch(updateAppFail(err.response?.data?.message || 'Failed to update application'))
+        toast.error(err.response?.data?.message || 'Failed to update application')
     }
 }  
 
 
 export const deleteApp = (id) => async (dispatch) => {
     try{
-
         dispatch(deleteAppRequest())
 
         const config = {
@@ -133,7 +136,7 @@ export const deleteApp = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.delete(`https://joblane-backend.onrender.com/api/v1/admin/deleteApplication/${id}`,config)
+        const {data} = await axios.delete(`${API_BASE_URL}/api/v1/admin/deleteApplication/${id}`,config)
 
         
         dispatch(getAllAppAdmin()) 
@@ -141,7 +144,8 @@ export const deleteApp = (id) => async (dispatch) => {
         toast.success("Application Deleted !")
 
     }catch(err){
-        dispatch(deleteAppFail(err.response.data.message))
+        dispatch(deleteAppFail(err.response?.data?.message || 'Failed to delete application'))
+        toast.error(err.response?.data?.message || 'Failed to delete application')
     }
 }
 
@@ -149,7 +153,6 @@ export const deleteApp = (id) => async (dispatch) => {
 
 export const getUserData = (id) => async (dispatch) => {
     try{
-
         dispatch(getUserRequest())
         
         const config = {
@@ -158,12 +161,13 @@ export const getUserData = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get(`https://joblane-backend.onrender.com/api/v1/admin/getUser/${id}`,config)
+        const {data} = await axios.get(`${API_BASE_URL}/api/v1/admin/getUser/${id}`,config)
 
         dispatch(getUserSuccess(data.user))
 
     }catch(err){
-        dispatch(getUserFail(err.response.data.message)) ;
+        dispatch(getUserFail(err.response?.data?.message || 'Failed to fetch user')) ;
+        toast.error(err.response?.data?.message || 'Failed to fetch user')
     }
 } 
 
@@ -178,14 +182,15 @@ export const updateUser = (id,userData) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.put(`https://joblane-backend.onrender.com/api/v1/admin/updateUser/${id}`,userData,config)
+        const {data} = await axios.put(`${API_BASE_URL}/api/v1/admin/updateUser/${id}`,userData,config)
 
         dispatch(getUserData(id)) ;
         toast.success("Role Updated Successfully !")
         dispatch(updateUserSuccess())
 
     }catch(err){
-        dispatch(updateUserFail(err.response.data.message))
+        dispatch(updateUserFail(err.response?.data?.message || 'Failed to update user'))
+        toast.error(err.response?.data?.message || 'Failed to update user')
     }
 }
 
@@ -200,14 +205,15 @@ export const deleteUser = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.delete(`https://joblane-backend.onrender.com/api/v1/admin/deleteUser/${id}`,config)
+        const {data} = await axios.delete(`${API_BASE_URL}/api/v1/admin/deleteUser/${id}`,config)
 
         dispatch(getAllUsersAdmin()) ;
         toast.success("User Deleted Successfully !")
         dispatch(deleteUserSuccess())
 
     }catch(err){
-        dispatch(deleteUserFail(err.response.data.message))
+        dispatch(deleteUserFail(err.response?.data?.message || 'Failed to delete user'))
+        toast.error(err.response?.data?.message || 'Failed to delete user')
     }
 }
 
@@ -222,12 +228,13 @@ export const getJobData = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get(`https://joblane-backend.onrender.com/api/v1/admin/getJob/${id}`,config) ;
+        const {data} = await axios.get(`${API_BASE_URL}/api/v1/admin/getJob/${id}`,config) ;
 
         dispatch(getJobSuccess(data.job))
 
     }catch(err){    
-        dispatch(getJobFail(err.response.data.message)) ;
+        dispatch(getJobFail(err.response?.data?.message || 'Failed to fetch job')) ;
+        toast.error(err.response?.data?.message || 'Failed to fetch job')
     }
 }
 
@@ -241,7 +248,7 @@ export const updateJobData = (id,jobData) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.put(`https://joblane-backend.onrender.com/api/v1/admin/updateJob/${id}`,jobData,config) ;
+        const {data} = await axios.put(`${API_BASE_URL}/api/v1/admin/updateJob/${id}`,jobData,config) ;
 
         dispatch(updateJobSuccess())
         dispatch(getAllJobsAdmin())
@@ -249,7 +256,8 @@ export const updateJobData = (id,jobData) => async (dispatch) => {
         toast.success("Job Updated Successfully !")
 
     }catch(err){    
-        dispatch(updateJobFail(err.response.data.message)) ;
+        dispatch(updateJobFail(err.response?.data?.message || 'Failed to update job')) ;
+        toast.error(err.response?.data?.message || 'Failed to update job')
     }
 }
 
@@ -264,13 +272,14 @@ export const deleteJobData = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.delete(`https://joblane-backend.onrender.com/api/v1/admin/deleteJob/${id}`,config) ;
+        const {data} = await axios.delete(`${API_BASE_URL}/api/v1/admin/deleteJob/${id}`,config) ;
 
         dispatch(deleteJobSuccess())
         dispatch(getAllJobsAdmin())
         toast.success("Job Deleted Successfully !")
 
     }catch(err){    
-        dispatch(deleteJobFail(err.response.data.message)) ;
+        dispatch(deleteJobFail(err.response?.data?.message || 'Failed to delete job')) ;
+        toast.error(err.response?.data?.message || 'Failed to delete job')
     }
 }
