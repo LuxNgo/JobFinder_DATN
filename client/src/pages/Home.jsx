@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStats } from '../actions/StatsActions';
 import { MetaData } from '../components/MetaData'
-import { useSelector, useDispatch } from 'react-redux'
-import { JobCard } from '../components/JobCard'
 import { getAllJobs } from '../actions/JobActions'
 import Testimonials from '../components/Testimonials/Testimonials.jsx'
 import jobSearchImage from '../assets/images/image.job.search.svg';
@@ -11,9 +11,11 @@ import coporateImage from '../assets/images/image.coperate.png';
 export const Home = () => {
     const dispatch = useDispatch()
     const { loading, allJobs } = useSelector(state => state.job)
+    const { stats, loading: statsLoading } = useSelector(state => state.stats)
 
     useEffect(() => {
         dispatch(getAllJobs())
+        dispatch(getStats())
     }, [dispatch])
 
     const convertDateFormat = (inputDate) => {
@@ -101,22 +103,32 @@ export const Home = () => {
                 <div className='bg-white py-12 -mt-16 relative z-10'>
                     <div className='container mx-auto px-4'>
                         <div className='grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8'>
-                            <div className='text-center'>
-                                <div className='text-4xl font-bold text-blue-500 mb-2'>10K+</div>
-                                <div className='text-gray-600'>Công Việc Đang Tuyển</div>
-                            </div>
-                            <div className='text-center'>
-                                <div className='text-4xl font-bold text-blue-500 mb-2'>5K+</div>
-                                <div className='text-gray-600'>Doanh Nghiệp</div>
-                            </div>
-                            <div className='text-center'>
-                                <div className='text-4xl font-bold text-blue-500 mb-2'>1M+</div>
-                                <div className='text-gray-600'>Ứng Viên</div>
-                            </div>
-                            <div className='text-center'>
-                                <div className='text-4xl font-bold text-blue-500 mb-2'>8K+</div>
-                                <div className='text-gray-600'>Đã Tuyển Dụng</div>
-                            </div>
+                            {statsLoading ? (
+                                <div className='text-center col-span-4'>
+                                    <div className='animate-pulse'>
+                                        <div className='text-4xl font-bold text-blue-500 mb-2'>Loading...</div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className='text-center'>
+                                        <div className='text-4xl font-bold text-blue-500 mb-2'>{stats?.activeJobs || '10K+'}</div>
+                                        <div className='text-gray-600'>Công Việc Đang Tuyển</div>
+                                    </div>
+                                    <div className='text-center'>
+                                        <div className='text-4xl font-bold text-blue-500 mb-2'>{stats?.companies || '5K+'}</div>
+                                        <div className='text-gray-600'>Doanh Nghiệp</div>
+                                    </div>
+                                    <div className='text-center'>
+                                        <div className='text-4xl font-bold text-blue-500 mb-2'>{stats?.applicants || '1M+'}</div>
+                                        <div className='text-gray-600'>Ứng Viên</div>
+                                    </div>
+                                    <div className='text-center'>
+                                        <div className='text-4xl font-bold text-blue-500 mb-2'>{stats?.hires || '8K+'}</div>
+                                        <div className='text-gray-600'>Đã Tuyển Dụng</div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -222,36 +234,52 @@ export const Home = () => {
                 <Testimonials />
 
                 {/* About Section with Image */}
-                <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
+                <section className="py-24 bg-gradient-to-b from-blue-50 to-white">
                     <div className="container mx-auto px-4">
-                        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-                            <div className="flex-1">
+                        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+                            <div className="flex-1 relative overflow-hidden rounded-2xl shadow-xl transform transition-all duration-500">
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100 to-transparent opacity-50"></div>
                                 <img 
                                     src={coporateImage} 
-                                    alt="Về JobLane" 
-                                    className="w-full max-w-[500px] mx-auto rounded-xl shadow-xl 
-                                              transition-all duration-500
-                                             object-cover hover:shadow-2xl"
+                                    alt="Về JobFinder" 
+                                    className="w-full h-full object-cover rounded-2xl transition-transform duration-500"
                                 />
+                                <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-4 text-center">
+                                    <h3 className="text-lg font-semibold text-gray-800">JobFinder</h3>
+                                    <p className="text-sm text-gray-600">Kết nối người tài năng với cơ hội phù hợp nhất</p>
+                                </div>
                             </div>
-                            <div className="flex-1 text-center lg:text-left">
-                                <h2 className='text-4xl font-bold text-gray-900 mb-6'>Về JobLane</h2>
-                                <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                                    Khám phá Sức Mạnh của Khả Năng với JobLane: Nơi Hành Trình Nghề Nghiệp của Bạn Bắt Đầu, 
-                                    Được Hướng Dẫn bởi Mạng Lưới Cơ Hội Đa Dạng! Chúng tôi kết nối các chuyên viên tài năng với 
-                                    các công ty tiên phong để tạo ra mối quan hệ nghề nghiệp ý nghĩa.
-                                </p>
-                                <Link 
-                                    to="/about" 
-                                    className="inline-flex items-center gap-2 text-blue-500 font-semibold hover:text-blue-600 
-                                             transition-colors duration-300"
-                                >
-                                    Tìm hiểu thêm về chúng tôi
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                                              d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                    </svg>
-                                </Link>
+                            <div className="flex-1 space-y-8">
+                                <div className="space-y-4">
+                                    <h2 className='text-2xl font-bold text-gray-900 mb-4'>Về JobFinder</h2>
+                                    <p className="text-14 text-gray-600 leading-relaxed">
+                                        Khám phá Sức Mạnh của Khả Năng với JobFinder: Nơi Hành Trình Nghề Nghiệp của Bạn Bắt Đầu,
+                                        Được Hướng Dẫn bởi Mạng Lưới Cơ Hội Đa Dạng! Chúng tôi kết nối các chuyên viên tài năng với
+                                        các công ty tiên phong để tạo ra mối quan hệ nghề nghiệp ý nghĩa.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col lg:flex-row gap-4">
+                                    <div className="flex-1 p-6 bg-blue-50 rounded-xl shadow-sm">
+                                        <h3 className="text-xl font-semibold text-blue-600 mb-2">Tầm Nhìn</h3>
+                                        <p className="text-gray-600 text-14">Đưa người tài năng đến với cơ hội phù hợp nhất</p>
+                                    </div>
+                                    <div className="flex-1 p-6 bg-blue-50 rounded-xl shadow-sm">
+                                        <h3 className="text-xl font-semibold text-blue-600 mb-2">Sứ Mệnh</h3>
+                                        <p className="text-gray-600 text-14">Xây dựng nền tảng kết nối nhân tài và doanh nghiệp</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <Link 
+                                        to="/about" 
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-300 transform hover:scale-105"
+                                    >
+                                        Tìm hiểu thêm về chúng tôi
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                                  d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                        </svg>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,39 +1,46 @@
+import image1 from '../../assets/images/image.avatar.1.png';
+import image2 from '../../assets/images/image.avatar.2.png';
+import image3 from '../../assets/images/image.avatar.3.png';
+import image4 from '../../assets/images/image.avatar.4.png';
+import image5 from '../../assets/images/image.avatar.5.png';
+
 const testimonials = [
     {
-        name: "John Doe",
-        position: "Software Engineer",
-        company: "TechCorp",
-        image: "https://dpemoji.com/wp-content/uploads/2023/01/Whatsapp-dp-for-boys-57.png",
-        text: "JobLane helped me find my dream job quickly and easily. The platform is user-friendly and has a great selection of job listings."
+      name: "Nguyễn Văn An",
+      position: "Kỹ sư Phần mềm",
+      company: "TechCorp",
+      image: image1,
+      text: "JobLane đã giúp tôi tìm được công việc mơ ước một cách nhanh chóng và dễ dàng. Giao diện rất thân thiện và có nhiều cơ hội việc làm chất lượng."
     },
     {
-        name: "Jane Smith",
-        position: "Product Manager",
-        company: "InnovateX",
-        image: "https://t3.ftcdn.net/jpg/06/36/69/86/360_F_636698674_DroChEj5eWmZiaZOSDMnj8hcDqqw74Fp.jpg",
-        text: "I love how JobLane connects job seekers with top companies. It made my job search stress-free and successful!"
+      name: "Trần Thị Mai",
+      position: "Quản lý Sản phẩm",
+      company: "InnovateX",
+      image: image2,
+      text: "Tôi rất thích cách JobLane kết nối ứng viên với các công ty hàng đầu. Việc tìm việc trở nên dễ dàng và hiệu quả hơn rất nhiều!"
     },
     {
-        name: "Michael Johnson",
-        position: "Data Analyst",
-        company: "TechNet",
-        image: "https://dpemoji.com/wp-content/uploads/2023/01/Whatsapp-dp-for-boys-57.png",
-        text: "JobLane provided me with valuable insights into job trends and opportunities in my field. Highly recommend!"
+      name: "Lê Minh Tuấn",
+      position: "Chuyên viên Phân tích Dữ liệu",
+      company: "TechNet",
+      image: image3,
+      text: "JobLane đã cung cấp cho tôi những thông tin giá trị về xu hướng và cơ hội việc làm trong lĩnh vực của mình. Rất đáng tin cậy!"
     },
     {
-        name: "Emily Brown",
-        position: "UX Designer",
-        company: "CreativeMind",
-        image: "https://t3.ftcdn.net/jpg/06/36/69/86/360_F_636698674_DroChEj5eWmZiaZOSDMnj8hcDqqw74Fp.jpg",
-        text: "JobLane's intuitive interface and personalized job recommendations made my job search efficient and enjoyable."
+      name: "Phạm Thu Hà",
+      position: "Nhà Thiết kế UX",
+      company: "CreativeMind",
+      image: image4,
+      text: "Giao diện dễ sử dụng và gợi ý công việc phù hợp của JobLane giúp tôi tiết kiệm thời gian và tăng hiệu quả tìm việc."
     },
     {
-        name: "Alex Williams",
-        position: "Marketing Specialist",
-        company: "DigitalEdge",
-        image: "https://dpemoji.com/wp-content/uploads/2023/01/Whatsapp-dp-for-boys-57.png",
-        text: "JobLane connected me with top-tier companies and helped me land my dream job. Thank you for the amazing platform!"
+      name: "Đỗ Hoàng Nam",
+      position: "Chuyên viên Marketing",
+      company: "DigitalEdge",
+      image: image5,
+      text: "JobLane đã giúp tôi kết nối với các công ty hàng đầu và đạt được công việc mơ ước. Cảm ơn nền tảng tuyệt vời này!"
     },
-];
-
-export default testimonials;
+  ];
+  
+  export default testimonials;
+  
