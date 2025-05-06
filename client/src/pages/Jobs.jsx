@@ -44,13 +44,15 @@ export const Jobs = () => {
   const data = ["Technology", "Marketing", "Finance", "Sales", "Legal"]
 
   const companyData = [
-    "Google",
-    "Apple",
-    "Paypal",
-    "Samsung",
-    "Amazon",
-    "Oracle"
-  ]
+    "Vingroup",
+    "FPT Corporation",
+    "Viettel Group",
+    "VNPT",
+    "Vinamilk",
+    "Techcombank",
+    "BIDV"
+  ];
+  
 
   useEffect(() => {
     dispatch(getAllJobs());
@@ -253,13 +255,9 @@ export const Jobs = () => {
     );
   }
 
-  // Pagination 
-
-
-
   return (
     <>
-      <MetaData title="JobFinder - Browse Jobs" />
+      <MetaData title="JobFinder - Tìm Việc Làm" />
       <div className='min-h-screen bg-slate-50'>
         {loading ? <Loader /> : (
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
@@ -267,20 +265,20 @@ export const Jobs = () => {
             <div className='mb-12 mt-8'>
               <div className='text-center mb-12'>
                 <h1 className='text-5xl font-bold text-gray-900 mb-4'>
-                  Find Your Dream Job
+                  Tìm công việc mơ ước của bạn
                 </h1>
                 <p className='text-gray-600 text-lg max-w-2xl mx-auto'>
-                  {jobs.length}+ opportunities waiting for you
+                  {jobs.length}+ cơ hội đang chờ bạn
                 </p>
               </div>
-
+  
               {/* Enhanced Search Bar */}
               <div className='max-w-4xl mx-auto'>
                 <div className='bg-white rounded-2xl shadow-lg border border-gray-100 p-6'>
                   <div className='flex flex-col md:flex-row gap-4'>
                     {/* What Search */}
                     <div className='flex-1 relative'>
-                      <label className='block text-sm font-medium text-gray-700 mb-1'>What</label>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>Công việc</label>
                       <div className='relative'>
                         <BiSearch className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5' />
                         <input
@@ -291,7 +289,7 @@ export const Jobs = () => {
                               searchHandler();
                             }
                           }}
-                          placeholder='Job title or keyword'
+                          placeholder='Chức danh hoặc từ khóa'
                           className='w-full pl-12 pr-4 py-3.5 text-gray-700 bg-gray-50 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all'
                         />
                         {search && (
@@ -307,10 +305,10 @@ export const Jobs = () => {
                         )}
                       </div>
                     </div>
-
+  
                     {/* Where Search */}
                     <div className='flex-1 relative'>
-                      <label className='block text-sm font-medium text-gray-700 mb-1'>Where</label>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>Địa điểm</label>
                       <div className='relative'>
                         <IoLocationOutline className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5' />
                         <input
@@ -321,7 +319,7 @@ export const Jobs = () => {
                               searchHandler();
                             }
                           }}
-                          placeholder='City or remote'
+                          placeholder='Thành phố hoặc làm từ xa'
                           className='w-full pl-12 pr-4 py-3.5 text-gray-700 bg-gray-50 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all'
                         />
                         {location && (
@@ -337,7 +335,7 @@ export const Jobs = () => {
                         )}
                       </div>
                     </div>
-
+  
                     {/* Search Button */}
                     <div className='flex items-end'>
                       <button
@@ -345,16 +343,16 @@ export const Jobs = () => {
                         className='bg-blue-600 text-white px-8 py-3.5 rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap font-medium'
                       >
                         <BiSearch className='w-5 h-5' />
-                        Search Jobs
+                        Tìm việc
                       </button>
                     </div>
                   </div>
-
+  
                   {/* Quick Filters */}
                   <div className='flex flex-wrap items-center gap-3 mt-6'>
-                    <span className='text-sm font-medium text-gray-700'>Popular:</span>
+                    <span className='text-sm font-medium text-gray-700'>Phổ biến:</span>
                     <div className='flex flex-wrap gap-2'>
-                      {['Remote', 'Full-time', 'Part-time', 'Contract', 'Entry Level', 'Senior'].map((filter) => (
+                      {['Từ xa', 'Toàn thời gian', 'Bán thời gian', 'Hợp đồng', 'Mới vào nghề', 'Cấp cao'].map((filter) => (
                         <button
                           key={filter}
                           className='px-4 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors font-medium'
@@ -367,7 +365,7 @@ export const Jobs = () => {
                 </div>
               </div>
             </div>
-
+  
             {/* Main Content */}
             <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12'>
               {/* Enhanced Filters Sidebar */}
@@ -375,7 +373,7 @@ export const Jobs = () => {
                 <div className='lg:col-span-3 space-y-6'>
                   <div className='bg-white rounded-2xl shadow-sm border border-gray-200 p-6'>
                     <div className='flex justify-between items-center mb-6'>
-                      <h2 className='text-lg font-semibold text-gray-900'>Filters</h2>
+                      <h2 className='text-lg font-semibold text-gray-900'>Bộ lọc</h2>
                       <button
                         onClick={() => {
                           removeLeftFilter();
@@ -383,15 +381,15 @@ export const Jobs = () => {
                         }}
                         className='text-sm text-blue-600 hover:text-blue-700'
                       >
-                        Clear all
+                        Xóa tất cả
                       </button>
                     </div>
-                    
+  
                     {/* Experience Level */}
                     <div className='mb-8'>
-                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Experience Level</h3>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Trình độ kinh nghiệm</h3>
                       <div className='space-y-3'>
-                        {['Entry Level', 'Mid Level', 'Senior', 'Lead', 'Executive'].map((level) => (
+                        {['Mới vào nghề', 'Trung cấp', 'Cấp cao', 'Trưởng nhóm', 'Quản lý cấp cao'].map((level) => (
                           <label key={level} className='flex items-center gap-3 cursor-pointer group'>
                             <input
                               type='checkbox'
@@ -407,12 +405,12 @@ export const Jobs = () => {
                         ))}
                       </div>
                     </div>
-
+  
                     {/* Job Type */}
                     <div className='mb-8'>
-                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Job Type</h3>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Loại công việc</h3>
                       <div className='space-y-3'>
-                        {['Full-time', 'Part-time', 'Contract', 'Temporary', 'Internship'].map((type) => (
+                        {['Toàn thời gian', 'Bán thời gian', 'Hợp đồng', 'Tạm thời', 'Thực tập'].map((type) => (
                           <label key={type} className='flex items-center gap-3 cursor-pointer group'>
                             <input
                               type='checkbox'
@@ -428,10 +426,10 @@ export const Jobs = () => {
                         ))}
                       </div>
                     </div>
-
+  
                     {/* Categories */}
                     <div className='mb-8'>
-                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Categories</h3>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Ngành nghề</h3>
                       <div className='space-y-3'>
                         {data.map((category) => (
                           <label key={category} className='flex items-center gap-3 cursor-pointer group'>
@@ -448,10 +446,10 @@ export const Jobs = () => {
                         ))}
                       </div>
                     </div>
-
+  
                     {/* Companies */}
                     <div className='mb-8'>
-                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Companies</h3>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Công ty</h3>
                       <div className='space-y-3'>
                         {companyData.map((comp) => (
                           <label key={comp} className='flex items-center gap-3 cursor-pointer group'>
@@ -468,10 +466,10 @@ export const Jobs = () => {
                         ))}
                       </div>
                     </div>
-
+  
                     {/* Salary Range */}
                     <div>
-                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Salary Range</h3>
+                      <h3 className='text-sm font-medium text-gray-900 mb-4'>Mức lương</h3>
                       <input
                         type="range"
                         min="0"
@@ -482,24 +480,24 @@ export const Jobs = () => {
                         className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer'
                       />
                       <div className='flex justify-between mt-2'>
-                        <span className='text-sm text-gray-600'>$0</span>
-                        <span className='text-sm text-gray-600'>${salary.toLocaleString()}</span>
+                        <span className='text-sm text-gray-600'>0₫</span>
+                        <span className='text-sm text-gray-600'>{salary.toLocaleString()}₫</span>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
-
+  
               {/* Job Listings */}
               <div className='lg:col-span-9'>
                 <div className='space-y-6'>
                   {displayedData.map((job, index) => (
-                    <div key={index} >
+                    <div key={index}>
                       <JobCard job={job} />
                     </div>
                   ))}
                 </div>
-
+  
                 {/* Enhanced Pagination */}
                 {jobs.length > itemsPerPage && (
                   <div className='flex justify-center items-center gap-3 mt-12'>
@@ -508,7 +506,7 @@ export const Jobs = () => {
                       disabled={currentPage === 1}
                       className='px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      Previous
+                      Trước
                     </button>
                     {pageButtons}
                     <button
@@ -516,7 +514,7 @@ export const Jobs = () => {
                       disabled={currentPage === totalPageCount}
                       className='px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      Next
+                      Tiếp
                     </button>
                   </div>
                 )}
