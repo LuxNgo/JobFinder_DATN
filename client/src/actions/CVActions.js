@@ -228,11 +228,13 @@ export const suggestSkills = (jobTitle, industry) => async (dispatch) => {
 
 
 
-export const generatePDF = (cvData, template) => async (dispatch) => {
+export const generatePDF = (data) => async (dispatch) => {
     try {
         const token = localStorage.getItem('userToken');
         if (!token) {
-            throw new Error('Please log in first');
+            dispatch(cvGenerateFail('Please log in first'));
+            toast.error('Please log in first');
+            return;
         }
 
         dispatch(cvGenerateRequest());
@@ -241,19 +243,36 @@ export const generatePDF = (cvData, template) => async (dispatch) => {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`
-            }
+            },
+            responseType: 'blob' // Handle binary PDF response
         };
 
-        const { data } = await axios.post(
+        const response = await axios.post(
             `${API_BASE_URL}/cv/generate-pdf`,
-            { cvData, template },
+            data,
             config
         );
+        toast.success('CV PDF has been downloaded!');
 
-        dispatch(cvGenerateSuccess(data.cv));
-        return data.cv;
+        
+        // Create a blob URL for the PDF
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a download link and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${data.cvData.personalInfo?.fullName || 'CV'}_CV.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        dispatch(cvGenerateSuccess({ message: 'PDF generated successfully' }));
+        toast.success('CV PDF has been downloaded!');
     } catch (error) {
-        dispatch(cvGenerateFail(error.response?.data?.message || 'Failed to generate CV'));
-        throw error;
+        const errorMessage = error.response?.data?.error || error.message || 'Failed to generate PDF';
+        dispatch(cvGenerateFail(errorMessage));
+        // toast.error(errorMessage);
     }
 };

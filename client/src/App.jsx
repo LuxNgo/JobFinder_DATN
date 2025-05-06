@@ -35,9 +35,7 @@ import { Test } from './pages/Test'
 import NotFound from './pages/NotFound'
 import UnAuthorized from './pages/UnAuthorized'
 import ScrollToTopWhenRouteChanges from './components/ScrollToTopOnRouteChange.jsx'
-import { CVBuilder } from './pages/CVBuilder.jsx'
-
-
+import CVBuilder from './pages/CVBuilder.jsx'
 
 function App() {
 

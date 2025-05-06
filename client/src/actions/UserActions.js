@@ -68,21 +68,21 @@ export const logOrNot = () => async (dispatch) => {
         }
 
         try {
-            const { data } = await axios.get(`${API_BASE_URL}/isLogin`, config);
-            
-            if (data.success && data.isLogin) {
-                dispatch(isLoginSuccess(true))
-                // Also get user data if login is successful
-                dispatch(me())
+            const response = await axios.get(`${API_BASE_URL}/isLogin`, config);
+            if (response.data.success && response.data.isLogin) {
+                dispatch(isLoginSuccess(true));
+                dispatch(me());
             } else {
-                // Clear invalid token if login check fails
                 localStorage.removeItem('userToken');
-                dispatch(isLoginFail())
+                dispatch(isLoginFail());
             }
-        } catch (err) {
-            // Clear invalid token if request fails
+        } catch (error) {
             localStorage.removeItem('userToken');
-            dispatch(isLoginFail())
+            dispatch(isLoginFail());
+            if (error.response && error.response.status === 401) {
+                toast.error('Session expired. Please login again.');
+                window.location.href = '/login';
+            }
         }
     } catch (err) {
         dispatch(isLoginFail())
@@ -109,15 +109,15 @@ export const me = () => async (dispatch) => {
         }
 
         try {
-            const { data } = await axios.get(`${API_BASE_URL}/me`, config);
+            const response = await axios.get(`${API_BASE_URL}/me`, config);
             
-            if (data.success && data.user) {
-                localStorage.setItem("role", data.user.role)
-                dispatch(getMeSuccess(data.user))
+            if (response.data.success && response.data.user) {
+                localStorage.setItem("role", response.data.user.role);
+                dispatch(getMeSuccess(response.data.user));
             } else {
-                // Clear invalid token if request fails
                 localStorage.removeItem('userToken');
-                dispatch(getMeFail())
+                dispatch(getMeFail());
+                toast.error('Failed to fetch user data');
             }
         } catch (err) {
             // Clear invalid token if request fails

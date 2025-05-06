@@ -6,13 +6,21 @@ import {
   generateCV as generateCVAction,
   suggestCareerObjective,
   generateWorkExperience,
-  suggestSkills
+  suggestSkills,
+  generatePDF
 } from '../actions/CVActions';
 
-export const CVBuilder = () => {
+import TemplateSelector from '../components/cv-builder/TemplateSelector';
+import PersonalInfoForm from '../components/cv-builder/PersonalInfoForm';
+import CareerObjective from '../components/cv-builder/CareerObjective';
+import DownloadButton from '../components/cv-builder/DownloadButton';
+
+const CVBuilder = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { me } = useSelector(state => state.user);
+
+  // CV Data State
   const [cvData, setCvData] = useState({
     personalInfo: {
       fullName: me?.name || '',
@@ -28,41 +36,20 @@ export const CVBuilder = () => {
     skills: []
   });
 
-  const [selectedTemplate, setSelectedTemplate] = useState('modern');
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [pdfError, setPdfError] = useState(null);
+  // Template Selection State
+  const [selectedTemplate, setSelectedTemplate] = useState('professional');
 
-  // Function to generate PDF
-  const generatePDF = useCallback(async () => {
-    if (!me) {
-      toast.error('Vui lòng đăng nhập để tạo CV');
-      return;
-    }
+  // Loading State
+  const [loading, setLoading] = useState(false);
+  const [generatedCV, setGeneratedCV] = useState(null);
 
-    setIsGeneratingPDF(true);
-    setPdfError(null);
-
-    try {
-      const result = await dispatch(generatePDF(cvData, selectedTemplate));
-      
-      // Create download link
-      const url = window.URL.createObjectURL(result);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${cvData.personalInfo.fullName}_CV.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      toast.success('CV đã được tải xuống thành công!');
-    } catch (error) {
-      setPdfError(error.message);
-      toast.error(error.message);
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  }, [cvData, selectedTemplate, me, dispatch]);
+  // AI Suggestions State
+  const [aiSuggestions, setAiSuggestions] = useState({
+    careerObjective: '',
+    experiences: [],
+    skills: []
+  });
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Check authentication and token validity
   useEffect(() => {
@@ -76,7 +63,7 @@ export const CVBuilder = () => {
   // Set default template
   useEffect(() => {
     if (!selectedTemplate) {
-      setSelectedTemplate('modern');
+      setSelectedTemplate('professional');
     }
   }, [selectedTemplate]);
 
@@ -88,15 +75,6 @@ export const CVBuilder = () => {
       toast.error('Please log in to access CV Builder');
     }
   }, [me, navigate]);
-
-  const [loading, setLoading] = useState(false);
-  const [generatedCV, setGeneratedCV] = useState(null);
-  const [aiSuggestions, setAiSuggestions] = useState({
-    careerObjective: '',
-    experiences: [],
-    skills: []
-  });
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const templates = [
     { 
@@ -193,40 +171,6 @@ export const CVBuilder = () => {
     }
   ];
     
-  // Get AI suggestions for career objective
-  const suggestObjective = async () => {
-    try {
-      setIsGenerating(true);
-      const objective = await dispatch(suggestCareerObjective(cvData.jobTitle, cvData.industry));
-      setAiSuggestions(prev => ({ ...prev, careerObjective: objective }));
-      toast.success('Career objective generated successfully!');
-    } catch (error) {
-      toast.error('Failed to generate career objective');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // Generate experience bullet points
-  const generateExperience = async (exp) => {
-    try {
-      setIsGenerating(true);
-      const points = await dispatch(generateWorkExperience({
-        organization: exp.organization,
-        description: exp.description
-      }));
-      setAiSuggestions(prev => ({
-        ...prev,
-        experiences: [...prev.experiences.slice(0, exp.index), points, ...prev.experiences.slice(exp.index + 1)]
-      }));
-      toast.success('Experience points generated successfully!');
-    } catch (error) {
-      toast.error('Failed to generate experience points');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
   // Handle skills suggestion
   const handleSkillsSuggestion = async () => {
     try {
@@ -244,127 +188,53 @@ export const CVBuilder = () => {
     }
   };
 
-  // Handle experience change
-  const handleExperienceChange = (index, field, value) => {
-    setCvData(prev => ({
-      ...prev,
-      experiences: prev.experiences.map((exp, i) =>
-        i === index ? { ...exp, [field]: value } : exp
-      )
-    }));
-  };
+  // Handle CV generation
+  const generateFullCV = useCallback(async () => {
+    if (!me) {
+      toast.error('Vui lòng đăng nhập để tạo CV');
+      return;
+    }
+    setLoading(true);
 
-  const generateFullCV = async () => {
     try {
-      setLoading(true);
-      const data = {
-        jobTitle: cvData.jobTitle,
-        industry: cvData.industry,
-        personalInfo: {
-          fullName: cvData.personalInfo.fullName,
-          email: cvData.personalInfo.email,
-          phone: cvData.personalInfo.phone,
-          location: cvData.personalInfo.location,
-          summary: cvData.personalInfo.summary
-        },
-        experiences: cvData.experiences.map((exp, index) => ({
-          title: exp.title,
-          organization: exp.organization,
-          location: exp.location,
-          type: exp.type,
-          startDate: exp.startDate,
-          endDate: exp.endDate,
-          description: exp.description,
-          link: exp.link,
-          summary: exp.summary
-        })),
-        education: cvData.education,
-        skills: cvData.skills
-      };
-      
-      const response = await dispatch(generateCVAction(data, selectedTemplate));
-      
-      if (response) {
-        console.log('Raw response:', JSON.stringify(response, null, 2)); // Debug log
-        
-        // Extract cvContent safely
-        const cvContent = response?.cvContent || response;
-        
-        console.log('Extracted cvContent:', JSON.stringify(cvContent, null, 2)); // Debug log
-        
-        // Set default empty arrays if data is missing
-        const safeContent = {
-          personalInfo: {
-            name: cvContent?.personalInfo?.name || '',
-            email: cvContent?.personalInfo?.email || '',
-            phone: cvContent?.personalInfo?.phone || '',
-            location: cvContent?.personalInfo?.location || '',
-            summary: cvContent?.personalInfo?.summary || ''
-          },
-          experience: Array.isArray(cvContent?.experience) ? cvContent.experience.map(exp => ({
-            ...exp,
-            achievements: Array.isArray(exp.achievements) ? exp.achievements : []
-          })) : [],
-          skills: Array.isArray(cvContent?.skills) ? cvContent.skills : [],
-          projects: Array.isArray(cvContent?.projects) ? cvContent.projects : [],
-          template: cvContent?.template || ''
-        };
-        
-        console.log('Final safe content:', JSON.stringify(safeContent, null, 2)); // Debug log
-        
-        setGeneratedCV(data);
-        toast.success('CV generated successfully!');
-      } else {
-        throw new Error('No CV content received from server');
-      }
+      await dispatch(generateCVAction(cvData, selectedTemplate));
+      toast.success('CV đã được tạo thành công!');
+      setGeneratedCV(true);
     } catch (error) {
-      console.error('CV generation error:', error);
-      toast.error(error.message || 'Failed to generate CV');
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [cvData, selectedTemplate, me, dispatch]);
 
+  // Check authentication and token validity
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    if (!token || !me) {
+      navigate('/login', { replace: true });
+      toast.error('Please log in to access CV Builder');
+    }
+  }, [me, navigate]);
+
+  // Set default template
+  useEffect(() => {
+    if (!selectedTemplate) {
+      setSelectedTemplate('modern');
+    }
+  }, [selectedTemplate]);
 
   return (
     <div className="min-h-screen bg-white container mx-auto px-4 py-8 pt-24">
-      {/* Template Selection */}
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold mb-4">Chọn Mẫu CV</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {templates.map(template => (
-            <div 
-              key={template.id}
-              className={`p-6 rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
-                selectedTemplate === template.id ? 'shadow-lg border-2 border-blue-500 bg-blue-50' : 'border border-gray-200'
-              }`}
-              onClick={() => setSelectedTemplate(template.id)}
-              style={{
-                backgroundColor: selectedTemplate === template.id 
-                  ? templates.find(t => t.id === selectedTemplate)?.styles.backgroundColor 
-                  : 'transparent'
-              }}
-            >
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold" style={{
-                  color: selectedTemplate === template.id 
-                    ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor 
-                    : '#333333'
-                }}>{template.name}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed" style={{
-                  color: selectedTemplate === template.id 
-                    ? templates.find(t => t.id === selectedTemplate)?.styles.textSecondary 
-                    : '#666666'
-                }}>{template.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <TemplateSelector 
+        selectedTemplate={selectedTemplate} 
+        setSelectedTemplate={setSelectedTemplate}
+      />
+      <DownloadButton
+                cvData={cvData}
+                selectedTemplate={selectedTemplate}
+              />
 
-      {/* CV Form */}
       <div className="space-y-8">
-        {/* Job Information */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Thông Tin Công Việc</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -387,137 +257,44 @@ export const CVBuilder = () => {
                 className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ví dụ: Công Nghệ Thông Tin"
               />
-                    </div>
-                    </div>
-                    </div>
-
-        {/* Personal Information */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Thông Tin Cá Nhân</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Họ và Tên</label>
-              <input
-                type="text"
-                value={cvData.personalInfo.fullName}
-                onChange={(e) => setCvData(prev => ({
-                  ...prev,
-                  personalInfo: {
-                    ...prev.personalInfo,
-                    fullName: e.target.value
-                  }
-                }))}
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-                    </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={cvData.personalInfo.email}
-                onChange={(e) => setCvData(prev => ({
-                  ...prev,
-                  personalInfo: {
-                    ...prev.personalInfo,
-                    email: e.target.value
-                  }
-                }))}
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-                  </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Số Điện Thoại</label>
-              <input
-                type="tel"
-                value={cvData.personalInfo.phone}
-                onChange={(e) => setCvData(prev => ({
-                  ...prev,
-                  personalInfo: {
-                    ...prev.personalInfo,
-                    phone: e.target.value
-                  }
-                }))}
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Địa Chỉ</label>
-              <input
-                type="text"
-                value={cvData.personalInfo.location}
-                onChange={(e) => setCvData(prev => ({
-                  ...prev,
-                  personalInfo: {
-                    ...prev.personalInfo,
-                    location: e.target.value
-                  }
-                }))}
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
             </div>
           </div>
         </div>
 
-        {/* Career Objective */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Mục Tiêu Nghề Nghiệp</h2>
-          <div className="mb-4">
-              <textarea
-                value={cvData.personalInfo.summary}
-                onChange={(e) => setCvData(prev => ({
-                  ...prev,
-                  personalInfo: {
-                    ...prev.personalInfo,
-                    summary: e.target.value
-                  }
-                }))}
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
-                placeholder="Nhập mục tiêu nghề nghiệp của bạn..."
-              />
-          </div>
-          <button
-            onClick={suggestObjective}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2"
-            disabled={isGenerating}
-          >
-            {isGenerating ? (
-              <>
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Đang Tạo...
-              </>
-            ) : (
-              'Lấy Gợi Ý từ AI'
-            )}
-          </button>
-          {aiSuggestions.careerObjective && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="space-y-2">
-                <p className="text-blue-800 font-medium">Gợi Ý Mục Tiêu Nghề Nghiệp:</p>
-                <div className="prose prose-blue max-w-none">
-                  <p>{aiSuggestions.careerObjective}</p>
-                </div>
-                <button
-                  onClick={() => setCvData(prev => ({
-                    ...prev,
-                    personalInfo: {
-                      ...prev.personalInfo,
-                      summary: aiSuggestions.careerObjective
-                    }
-                  }))}
-                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Sử dụng gợi ý này
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        <PersonalInfoForm 
+          personalInfo={cvData.personalInfo} 
+          setPersonalInfo={(newInfo) => {
+            setCvData(prev => ({
+              ...prev,
+              personalInfo: newInfo
+            }));
+          }}
+        />
+
+        <CareerObjective 
+          summary={cvData.personalInfo.summary}
+          setSummary={(newSummary) => {
+            setCvData(prev => ({
+              ...prev,
+              personalInfo: {
+                ...prev.personalInfo,
+                summary: newSummary
+              }
+            }));
+          }}
+          suggestObjective={() => {
+            setIsGenerating(true);
+            dispatch(suggestCareerObjective(cvData)).then((suggestion) => {
+              setAiSuggestions(prev => ({
+                ...prev,
+                careerObjective: suggestion
+              }));
+              setIsGenerating(false);
+            });
+          }}
+          isGenerating={isGenerating}
+          aiSuggestions={aiSuggestions}
+        />
 
         {/* Education */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -526,19 +303,6 @@ export const CVBuilder = () => {
             <div key={index} className="mb-4 p-4 bg-gray-50 rounded-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bằng Cấp</label>
-                  <input
-                    type="text"
-                    value={edu.degree}
-                    onChange={(e) => {
-                      const newEdu = [...cvData.education];
-                      newEdu[index] = { ...newEdu[index], degree: e.target.value };
-                      setCvData(prev => ({ ...prev, education: newEdu }));
-                    }}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Trường Học</label>
                   <input
                     type="text"
@@ -546,6 +310,19 @@ export const CVBuilder = () => {
                     onChange={(e) => {
                       const newEdu = [...cvData.education];
                       newEdu[index] = { ...newEdu[index], institution: e.target.value };
+                      setCvData(prev => ({ ...prev, education: newEdu }));
+                    }}
+                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Bằng Cấp</label>
+                  <input
+                    type="text"
+                    value={edu.degree}
+                    onChange={(e) => {
+                      const newEdu = [...cvData.education];
+                      newEdu[index] = { ...newEdu[index], degree: e.target.value };
                       setCvData(prev => ({ ...prev, education: newEdu }));
                     }}
                     className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -611,14 +388,14 @@ export const CVBuilder = () => {
           </button>
         </div>
 
-        {/* Experiences */}
+        {/* Experience */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Kinh Nghiệm</h2>
+          <h2 className="text-xl font-semibold mb-4">Kinh Nghiệm Làm Việc</h2>
           {cvData.experiences.map((exp, index) => (
             <div key={index} className="mb-4 p-4 bg-gray-50 rounded-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Vị Trí</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Chức Vụ</label>
                   <input
                     type="text"
                     value={exp.title}
@@ -627,7 +404,7 @@ export const CVBuilder = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tổ Chức</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Công Ty</label>
                   <input
                     type="text"
                     value={exp.organization}
@@ -645,116 +422,40 @@ export const CVBuilder = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Loại</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Loại Công Việc</label>
                   <select
                     value={exp.type}
                     onChange={(e) => handleExperienceChange(index, 'type', e.target.value)}
                     className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="work">Kinh Nghiệm Làm Việc</option>
-                    <option value="project">Dự Án</option>
-                    <option value="volunteer">Tình Nguyện Viên</option>
+                    <option value="full-time">Toàn Thời Gian</option>
+                    <option value="part-time">Bán Thời Gian</option>
+                    <option value="contract">Hợp Đồng</option>
+                    <option value="freelance">Freelance</option>
+                    <option value="internship">Thực Tập</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ngày Bắt Đầu</label>
-                  <input
-                    type="text"
-                    value={exp.startDate}
-                    onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ngày Kết Thúc</label>
-                  <input
-                    type="text"
-                    value={exp.endDate}
-                    onChange={(e) => handleExperienceChange(index, 'endDate', e.target.value)}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Link(Tùy Chọn)</label>
-                  <input
-                    type="text"
-                    value={exp.link}
-                    onChange={(e) => handleExperienceChange(index, 'link', e.target.value)}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mô Tả</label>
-                  <textarea
-                    value={exp.description}
-                    onChange={(e) => handleExperienceChange(index, 'description', e.target.value)}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
-                  />
-                </div>
               </div>
-              <button
-                onClick={() => generateExperience(exp)}
-                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2"
-                disabled={isGenerating}
-              >
-                {isGenerating ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Đang Tạo...
-                  </>
-                ) : (
-                  'Tạo Tóm Tắt Kinh Nghiệm'
-                )}
-              </button>
-              {aiSuggestions.experiences[index] && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-blue-700 mb-1">Tóm Tắt</label>
-                    <textarea
-                      value={exp.summary}
-                      onChange={(e) => handleExperienceChange(index, 'summary', e.target.value)}
-                      className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
-                      placeholder="Nhập tóm tắt kinh nghiệm..."
-                    />
-                  </div>
-                  <ul className="space-y-2">
-                    {aiSuggestions.experiences[index].map((point, i) => (
-                      <li key={i} className="text-blue-700 flex items-center gap-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                  <button
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mô Tả</label>
+                <textarea
+                  value={exp.description}
+                  onChange={(e) => handleExperienceChange(index, 'description', e.target.value)}
+                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                />
+              </div>
+              <div className="mt-4 flex justify-end">
+                <button
                   onClick={() => {
                     const newExps = [...cvData.experiences];
-                    newExps[index] = { ...newExps[index], summary: aiSuggestions.experiences[index] };
+                    newExps.splice(index, 1);
                     setCvData(prev => ({ ...prev, experiences: newExps }));
                   }}
-                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="text-red-500 hover:text-red-700"
                 >
-                  <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Sử dụng tóm tắt này
+                  Xóa
                 </button>
-                </div>
-              )}
-              <button
-                onClick={() => {
-                  const newExps = [...cvData.experience];
-                  newExps.splice(index, 1);
-                  setCvData(prev => ({ ...prev, experience: newExps }));
-                }}
-                className="mt-4 text-red-500 hover:text-red-700"
-              >
-                Xóa Kinh Nghiệm
-              </button>
+              </div>
             </div>
           ))}
           <button
@@ -764,11 +465,12 @@ export const CVBuilder = () => {
                 title: '',
                 organization: '',
                 location: '',
-                type: 'work',
+                type: 'full-time',
                 startDate: '',
                 endDate: '',
                 description: '',
-                link: ''
+                link: '',
+                summary: ''
               }]
             }))}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
@@ -825,17 +527,17 @@ export const CVBuilder = () => {
                     ))}
                   </div>
                   <button
-                  onClick={() => setCvData(prev => ({
-                    ...prev,
-                    skills: [...prev.skills, ...aiSuggestions.skills]
-                  }))}
-                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Thêm kỹ năng này
-                </button>
+                    onClick={() => setCvData(prev => ({
+                      ...prev,
+                      skills: [...prev.skills, ...aiSuggestions.skills]
+                    }))}
+                    className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Thêm kỹ năng này
+                  </button>
                 </div>
               )}
             </div>
@@ -937,44 +639,44 @@ export const CVBuilder = () => {
                   ))}
                 </div>
               </div>
-            <div className={`p-6 rounded-lg shadow-md`} style={{
-              backgroundColor: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.backgroundColor : '#ffffff',
-              fontFamily: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.font : 'Arial, sans-serif'
-            }}>
-              {/* Render CV preview based on selected template */}
-              <div className={`mb-12 ${
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'sm' && 'mb-6' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'md' && 'mb-8' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'lg' && 'mb-10' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'xl' && 'mb-12' : ''
-              }`}>
-                <h3 className={`text-xl ${
-                  selectedTemplate === 'professional' && 'uppercase tracking-wide',
-                  selectedTemplate === 'elegant' && 'italic',
-                  selectedTemplate === 'techy' && 'font-mono uppercase',
-                  selectedTemplate === 'bold' && 'font-bold text-2xl'
-                }`} style={{
-                  color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
-                }}>
-                  Mục Tiêu Nghề Nghiệp
-                </h3>
-                <div className="prose prose-gray max-w-none">
-                  <p style={{
-                    color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.textPrimary : '#333333'
-                  }}>{generatedCV.personalInfo?.summary || 'Mục tiêu nghề nghiệp sẽ hiển thị ở đây'}</p>
+              <div className={`p-6 rounded-lg shadow-md`} style={{
+                backgroundColor: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.backgroundColor : '#ffffff',
+                fontFamily: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.font : 'Arial, sans-serif'
+              }}>
+                {/* Render CV preview based on selected template */}
+                <div className={`mb-12 ${
+                  selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'sm' && 'mb-6' : '',
+                  selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'md' && 'mb-8' : '',
+                  selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'lg' && 'mb-10' : '',
+                  selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionSpacing === 'xl' && 'mb-12' : ''
+                }`}>
+                  <h3 className={`text-xl ${
+                    selectedTemplate === 'professional' && 'uppercase tracking-wide',
+                    selectedTemplate === 'elegant' && 'italic',
+                    selectedTemplate === 'techy' && 'font-mono uppercase',
+                    selectedTemplate === 'bold' && 'font-bold text-2xl'
+                  }`} style={{
+                    color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
+                  }}>
+                    Mục Tiêu Nghề Nghiệp
+                  </h3>
+                  <div className="prose prose-gray max-w-none">
+                    <p style={{
+                      color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.textPrimary : '#333333'
+                    }}>{generatedCV.personalInfo?.summary || 'Mục tiêu nghề nghiệp sẽ hiển thị ở đây'}</p>
+                  </div>
                 </div>
-              </div>
                 <div className='mb-12'>
                   <h3 className={`text-xl mb-4 ${
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'uppercase' && 'uppercase tracking-wide' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'italic' && 'italic' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'capslock' && 'font-mono uppercase' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'bold-caps' && 'font-bold text-2xl' : ''
-              }`} style={{
-                color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
-              }}>
-                  Học Vấn
-                </h3>
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'uppercase' && 'uppercase tracking-wide' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'italic' && 'italic' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'capslock' && 'font-mono uppercase' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'bold-caps' && 'font-bold text-2xl' : ''
+                  }`} style={{
+                    color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
+                  }}>
+                    Học Vấn
+                  </h3>
                   {Array.isArray(generatedCV.education) && generatedCV.education.length > 0 ? (
                     <div className="space-y-6">
                       {generatedCV.education.map((edu, index) => (
@@ -1002,15 +704,15 @@ export const CVBuilder = () => {
                 </div>
                 <div className='mb-12'>
                   <h3 className={`text-xl mb-4 ${
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'uppercase' && 'uppercase tracking-wide' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'italic' && 'italic' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'capslock' && 'font-mono uppercase' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'bold-caps' && 'font-bold text-2xl' : ''
-              }`} style={{
-                color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
-              }}>
-                  Kinh Nghiệm
-                </h3>
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'uppercase' && 'uppercase tracking-wide' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'italic' && 'italic' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'capslock' && 'font-mono uppercase' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'bold-caps' && 'font-bold text-2xl' : ''
+                  }`} style={{
+                    color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
+                  }}>
+                    Kinh Nghiệm
+                  </h3>
                   {Array.isArray(generatedCV.experiences) && generatedCV.experiences.length > 0 ? (
                     <div className="space-y-6">
                       {generatedCV.experiences.map((exp, index) => (
@@ -1043,15 +745,15 @@ export const CVBuilder = () => {
                 </div>
                 <div className='mb-12'>
                   <h3 className={`text-xl mb-4 ${
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'uppercase' && 'uppercase tracking-wide' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'italic' && 'italic' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'capslock' && 'font-mono uppercase' : '',
-                selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'bold-caps' && 'font-bold text-2xl' : ''
-              }`} style={{
-                color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
-              }}>
-                  Kỹ Năng
-                </h3>
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'uppercase' && 'uppercase tracking-wide' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'italic' && 'italic' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'capslock' && 'font-mono uppercase' : '',
+                    selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.headerStyle === 'bold-caps' && 'font-bold text-2xl' : ''
+                  }`} style={{
+                    color: selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.styles.sectionHeaderColor : '#2c3e50'
+                  }}>
+                    Kỹ Năng
+                  </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {Array.isArray(generatedCV.skills) && generatedCV.skills.length > 0 ? (
                       generatedCV.skills.map((skill, i) => (
@@ -1072,42 +774,14 @@ export const CVBuilder = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={generatePDF}
-                disabled={isGeneratingPDF}
-                className={`inline-flex items-center px-8 py-4 ${
-                  isGeneratingPDF 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
-                } text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5`}
-              >
-                {isGeneratingPDF ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Đang tạo PDF...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Tải XUống PDF
-                  </>
-                )}
-              </button>
-              {console.log(pdfError)}
-              {pdfError && (
-                <p className="mt-2 text-red-500 text-sm text-center">{pdfError}</p>
-              )}
-            </div>
+            <DownloadButton
+                cvData={cvData}
+                selectedTemplate={selectedTemplate}
+              />
           </div>
         )}
       </div>
     </div>
   );
 };
-
+export default CVBuilder;
