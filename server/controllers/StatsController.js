@@ -1,7 +1,6 @@
 const Job = require('../models/JobModel');
-const Company = require('../models/CompanyModel');
 const User = require('../models/UserModel');
-const Application = require('../models/ApplicationModel');
+const Application = require('../models/AppModel');
 
 exports.getStats = async (req, res) => {
     try {
