@@ -408,43 +408,11 @@ const suggestSkills = async (req, res) => {
   }
 };
 
-// Get Template Recommendation
-const getTemplateRecommendation = async (req, res) => {
-  try {
-    const { industry } = req.body;
-    const cacheKey = `template_${industry}`;
-    const cachedResponse = apiCache.get(cacheKey);
-    if (cachedResponse) {
-      return res.json(cachedResponse);
-    }
-
-    const response = await generateContent(`
-      Recommend the best CV template for a ${industry} industry professional.
-      Consider modernity, professionalism, and industry standards.
-      Format: Return either 'modern' or 'traditional' based on the industry's common practices.
-      Return the result in Vietnamese
-    `);
-    const template = response.toLowerCase().includes('modern') ? 'modern' : 'traditional';
-    apiCache.set(cacheKey, { success: true, template });
-    res.json({
-      success: true,
-      template
-    });
-  } catch (error) {
-    console.error('Template recommendation error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to recommend template'
-    });
-  }
-};
-
 module.exports = {
   generateCV,
   suggestCareerObjective,
   generateWorkExperience,
   suggestSkills,
-  getTemplateRecommendation,
   generatePDF,
   apiLimiter
 };
