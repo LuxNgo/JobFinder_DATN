@@ -6,8 +6,7 @@ import {
   generateCV as generateCVAction,
   suggestCareerObjective,
   generateWorkExperience,
-  suggestSkills,
-  getTemplateRecommendation
+  suggestSkills
 } from '../actions/CVActions';
 
 export const CVBuilder = () => {
@@ -74,22 +73,12 @@ export const CVBuilder = () => {
     }
   }, [me, navigate]);
 
-  // Fetch template recommendation when industry is selected
+  // Set default template
   useEffect(() => {
-    if (me && cvData.industry) {
-      const fetchTemplateRecommendation = async () => {
-        try {
-          const response = await dispatch(getTemplateRecommendation(cvData.industry));
-          if (response.success) {
-            setSelectedTemplate(response.template);
-          }
-        } catch (error) {
-          console.error('Error fetching template recommendation:', error);
-        }
-      };
-      fetchTemplateRecommendation();
+    if (!selectedTemplate) {
+      setSelectedTemplate('modern');
     }
-  }, [me, cvData.industry, dispatch]);
+  }, [selectedTemplate]);
 
   // Check authentication and token validity
   useEffect(() => {
@@ -100,29 +89,6 @@ export const CVBuilder = () => {
     }
   }, [me, navigate]);
 
-  // Fetch template recommendation when industry is selected
-  useEffect(() => {
-    if (me && cvData.industry) {
-      const fetchTemplateRecommendation = async () => {
-        try {
-          // Check if token exists before making request
-          const token = localStorage.getItem('userToken');
-          if (!token) {
-            throw new Error('Please log in first');
-          }
-          
-          await dispatch(getTemplateRecommendation(cvData.industry));
-        } catch (error) {
-          toast.error(error.message);
-          // If error is related to authentication, redirect to login
-          if (error.message.includes('Please log in first')) {
-            navigate('/login', { replace: true });
-          }
-        }
-      };
-      fetchTemplateRecommendation();
-    }
-  }, [dispatch, me, cvData.industry, navigate]);
   const [loading, setLoading] = useState(false);
   const [generatedCV, setGeneratedCV] = useState(null);
   const [aiSuggestions, setAiSuggestions] = useState({
@@ -227,21 +193,6 @@ export const CVBuilder = () => {
     }
   ];
     
-  // Get template recommendation based on industry
-  useEffect(() => {
-    const getRecommendedTemplate = async () => {
-      if (cvData.industry) {
-        try {
-          const template = await dispatch(getTemplateRecommendation(cvData.industry));
-          setSelectedTemplate(template);
-        } catch (error) {
-          console.error('Failed to get template recommendation:', error);
-        }
-      }
-    };
-    getRecommendedTemplate();
-  }, [cvData.industry, dispatch]);
-
   // Get AI suggestions for career objective
   const suggestObjective = async () => {
     try {

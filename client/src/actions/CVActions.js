@@ -18,9 +18,6 @@ export const CV_GENERATE_EXPERIENCE_FAIL = 'CV_GENERATE_EXPERIENCE_FAIL';
 export const CV_SUGGEST_SKILLS_REQUEST = 'CV_SUGGEST_SKILLS_REQUEST';
 export const CV_SUGGEST_SKILLS_SUCCESS = 'CV_SUGGEST_SKILLS_SUCCESS';
 export const CV_SUGGEST_SKILLS_FAIL = 'CV_SUGGEST_SKILLS_FAIL';
-export const CV_TEMPLATE_RECOMMEND_REQUEST = 'CV_TEMPLATE_RECOMMEND_REQUEST';
-export const CV_TEMPLATE_RECOMMEND_SUCCESS = 'CV_TEMPLATE_RECOMMEND_SUCCESS';
-export const CV_TEMPLATE_RECOMMEND_FAIL = 'CV_TEMPLATE_RECOMMEND_FAIL';
 
 // Action Creators
 export const cvGenerateRequest = () => ({
@@ -92,19 +89,7 @@ export const cvSuggestSkillsFail = (error) => ({
     payload: error
 });
 
-export const cvTemplateRecommendRequest = () => ({
-    type: CV_TEMPLATE_RECOMMEND_REQUEST
-});
 
-export const cvTemplateRecommendSuccess = (template) => ({
-    type: CV_TEMPLATE_RECOMMEND_SUCCESS,
-    payload: template
-});
-
-export const cvTemplateRecommendFail = (error) => ({
-    type: CV_TEMPLATE_RECOMMEND_FAIL,
-    payload: error
-});
 
 // API Actions
 export const generateCV = (cvData, template) => async (dispatch) => {
@@ -241,35 +226,7 @@ export const suggestSkills = (jobTitle, industry) => async (dispatch) => {
     }
 };
 
-export const getTemplateRecommendation = (industry) => async (dispatch) => {
-    try {
-        const token = localStorage.getItem('userToken');
-        if (!token) {
-            throw new Error('Please log in first');
-        }
 
-        dispatch(cvTemplateRecommendRequest());
-
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-
-        const { data } = await axios.post(
-            `${API_BASE_URL}/cv/template-recommendation`,
-            { industry },
-            config
-        );
-
-        dispatch(cvTemplateRecommendSuccess(data.template));
-        return data.template;
-    } catch (error) {
-        dispatch(cvTemplateRecommendFail(error.response?.data?.message || 'Failed to recommend template'));
-        throw error;
-    }
-};
 
 export const generatePDF = (cvData, template) => async (dispatch) => {
     try {
