@@ -49,7 +49,7 @@ export const getSingleJob = (id) => async (dispatch) => {
         dispatch(jobDetailsSuccess(data.job)) ;
 
     }catch(err){
-        dispatch(jobDetailsFail(err.response.data.message))   
+        dispatch(jobDetailsFail(err.response.data.message));   
     }
 }
 

@@ -18,7 +18,7 @@ export const Home = () => {
 
     const convertDateFormat = (inputDate) => {
         const parts = inputDate.split('-')
-        if (parts.length !== 3) return "Invalid date"
+        if (parts.length !== 3) return "Ngày không hợp lệ"
         return `${parts[2]}-${parts[1]}-${parts[0]}`
     }
 
@@ -28,7 +28,7 @@ export const Home = () => {
 
     return (
         <>
-            <MetaData title="JobLane - Find Your Dream Job" />
+            <MetaData title="JobLane - Tìm Việc Làm Mơ Ước Của Bạn" />
             <div className='min-h-screen flex flex-col text-black'>
                 {/* Hero Section */}
                 <div className='relative w-full bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 overflow-hidden'>
@@ -39,14 +39,15 @@ export const Home = () => {
                     </div>
                     
                     <div className='relative min-h-[700px] flex items-center'>
-                        <div className='container mx-auto px-4 py-20 flex flex-col lg:flex-row items-center gap-12'>
+                        <div className='container mx-20 px-4 py-20 flex flex-col lg:flex-row items-center gap-12'>
                             {/* Hero Content */}
                             <div className='flex-1 text-center lg:text-left space-y-8 z-10'>
-                                <h1 className='text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight'>
-                                    Find Your <span className='text-blue-400'>Dream Job</span> Today
+                                <h1 className='text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight space-y-4'>
+                                    <div>Tìm Việc Làm </div>
+                                    <div><span className='text-blue-400'>Mơ Ước </span>Của Bạn</div>
                                 </h1>
                                 <p className='text-xl md:text-2xl text-blue-100 max-w-3xl'>
-                                    Connect with top employers and discover opportunities that match your skills and aspirations.
+                                    Kết nối với các nhà tuyển dụng hàng đầu và khám phá cơ hội phù hợp với kỹ năng và ước mơ của bạn.
                                 </p>
                                 <div className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'>
                                     <Link 
@@ -55,7 +56,7 @@ export const Home = () => {
                                                  hover:bg-blue-600 transition-all duration-300 shadow-lg hover:shadow-blue-500/50
                                                  flex items-center gap-2 group hover:-translate-y-1'
                                     >
-                                        Browse Jobs
+                                        Tìm Việc Làm
                                         <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" 
                                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
@@ -68,7 +69,7 @@ export const Home = () => {
                                                  hover:bg-blue-50 transition-all duration-300 shadow-lg
                                                  flex items-center gap-2 hover:-translate-y-1'
                                     >
-                                        Post a Job
+                                        Đăng Tin Tuyển Dụng
                                     </Link>
                                 </div>
                             </div>
@@ -83,7 +84,7 @@ export const Home = () => {
                                 <div className="relative z-10 backdrop-blur-sm bg-white/10 rounded-2xl p-6">
                                     <img 
                                         src={jobSearchImage} 
-                                        alt="Job Search Illustration" 
+                                        alt="Tìm Kiếm Việc Làm" 
                                         className="w-full max-w-[600px] mx-auto 
                                                  relative z-10 
                                                  transition-all duration-500
@@ -102,19 +103,19 @@ export const Home = () => {
                         <div className='grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8'>
                             <div className='text-center'>
                                 <div className='text-4xl font-bold text-blue-500 mb-2'>10K+</div>
-                                <div className='text-gray-600'>Active Jobs</div>
+                                <div className='text-gray-600'>Công Việc Đang Tuyển</div>
                             </div>
                             <div className='text-center'>
                                 <div className='text-4xl font-bold text-blue-500 mb-2'>5K+</div>
-                                <div className='text-gray-600'>Companies</div>
+                                <div className='text-gray-600'>Doanh Nghiệp</div>
                             </div>
                             <div className='text-center'>
                                 <div className='text-4xl font-bold text-blue-500 mb-2'>1M+</div>
-                                <div className='text-gray-600'>Job Seekers</div>
+                                <div className='text-gray-600'>Ứng Viên</div>
                             </div>
                             <div className='text-center'>
                                 <div className='text-4xl font-bold text-blue-500 mb-2'>8K+</div>
-                                <div className='text-gray-600'>Hired</div>
+                                <div className='text-gray-600'>Đã Tuyển Dụng</div>
                             </div>
                         </div>
                     </div>
@@ -124,9 +125,9 @@ export const Home = () => {
                 <section className='py-20 px-4 bg-gray-50'>
                     <div className='container mx-auto'>
                         <div className='text-center mb-12'>
-                            <h2 className='text-4xl font-bold text-gray-900 mb-4'>Featured Opportunities</h2>
+                            <h2 className='text-4xl font-bold text-gray-900 mb-4'>Cơ Hội Nổi Bật</h2>
                             <div className='h-1 w-20 bg-blue-500 mx-auto'></div>
-                            <p className='mt-4 text-gray-600 text-lg'>Discover hand-picked positions from top companies</p>
+                            <p className='mt-4 text-gray-600 text-lg'>Khám phá các vị trí được chọn lọc từ các công ty hàng đầu</p>
                         </div>
 
                         {loading ? (
@@ -134,49 +135,57 @@ export const Home = () => {
                                 <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500'></div>
                             </div>
                         ) : (
-                            <div className='grid md:grid-cols-3 gap-8'>
-                                {allJobs && allJobs.length >= 4 && [3, 5, 2].map((index) => (
-                                    <Link
-                                        key={allJobs[index]._id}
-                                        to={`/details/${allJobs[index]._id}`}
-                                        className='group bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 
-                                                 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]'
-                                    >
-                                        <div className='flex gap-4'>
-                                            <div className='w-16 h-16 flex justify-center items-center bg-gray-50 rounded-lg p-2 overflow-hidden'>
-                                                <img
-                                                    src={allJobs[index].companyLogo.url}
-                                                    alt={allJobs[index].title}
-                                                    className='w-full h-full object-contain group-hover:scale-110 transition-transform'
-                                                />
-                                            </div>
-                                            <div className='flex-1'>
-                                                <h3 className='text-xl font-semibold text-gray-900 group-hover:text-blue-500 
-                                                           transition-colors duration-300 line-clamp-2'
-                                                >
-                                                    {allJobs[index].title}
-                                                </h3>
-                                                <p className='text-lg text-gray-700 font-medium'>
-                                                    {allJobs[index].companyName}
+                            <div className='grid md:grid-cols-3 gap-8 mx-20'>
+                                {allJobs && allJobs.length >= 4 ? (
+                                    [3, 1, 2].map((index) => (
+                                        allJobs[index] ? (
+                                            <Link
+                                                key={allJobs[index]._id}
+                                                to={`/details/${allJobs[index]._id}`}
+                                                className='group bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 
+                                                     transition-all duration-300 hover:shadow-xl hover:scale-[1.02]'
+                                            >
+                                                <div className='flex gap-4'>
+                                                    <div className='w-16 h-16 flex justify-center items-center bg-gray-50 rounded-lg p-2 overflow-hidden'>
+                                                        <img
+                                                            src={allJobs[index].companyLogo?.url || '/default-logo.png'}
+                                                            alt={allJobs[index].title}
+                                                            className='w-full h-full object-contain group-hover:scale-110 transition-transform'
+                                                        />
+                                                    </div>
+                                                    <div className='flex-1'>
+                                                        <h3 className='text-xl font-semibold text-gray-900 group-hover:text-blue-500 
+                                                               transition-colors duration-300 line-clamp-2'
+                                                        >
+                                                            {allJobs[index].title}
+                                                        </h3>
+                                                        <p className='text-lg text-gray-700 font-medium'>
+                                                            {allJobs[index].companyName}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <p className='text-sm text-gray-600 mt-4 line-clamp-2'>
+                                                    {allJobs[index].description}
                                                 </p>
-                                            </div>
-                                        </div>
-                                        <p className='text-sm text-gray-600 mt-4 line-clamp-2'>
-                                            {allJobs[index].description}
-                                        </p>
-                                        <div className='flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-gray-100'>
-                                            <span className='px-3 py-1 text-sm text-gray-600 bg-gray-100 rounded-full'>
-                                                {convertDateFormat(allJobs[index].createdAt.slice(0,10))}
-                                            </span>
-                                            <span className='px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-full'>
-                                                {allJobs[index].employmentType}
-                                            </span>
-                                            <span className='px-3 py-1 text-sm text-green-600 bg-green-50 rounded-full'>
-                                                {allJobs[index].location}
-                                            </span>
-                                        </div>
-                                    </Link>
-                                ))}
+                                                <div className='flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-gray-100'>
+                                                    <span className='px-3 py-1 text-sm text-gray-600 bg-gray-100 rounded-full'>
+                                                        {convertDateFormat(allJobs[index].createdAt?.slice(0,10) || '')}
+                                                    </span>
+                                                    <span className='px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-full'>
+                                                        {allJobs[index].employmentType}
+                                                    </span>
+                                                    <span className='px-3 py-1 text-sm text-green-600 bg-green-50 rounded-full'>
+                                                        {allJobs[index].location}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        ) : null
+                                    ))
+                                ) : (
+                                    <div className='text-center py-8'>
+                                        <p className='text-gray-600'>Không có công việc nào được tìm thấy</p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -186,9 +195,9 @@ export const Home = () => {
                 <section className='py-20 bg-white'>
                     <div className='container mx-auto px-4'>
                         <div className='text-center mb-12'>
-                            <h2 className='text-4xl font-bold text-gray-900 mb-4'>Trusted by Leading Companies</h2>
+                            <h2 className='text-4xl font-bold text-gray-900 mb-4'>Được Tin Tưởng Bởi Các Doanh Nghiệp Hàng Đầu</h2>
                             <div className='h-1 w-20 bg-blue-500 mx-auto'></div>
-                            <p className='mt-4 text-gray-600 text-lg'>Join thousands of companies that trust us with their hiring needs</p>
+                            <p className='mt-4 text-gray-600 text-lg'>Tham gia cùng hàng nghìn doanh nghiệp tin tưởng chúng tôi trong việc tuyển dụng</p>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
                             {companyLogos.map((logo, i) => (
@@ -201,7 +210,7 @@ export const Home = () => {
                                         src={logo.link} 
                                         className='w-full h-full object-contain filter grayscale group-hover:grayscale-0 
                                                  transition-all duration-300 group-hover:scale-110' 
-                                        alt="Company logo" 
+                                        alt="Logo công ty" 
                                     />
                                 </div>
                             ))}
@@ -219,25 +228,25 @@ export const Home = () => {
                             <div className="flex-1">
                                 <img 
                                     src={coporateImage} 
-                                    alt="About JobLane" 
+                                    alt="Về JobLane" 
                                     className="w-full max-w-[500px] mx-auto rounded-xl shadow-xl 
                                               transition-all duration-500
                                              object-cover hover:shadow-2xl"
                                 />
                             </div>
                             <div className="flex-1 text-center lg:text-left">
-                                <h2 className='text-4xl font-bold text-gray-900 mb-6'>About JobLane</h2>
+                                <h2 className='text-4xl font-bold text-gray-900 mb-6'>Về JobLane</h2>
                                 <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                                    Discover the Power of Possibility with JobLane: Where Your Professional Journey Takes Flight, 
-                                    Guided by a Network of Diverse Opportunities! We connect talented professionals with 
-                                    forward-thinking companies to create meaningful career relationships.
+                                    Khám phá Sức Mạnh của Khả Năng với JobLane: Nơi Hành Trình Nghề Nghiệp của Bạn Bắt Đầu, 
+                                    Được Hướng Dẫn bởi Mạng Lưới Cơ Hội Đa Dạng! Chúng tôi kết nối các chuyên viên tài năng với 
+                                    các công ty tiên phong để tạo ra mối quan hệ nghề nghiệp ý nghĩa.
                                 </p>
                                 <Link 
                                     to="/about" 
                                     className="inline-flex items-center gap-2 text-blue-500 font-semibold hover:text-blue-600 
                                              transition-colors duration-300"
                                 >
-                                    Learn More About Us
+                                    Tìm hiểu thêm về chúng tôi
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                                               d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -251,11 +260,3 @@ export const Home = () => {
         </>
     )
 }
-
-
-
-
-
-
-
-
