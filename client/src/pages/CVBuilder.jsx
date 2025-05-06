@@ -56,7 +56,7 @@ const CVBuilder = () => {
     const token = localStorage.getItem('userToken');
     if (!token || !me) {
       navigate('/login', { replace: true });
-      toast.error('Please log in to access CV Builder');
+      toast.error('Vui lòng đăng nhập để truy cập CV Builder');
     }
   }, [me, navigate]);
 
@@ -72,7 +72,7 @@ const CVBuilder = () => {
     const token = localStorage.getItem('userToken');
     if (!token || !me) {
       navigate('/login', { replace: true });
-      toast.error('Please log in to access CV Builder');
+      toast.error('Vui lòng đăng nhập để truy cập CV Builder');
     }
   }, [me, navigate]);
 
@@ -180,9 +180,9 @@ const CVBuilder = () => {
         ...prev,
         skills: [...prev.skills, ...skills]
       }));
-      toast.success('Skills suggested successfully!');
+      toast.success('Kỹ năng được đề xuất thành công!');
     } catch (error) {
-      toast.error('Failed to suggest skills');
+      toast.error('Thất bại khi đề xuất kỹ năng');
     } finally {
       setIsGenerating(false);
     }
@@ -212,7 +212,7 @@ const CVBuilder = () => {
     const token = localStorage.getItem('userToken');
     if (!token || !me) {
       navigate('/login', { replace: true });
-      toast.error('Please log in to access CV Builder');
+      toast.error('Vui lòng đăng nhập để truy cập CV Builder');
     }
   }, [me, navigate]);
 
@@ -224,16 +224,11 @@ const CVBuilder = () => {
   }, [selectedTemplate]);
 
   return (
-    <div className="min-h-screen bg-white container mx-auto px-4 py-8 pt-24">
+    <div className="min-h-screen bg-white mx-32 px-4 py-8 pt-24">
       <TemplateSelector 
         selectedTemplate={selectedTemplate} 
         setSelectedTemplate={setSelectedTemplate}
       />
-      <DownloadButton
-                cvData={cvData}
-                selectedTemplate={selectedTemplate}
-              />
-
       <div className="space-y-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Thông Tin Công Việc</h2>

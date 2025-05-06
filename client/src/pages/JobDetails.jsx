@@ -1,55 +1,48 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router'
-import { MetaData } from '../components/MetaData'
-import { Loader } from '../components/Loader'
-import { useDispatch, useSelector } from 'react-redux'
-import { getSingleJob, saveJob } from '../actions/JobActions'
-import { BiBriefcase, BiBuildings, BiRupee } from 'react-icons/bi'
-import { AiOutlineSave } from 'react-icons/ai'
-import { HiStatusOnline } from 'react-icons/hi'
-import { BsPersonWorkspace, BsSend } from 'react-icons/bs'
-import { TbLoader2 } from 'react-icons/tb'
-import { useNavigate } from 'react-router'
-import { toast } from 'react-toastify'
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router';
+import { MetaData } from '../components/MetaData';
+import { Loader } from '../components/Loader';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSingleJob, saveJob } from '../actions/JobActions';
+import { BiBriefcase, BiBuildings, BiRupee } from 'react-icons/bi';
+import { AiOutlineSave } from 'react-icons/ai';
+import { HiStatusOnline } from 'react-icons/hi';
+import { BsPersonWorkspace, BsSend } from 'react-icons/bs';
+import { TbLoader2 } from 'react-icons/tb';
+import { toast } from 'react-toastify';
 
 export const JobDetails = () => {
-
   const dispatch = useDispatch();
   const { jobDetails, loading, saveJobLoading } = useSelector(state => state.job);
   const { me, isLogin } = useSelector(state => state.user);
-  const job = jobDetails;
-  const { id } = useParams()
-
-  const navigate = useNavigate()
-
-  
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(getSingleJob(id))
-  }, [dispatch])
+    dispatch(getSingleJob(id));
+  }, [dispatch, id]);
 
   const convertDateFormat = (inputDate) => {
     const parts = inputDate.split('-');
-    if (parts.length !== 3) return "Invalid date format";
+    if (parts.length !== 3) return "Định dạng ngày không hợp lệ";
     const [year, month, day] = parts;
     return `${day}-${month}-${year}`;
-  }
-
+  };
 
   const saveJobHandler = () => {
     dispatch(saveJob(id));
-  }
+  };
 
   const notLoginHandler = (str) => {
     if (!isLogin) {
-      toast.info(`Please login to ${str} job`)
-      navigate("/login")
+      toast.info(`Vui lòng đăng nhập để ${str} công việc`);
+      navigate("/login");
     }
-  }
+  };
 
   return (
     <>
-      <MetaData title="Job Details" />
+      <MetaData title="Chi Tiết Công Việc" />
       <div className='bg-white min-h-screen pt-14 md:px-20 text-gray-800'>
         {loading ? (
           <Loader />
@@ -77,10 +70,8 @@ export const JobDetails = () => {
                       </p>
                       <div className='flex items-center gap-2'>
                         <HiStatusOnline size={20} className="text-gray-600" />
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          jobDetails.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                        }`}>
-                          {jobDetails.status}
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${jobDetails.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                          {jobDetails.status === "active" ? "Đang tuyển" : "Ngưng tuyển"}
                         </span>
                       </div>
                     </div>
@@ -88,36 +79,36 @@ export const JobDetails = () => {
                 </div>
 
                 <div className='bg-white shadow-lg rounded-lg p-6'>
-                  <h2 className='text-2xl font-bold mb-6'>Details</h2>
+                  <h2 className='text-2xl font-bold mb-6'>Thông Tin Chi Tiết</h2>
                   <div className='space-y-4'>
                     <div className='grid md:grid-cols-2 gap-4'>
                       <div className='flex items-center gap-2'>
-                        <span className='font-semibold'>Posted By:</span>
+                        <span className='font-semibold'>Người đăng:</span>
                         <span>{jobDetails.postedBy.name}</span>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <span className='font-semibold'>Posted At:</span>
+                        <span className='font-semibold'>Ngày đăng:</span>
                         <span>{convertDateFormat(jobDetails.createdAt.substr(0, 10))}</span>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <span className='font-semibold'>Location:</span>
+                        <span className='font-semibold'>Địa điểm:</span>
                         <span>{jobDetails.location}</span>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <span className='font-semibold'>Salary:</span>
+                        <span className='font-semibold'>Mức lương:</span>
                         <span className='flex items-center'>
                           <BiRupee />
                           {(jobDetails.salary / 100000).toFixed(0)} LPA
                         </span>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <span className='font-semibold'>Experience:</span>
+                        <span className='font-semibold'>Kinh nghiệm:</span>
                         <span>{jobDetails.experience}</span>
                       </div>
                     </div>
 
                     <div className='pt-4'>
-                      <h3 className='font-semibold mb-2'>Skills Required:</h3>
+                      <h3 className='font-semibold mb-2'>Kỹ năng yêu cầu:</h3>
                       <div className='flex flex-wrap gap-2'>
                         {jobDetails.skillsRequired.map((skill, i) => (
                           <span key={i} className='px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium'>
@@ -128,7 +119,7 @@ export const JobDetails = () => {
                     </div>
 
                     <div className='pt-4'>
-                      <h3 className='font-semibold mb-2'>Job Description:</h3>
+                      <h3 className='font-semibold mb-2'>Mô tả công việc:</h3>
                       <p className='text-gray-700 leading-relaxed'>{jobDetails.description}</p>
                     </div>
                   </div>
@@ -138,19 +129,19 @@ export const JobDetails = () => {
                       onClick={() => {
                         isLogin
                           ? me.appliedJobs && me.appliedJobs.includes(jobDetails._id)
-                            ? toast.error("You are already applied !")
+                            ? toast.error("Bạn đã ứng tuyển công việc này!")
                             : navigate(`/Application/${jobDetails._id}`)
-                          : notLoginHandler("apply")
+                          : notLoginHandler("ứng tuyển");
                       }}
                       className='flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200'
                     >
                       <BsSend />
-                      {me.appliedJobs && me.appliedJobs.includes(jobDetails._id) ? "Applied" : "Apply"}
+                      {me.appliedJobs && me.appliedJobs.includes(jobDetails._id) ? "Đã ứng tuyển" : "Ứng tuyển"}
                     </button>
 
                     <button
                       onClick={() => {
-                        isLogin ? saveJobHandler() : notLoginHandler("save")
+                        isLogin ? saveJobHandler() : notLoginHandler("lưu");
                       }}
                       className='flex items-center gap-2 px-6 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200'
                     >
@@ -159,7 +150,7 @@ export const JobDetails = () => {
                       ) : (
                         <>
                           <AiOutlineSave />
-                          {me.savedJobs && me.savedJobs.includes(jobDetails._id) ? "Unsave" : "Save"}
+                          {me.savedJobs && me.savedJobs.includes(jobDetails._id) ? "Bỏ lưu" : "Lưu"}
                         </>
                       )}
                     </button>
@@ -171,6 +162,5 @@ export const JobDetails = () => {
         )}
       </div>
     </>
-  )
-}
-
+  );
+};

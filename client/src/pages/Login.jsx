@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux'
 
 export const Login = () => {
 
-
   const { loading, isLogin } = useSelector(state => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -34,8 +33,6 @@ export const Login = () => {
     setFormData({ email: "", password: "" })
   }
 
-
-
   useEffect(() => {
     if (isLogin) {
       navigate("/")
@@ -44,24 +41,24 @@ export const Login = () => {
 
   return (
     <>
-      <MetaData title="Login" />
+      <MetaData title="Đăng nhập" />
       <div className='min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
         <div className='max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg'>
-          {/* Header Section */}
+          {/* Phần tiêu đề */}
           <div className='text-center space-y-2'>
-            <h2 className='text-3xl font-bold text-gray-900'>Welcome Back</h2>
-            <p className='text-gray-500'>Please enter your details to sign in</p>
+            <h2 className='text-3xl font-bold text-gray-900'>Chào mừng trở lại</h2>
+            <p className='text-gray-500'>Vui lòng nhập thông tin để đăng nhập</p>
           </div>
 
           <form onSubmit={loginHandler} className='mt-8 space-y-6'>
             <div className='space-y-5'>
-              {/* Email Input */}
+              {/* Nhập email */}
               <div className='space-y-2'>
                 <label
                   htmlFor="email"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Email Address
+                  Địa chỉ Email
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -85,19 +82,19 @@ export const Login = () => {
                         ? 'border-blue-600 ring-1 ring-blue-600' 
                         : 'border-gray-300 hover:border-gray-400'}
                     `}
-                    placeholder="Enter your email address"
+                    placeholder="Nhập địa chỉ email của bạn"
                     required
                   />
                 </div>
               </div>
 
-              {/* Password Input */}
+              {/* Nhập mật khẩu */}
               <div className='space-y-2'>
                 <label
                   htmlFor="password"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Password
+                  Mật khẩu
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -121,7 +118,7 @@ export const Login = () => {
                         ? 'border-blue-600 ring-1 ring-blue-600'
                         : 'border-gray-300 hover:border-gray-400'}
                     `}
-                    placeholder="Enter your password"
+                    placeholder="Nhập mật khẩu của bạn"
                     required
                   />
                   <button 
@@ -138,7 +135,7 @@ export const Login = () => {
                 </div>
               </div>
 
-              {/* Remember Me & Forgot Password */}
+              {/* Ghi nhớ và Quên mật khẩu */}
               <div className='flex items-center justify-between pt-2'>
                 <div className='flex items-center'>
                   <input
@@ -148,19 +145,19 @@ export const Login = () => {
                     className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
                   />
                   <label htmlFor="remember-me" className='ml-2 block text-sm text-gray-600'>
-                    Remember me
+                    Ghi nhớ đăng nhập
                   </label>
                 </div>
                 <Link 
                   to="/forgot-password"
                   className='text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200'
                 >
-                  Forgot password?
+                  Quên mật khẩu?
                 </Link>
               </div>
             </div>
 
-            {/* Sign In Button */}
+            {/* Nút đăng nhập */}
             <button
               type="submit"
               disabled={loading || !formData.email || !formData.password}
@@ -174,18 +171,18 @@ export const Login = () => {
               {loading ? (
                 <TbLoader2 className='animate-spin h-5 w-5' />
               ) : (
-                'Sign in'
+                'Đăng nhập'
               )}
             </button>
 
-            {/* Sign Up Link */}
+            {/* Liên kết đăng ký */}
             <div className='text-center text-sm text-gray-500'>
-              Don't have an account?{' '}
+              Bạn chưa có tài khoản?{' '}
               <Link 
                 to="/register" 
                 className='font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200'
               >
-                Sign up for free
+                Đăng ký miễn phí
               </Link>
             </div>
           </form>
@@ -194,7 +191,3 @@ export const Login = () => {
     </>
   )
 }
-
-
-
-

@@ -13,28 +13,28 @@ export const MyProfile = () => {
 
   const convertDateFormat = (inputDate) => {
     const parts = inputDate.split('-')
-    if (parts.length !== 3) return "Invalid date format"
+    if (parts.length !== 3) return "Định dạng ngày không hợp lệ"
     return `${parts[2]}-${parts[1]}-${parts[0]}`
   }
 
   const menuItems = [
-    { icon: <FaUserEdit className="w-5 h-5" />, text: 'Edit Profile', link: '/editProfile' },
-    { icon: <FaClipboardList className="w-5 h-5" />, text: 'My Applications', link: '/applied' },
-    { icon: <FaBookmark className="w-5 h-5" />, text: 'Saved Jobs', link: '/saved' },
-    { icon: <FaKey className="w-5 h-5" />, text: 'Change Password', link: '/changePassword' },
-    { icon: <FaTrash className="w-5 h-5" />, text: 'Delete Account', link: '/deleteAccount' }
+    { icon: <FaUserEdit className="w-5 h-5" />, text: 'Chỉnh sửa hồ sơ', link: '/editProfile' },
+    { icon: <FaClipboardList className="w-5 h-5" />, text: 'Việc đã ứng tuyển', link: '/applied' },
+    { icon: <FaBookmark className="w-5 h-5" />, text: 'Việc đã lưu', link: '/saved' },
+    { icon: <FaKey className="w-5 h-5" />, text: 'Đổi mật khẩu', link: '/changePassword' },
+    { icon: <FaTrash className="w-5 h-5" />, text: 'Xóa tài khoản', link: '/deleteAccount' }
   ]
 
   return (
     <>
-      <MetaData title="My Profile" />
+      <MetaData title="Hồ sơ cá nhân" />
       <div className='min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8'>
         {loading ? <Loader /> : (
-          <div className='max-w-4xl mx-auto'>
+          <div className='max-w-4xl mx-auto mt-16'>
             <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
               {/* Header Section */}
               <div className='bg-blue-600 text-white px-8 py-6'>
-                <h1 className='text-3xl font-bold'>My Profile</h1>
+                <h1 className='text-3xl font-bold'>Hồ sơ cá nhân</h1>
               </div>
 
               {/* Profile Content */}
@@ -45,7 +45,7 @@ export const MyProfile = () => {
                     <div className='w-48 h-48 rounded-full overflow-hidden border-4 border-blue-100 shadow-lg'>
                       <img 
                         src={me.avatar.url} 
-                        alt="Profile" 
+                        alt="Ảnh đại diện" 
                         className='w-full h-full object-cover'
                       />
                     </div>
@@ -56,7 +56,7 @@ export const MyProfile = () => {
                       className='mt-6 flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
                     >
                       <FaFileAlt />
-                      View Resume
+                      Xem CV
                     </button>
                   </div>
 
@@ -66,7 +66,7 @@ export const MyProfile = () => {
                       {/* Personal Info */}
                       <div className='space-y-4'>
                         <div>
-                          <h3 className='text-sm font-medium text-gray-500'>Full Name</h3>
+                          <h3 className='text-sm font-medium text-gray-500'>Họ tên</h3>
                           <p className='text-lg font-medium text-gray-900'>{me.name}</p>
                         </div>
                         <div>
@@ -74,7 +74,7 @@ export const MyProfile = () => {
                           <p className='text-lg font-medium text-gray-900'>{me.email}</p>
                         </div>
                         <div>
-                          <h3 className='text-sm font-medium text-gray-500'>Joined On</h3>
+                          <h3 className='text-sm font-medium text-gray-500'>Tham gia từ</h3>
                           <p className='text-lg font-medium text-gray-900'>
                             {convertDateFormat(me.createdAt.substr(0, 10))}
                           </p>
@@ -83,7 +83,7 @@ export const MyProfile = () => {
 
                       {/* Skills */}
                       <div>
-                        <h3 className='text-sm font-medium text-gray-500 mb-2'>Skills</h3>
+                        <h3 className='text-sm font-medium text-gray-500 mb-2'>Kỹ năng</h3>
                         <div className='flex flex-wrap gap-2'>
                           {me.skills.map((skill, i) => (
                             <span 
@@ -119,11 +119,11 @@ export const MyProfile = () => {
             <Modal 
               opened={opened} 
               onClose={close} 
-              title="Resume"
+              title="Hồ sơ cá nhân"
               size="lg"
             >
               <div className='w-full'>
-                <img src={me.resume.url} className='w-full h-auto' alt="Resume" />
+                <img src={me.resume.url} className='w-full h-auto' alt="CV" />
               </div>
             </Modal>
           </div>
@@ -132,4 +132,3 @@ export const MyProfile = () => {
     </>
   )
 }
-

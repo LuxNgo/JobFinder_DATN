@@ -23,7 +23,7 @@ export const EditUserAdmin = () => {
 
     const updateRolehandler = () => {
         if (role === "not") {
-            toast.info("Please Select Role !")
+            toast.info("Vui lòng chọn vai trò !")
         }
         else {
             dispatch(updateUser(id,{role}))

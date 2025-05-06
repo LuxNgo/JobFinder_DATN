@@ -72,7 +72,7 @@ export const SaveJobCard = ({ job }) => {
                                 ))}
                                 {skills.length > 4 && (
                                     <span className='px-4 py-2 bg-[#F3F4F6] text-[#111827] rounded-lg text-sm font-medium'>
-                                        +{skills.length - 4} more
+                                        +{skills.length - 4} thêm
                                     </span>
                                 )}
                             </div>
@@ -84,14 +84,14 @@ export const SaveJobCard = ({ job }) => {
                             to={`/details/${job._id}`}
                             className='px-6 py-3 bg-[#3803FF] text-white rounded-xl hover:bg-[#2601B7] transition-all duration-300 text-center text-[15px] font-semibold shadow-sm hover:shadow-md'
                         >
-                            Apply Now
+                            Ứng tuyển ngay
                         </Link>
                         <button
                             onClick={unSaveJobHandler}
                             className='px-6 py-3 bg-[#F3F4F6] text-[#111827] rounded-xl hover:bg-[#E5E7EB] transition-all duration-300 flex items-center justify-center gap-2 text-[15px] font-semibold'
                         >
                             <FaBookmark className="text-[#3803FF]" />
-                            Unsave
+                            Hủy lưu
                         </button>
                     </div>
                 </div>

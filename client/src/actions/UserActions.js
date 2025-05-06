@@ -41,7 +41,7 @@ export const loginUser = (userData) => async (dispatch) => {
         localStorage.setItem('userToken', data.token)
         dispatch(logOrNot())
         dispatch(me())
-        toast.success("Login successful !")
+        toast.success("Đăng nhập thành công !")
 
     } catch (err) {
         dispatch(loginFail(err.response.data.message))

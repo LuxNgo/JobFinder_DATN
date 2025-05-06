@@ -56,23 +56,23 @@ export const Register = () => {
 
   return (
     <>
-      <MetaData title="Register" />
+      <MetaData title="Đăng ký" />
       <div className='min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
         <div className='max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg mt-10'>
           <div className='text-center space-y-2'>
-            <h2 className='text-3xl font-bold text-gray-900'>Create Account</h2>
-            <p className='text-gray-500'>Please fill in your details to register</p>
+            <h2 className='text-3xl font-bold text-gray-900'>Tạo Tài Khoản</h2>
+            <p className='text-gray-500'>Vui lòng điền thông tin để đăng ký</p>
           </div>
 
           <form onSubmit={registerHandler} className='mt-8 space-y-6'>
             <div className='space-y-5'>
-              {/* Name Input */}
+              {/* Tên Input */}
               <div className='space-y-2'>
                 <label
                   htmlFor="name"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Full Name
+                  Họ và Tên
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -95,7 +95,7 @@ export const Register = () => {
                         ? 'border-blue-600 ring-1 ring-blue-600' 
                         : 'border-gray-300 hover:border-gray-400'}
                     `}
-                    placeholder="Enter your full name"
+                    placeholder="Nhập họ và tên"
                     required
                   />
                 </div>
@@ -107,7 +107,7 @@ export const Register = () => {
                   htmlFor="email"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Email Address
+                  Địa chỉ Email
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -130,19 +130,19 @@ export const Register = () => {
                         ? 'border-blue-600 ring-1 ring-blue-600' 
                         : 'border-gray-300 hover:border-gray-400'}
                     `}
-                    placeholder="Enter your email address"
+                    placeholder="Nhập địa chỉ email của bạn"
                     required
                   />
                 </div>
               </div>
 
-              {/* Password Input */}
+              {/* Mật khẩu Input */}
               <div className='space-y-2'>
                 <label
                   htmlFor="password"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Password
+                  Mật khẩu
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -165,7 +165,7 @@ export const Register = () => {
                         ? 'border-blue-600 ring-1 ring-blue-600'
                         : 'border-gray-300 hover:border-gray-400'}
                     `}
-                    placeholder="Create a password"
+                    placeholder="Tạo mật khẩu"
                     required
                   />
                   <button 
@@ -182,13 +182,13 @@ export const Register = () => {
                 </div>
               </div>
 
-              {/* Skills Input */}
+              {/* Kỹ năng Input */}
               <div className='space-y-2'>
                 <label
                   htmlFor="skills"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Skills (comma-separated)
+                  Kỹ năng (ngăn cách bởi dấu phẩy)
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -210,7 +210,7 @@ export const Register = () => {
                         ? 'border-blue-600 ring-1 ring-blue-600'
                         : 'border-gray-300 hover:border-gray-400'}
                     `}
-                    placeholder="Enter your skills (e.g., JavaScript, React, Node.js)"
+                    placeholder="Nhập kỹ năng của bạn (ví dụ: JavaScript, React, Node.js)"
                     required
                   />
                 </div>
@@ -222,7 +222,7 @@ export const Register = () => {
                   htmlFor="avatar"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Profile Picture
+                  Ảnh đại diện
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -256,7 +256,7 @@ export const Register = () => {
                     `}
                     onClick={() => document.getElementById('avatar').click()}
                   >
-                    {avatarName || "Choose profile picture"}
+                    {avatarName || "Chọn ảnh đại diện"}
                   </div>
                 </div>
               </div>
@@ -267,7 +267,7 @@ export const Register = () => {
                   htmlFor="resume"
                   className='block text-sm font-medium text-gray-700'
                 >
-                  Resume
+                  Hồ sơ
                 </label>
                 <div className='relative'>
                   <div className={`
@@ -301,13 +301,13 @@ export const Register = () => {
                     `}
                     onClick={() => document.getElementById('resume').click()}
                   >
-                    {resumeName || "Upload your resume"}
+                    {resumeName || "Tải lên hồ sơ của bạn"}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Register Button */}
+            {/* Đăng ký Button */}
             <button
               type="submit"
               disabled={loading || !email || !password || !name || !skills}
@@ -321,18 +321,18 @@ export const Register = () => {
               {loading ? (
                 <TbLoader2 className='animate-spin h-5 w-5' />
               ) : (
-                'Create Account'
+                'Tạo Tài Khoản'
               )}
             </button>
 
-            {/* Sign In Link */}
+            {/* Đăng nhập Link */}
             <div className='text-center text-sm text-gray-500'>
-              Already have an account?{' '}
+              Bạn đã có tài khoản?{' '}
               <Link 
                 to="/login" 
-                className='font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200'
+                className='font-medium text-blue-600 hover:text-blue-700'
               >
-                Sign in here
+                Đăng nhập
               </Link>
             </div>
           </form>
@@ -341,4 +341,3 @@ export const Register = () => {
     </>
   )
 }
-

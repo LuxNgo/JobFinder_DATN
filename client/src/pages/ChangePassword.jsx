@@ -32,23 +32,23 @@ export const ChangePassword = () => {
 
     return (
         <>
-            <MetaData title="Change Password" />
+            <MetaData title="Đổi mật khẩu" />
             <div className='min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
                 <div className='max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg mt-10'>
                     <div className='text-center space-y-2'>
-                        <h2 className='text-3xl font-bold text-gray-900'>Change Password</h2>
-                        <p className='text-gray-500'>Enter your current password and choose a new one</p>
+                        <h2 className='text-3xl font-bold text-gray-900'>Đổi mật khẩu</h2>
+                        <p className='text-gray-500'>Nhập mật khẩu hiện tại và chọn mật khẩu mới</p>
                     </div>
 
                     <form onSubmit={changeHandler} className='mt-8 space-y-6'>
                         <div className='space-y-5'>
-                            {/* Current Password */}
+                            {/* Mật khẩu hiện tại */}
                             <div className='space-y-2'>
                                 <label
                                     htmlFor="currentPassword"
                                     className='block text-sm font-medium text-gray-700'
                                 >
-                                    Current Password
+                                    Mật khẩu hiện tại
                                 </label>
                                 <div className='relative'>
                                     <div className={`
@@ -67,12 +67,12 @@ export const ChangePassword = () => {
                                         className={`
                                             w-full pl-12 pr-12 py-3 text-gray-900 text-base
                                             border rounded-lg outline-none transition-all duration-200
-                                            ${focusedInput === 'currentPassword' 
-                                                ? 'border-blue-600 ring-1 ring-blue-600' 
+                                            ${focusedInput === 'currentPassword'
+                                                ? 'border-blue-600 ring-1 ring-blue-600'
                                                 : 'border-gray-300 hover:border-gray-400'
                                             }
                                         `}
-                                        placeholder="Enter your current password"
+                                        placeholder="Nhập mật khẩu hiện tại"
                                         required
                                     />
                                     <button
@@ -85,13 +85,13 @@ export const ChangePassword = () => {
                                 </div>
                             </div>
 
-                            {/* New Password */}
+                            {/* Mật khẩu mới */}
                             <div className='space-y-2'>
                                 <label
                                     htmlFor="newPassword"
                                     className='block text-sm font-medium text-gray-700'
                                 >
-                                    New Password
+                                    Mật khẩu mới
                                 </label>
                                 <div className='relative'>
                                     <div className={`
@@ -110,12 +110,12 @@ export const ChangePassword = () => {
                                         className={`
                                             w-full pl-12 pr-12 py-3 text-gray-900 text-base
                                             border rounded-lg outline-none transition-all duration-200
-                                            ${focusedInput === 'newPassword' 
-                                                ? 'border-blue-600 ring-1 ring-blue-600' 
+                                            ${focusedInput === 'newPassword'
+                                                ? 'border-blue-600 ring-1 ring-blue-600'
                                                 : 'border-gray-300 hover:border-gray-400'
                                             }
                                         `}
-                                        placeholder="Enter your new password"
+                                        placeholder="Nhập mật khẩu mới"
                                         required
                                     />
                                     <button
@@ -128,13 +128,13 @@ export const ChangePassword = () => {
                                 </div>
                             </div>
 
-                            {/* Confirm Password */}
+                            {/* Xác nhận mật khẩu */}
                             <div className='space-y-2'>
                                 <label
                                     htmlFor="confirmPassword"
                                     className='block text-sm font-medium text-gray-700'
                                 >
-                                    Confirm New Password
+                                    Xác nhận mật khẩu mới
                                 </label>
                                 <div className='relative'>
                                     <div className={`
@@ -153,12 +153,12 @@ export const ChangePassword = () => {
                                         className={`
                                             w-full pl-12 pr-12 py-3 text-gray-900 text-base
                                             border rounded-lg outline-none transition-all duration-200
-                                            ${focusedInput === 'confirmPassword' 
-                                                ? 'border-blue-600 ring-1 ring-blue-600' 
+                                            ${focusedInput === 'confirmPassword'
+                                                ? 'border-blue-600 ring-1 ring-blue-600'
                                                 : 'border-gray-300 hover:border-gray-400'
                                             }
                                         `}
-                                        placeholder="Confirm your new password"
+                                        placeholder="Nhập lại mật khẩu mới"
                                         required
                                     />
                                     <button
@@ -180,7 +180,7 @@ export const ChangePassword = () => {
                             {loading ? (
                                 <TbLoader2 className='animate-spin h-5 w-5' />
                             ) : (
-                                'Change Password'
+                                'Đổi mật khẩu'
                             )}
                         </button>
                     </form>
@@ -189,5 +189,3 @@ export const ChangePassword = () => {
         </>
     )
 }
-
-

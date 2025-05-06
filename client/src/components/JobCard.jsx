@@ -49,7 +49,7 @@ export const JobCard = ({ job }) => {
                             <button className='shrink-0 blueCol text-white text-sm font-semibold 
                                 px-5 py-2.5 rounded-full border-2 border-transparent
                                 hover:scale-105 transition-all duration-300 shadow-sm'>
-                                Apply
+                                Ứng tuyển
                             </button>
                         </div>
 
@@ -71,7 +71,7 @@ export const JobCard = ({ job }) => {
                             <span className='inline-flex bg-neutral-50 text-neutral-700 
                                 rounded-full px-4 py-1.5 border-2 border-neutral-100
                                 group-hover:border-neutral-200 transition-colors duration-300'>
-                                {job.exp}
+                                {job.experience}
                             </span>
                             <span className='inline-flex bg-neutral-50 text-neutral-700 
                                 rounded-full px-4 py-1.5 border-2 border-neutral-100
@@ -88,7 +88,7 @@ export const JobCard = ({ job }) => {
                         {/* Footer */}
                         <div className='pt-4 border-t-2 border-neutral-100'>
                             <p className='text-neutral-500 text-sm font-medium'>
-                                Posted: {convertDateFormat(job.createdAt.substr(0, 10))}
+                                Đăng vào ngày: {convertDateFormat(job.createdAt.substr(0, 10))}
                             </p>
                         </div>
                     </div>

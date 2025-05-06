@@ -85,7 +85,7 @@ export const EditProfile = () => {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+      toast.error('Vui lòng chọn một file ảnh');
       e.target.value = '';
       return;
     }
@@ -107,7 +107,7 @@ export const EditProfile = () => {
     e.preventDefault();
     
     if (!formData.avatar || !formData.resume) {
-      toast.error('Please select both profile picture and resume');
+      toast.error('Vui lòng chọn cả ảnh đại diện và hồ sơ');
       return;
     }
 

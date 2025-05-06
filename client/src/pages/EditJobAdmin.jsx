@@ -92,7 +92,7 @@ export const EditJobAdmin = () => {
         }
 
         if(logo.includes("cloudinary")){
-            toast.info("Please select new logo !")
+            toast.info("Vui lòng chọn logo mới !")
         }
         else{
             const updatedData = {

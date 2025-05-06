@@ -37,7 +37,7 @@ function Testimonials() {
             Đánh Giá Người Dùng
           </h2>
           <div className="flex items-center justify-center gap-2">
-            <div className="w-[500px] h-1 bg-primary-600 rounded-full" />
+            <div className="w-[300px] h-1 bg-primary-600 rounded-full" />
           </div>
         </div>
 

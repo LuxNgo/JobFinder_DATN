@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useIsMobile from '../hooks/useIsMobile';
 
-// Icons
+// Biểu tượng
 import { MdOutlineBusinessCenter, MdOutlineDashboard, MdDoneAll } from 'react-icons/md';
 import { FaUserCircle, FaSave } from 'react-icons/fa';
 import { RiLogoutBoxFill } from 'react-icons/ri';
@@ -24,7 +24,7 @@ export const Navbar = () => {
     const isMobile = useIsMobile();
     const location = useLocation();
 
-    // Handle scroll effect
+    // Xử lý hiệu ứng cuộn
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
@@ -33,7 +33,7 @@ export const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Close mobile menu on route change
+    // Đóng menu mobile khi đổi trang
     useEffect(() => {
         setToggle(false);
     }, [location]);
@@ -43,15 +43,16 @@ export const Navbar = () => {
         localStorage.removeItem('role');
         dispatch(logOrNot());
         navigate('/');
-        toast.success("Logout Successful!");
+        toast.success("Đăng xuất thành công!");
         dispatch(logoutClearState());
     };
 
     const navLinks = [
-        { path: '/', label: 'Home' },
-        { path: '/jobs', label: 'Jobs' },
-        { path: '/contact', label: 'Contact' },
-        { path: '/about', label: 'About' }
+        { path: '/', label: 'Trang chủ' },
+        { path: '/jobs', label: 'Việc làm' },
+        {path: 'cv-builder', label: 'Viết CV'},
+        { path: '/contact', label: 'Liên hệ' },
+        { path: '/about', label: 'Giới thiệu' }
     ];
 
     const isActivePath = (path) => location.pathname === path;
@@ -73,7 +74,7 @@ export const Navbar = () => {
                         </span>
                     </Link>
 
-                    {/* Desktop Navigation */}
+                    {/* Menu desktop */}
                     {!isMobile && (
                         <div className="flex items-center gap-8">
                             {navLinks.map((link) => (
@@ -93,7 +94,7 @@ export const Navbar = () => {
                         </div>
                     )}
 
-                    {/* Auth Section */}
+                    {/* Khu vực xác thực */}
                     <div className="flex items-center gap-4">
                         {isLogin ? (
                             <Menu 
@@ -110,7 +111,7 @@ export const Navbar = () => {
                                             radius="xl" 
                                             size={40}
                                             src={me.avatar.url} 
-                                            alt="Profile"
+                                            alt="Hồ sơ"
                                         />
                                         {!isMobile && (
                                             <span className="text-text-primary font-medium">
@@ -127,7 +128,7 @@ export const Navbar = () => {
                                         icon={<FaUserCircle size={16} className="text-primary-600" />}
                                         className="p-2 hover:bg-neutral-50 rounded-lg"
                                     >
-                                        My Profile
+                                        Hồ sơ của tôi
                                     </Menu.Item>
                                     {me.role === "admin" && (
                                         <Menu.Item 
@@ -136,7 +137,7 @@ export const Navbar = () => {
                                             icon={<MdOutlineDashboard size={16} className="text-primary-600" />}
                                             className="p-2 hover:bg-neutral-50 rounded-lg"
                                         >
-                                            Dashboard
+                                            Quản trị
                                         </Menu.Item>
                                     )}
                                     <Menu.Item 
@@ -145,7 +146,7 @@ export const Navbar = () => {
                                         icon={<MdDoneAll size={16} className="text-primary-600" />}
                                         className="p-2 hover:bg-neutral-50 rounded-lg"
                                     >
-                                        Applied Jobs
+                                        Việc đã ứng tuyển
                                     </Menu.Item>
                                     <Menu.Item 
                                         component={Link} 
@@ -153,7 +154,7 @@ export const Navbar = () => {
                                         icon={<FaSave size={16} className="text-primary-600" />}
                                         className="p-2 hover:bg-neutral-50 rounded-lg"
                                     >
-                                        Saved Jobs
+                                        Việc đã lưu
                                     </Menu.Item>
                                     <Menu.Divider className="my-2" />
                                     <Menu.Item 
@@ -161,7 +162,7 @@ export const Navbar = () => {
                                         icon={<RiLogoutBoxFill size={16} className="text-destructive" />}
                                         className="p-2 hover:bg-destructive/5 rounded-lg text-destructive"
                                     >
-                                        Logout
+                                        Đăng xuất
                                     </Menu.Item>
                                 </Menu.Dropdown>
                             </Menu>
@@ -171,23 +172,23 @@ export const Navbar = () => {
                                     to="/login"
                                     className="px-4 py-2 text-primary-600 hover:bg-primary-500/5 rounded-lg transition-all duration-300"
                                 >
-                                    Login
+                                    Đăng nhập
                                 </Link>
                                 <Link 
                                     to="/register"
                                     className="px-4 py-2 bg-gradient-primary text-white rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105"
                                 >
-                                    Register
+                                    Đăng ký
                                 </Link>
                             </div>
                         )}
 
-                        {/* Mobile Menu Button */}
+                        {/* Nút menu mobile */}
                         {isMobile && (
                             <button
                                 onClick={() => setToggle(!toggle)}
                                 className="p-2 hover:bg-neutral-50 rounded-lg transition-colors duration-300"
-                                aria-label="Toggle menu"
+                                aria-label="Bật/tắt menu"
                             >
                                 {toggle ? (
                                     <HiX size={24} className="text-text-primary" />
@@ -200,7 +201,7 @@ export const Navbar = () => {
                 </div>
             </nav>
 
-            {/* Mobile Menu */}
+            {/* Menu mobile */}
             {isMobile && (
                 <div 
                     className={`fixed inset-0 top-[68px] bg-white/90 backdrop-blur-sm transform transition-transform duration-300 ease-in-out ${
@@ -228,7 +229,4 @@ export const Navbar = () => {
             )}
         </header>
     );
-}
-
-
-
+};
