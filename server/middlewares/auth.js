@@ -17,36 +17,45 @@ exports.createToken = (id, email) => {
 
 
 
-exports.isAuthenticated = (req, res, next) => {
-    try{    
-        const token = req.headers.authorization?.split(' ')[1]
-               
-        
-        if(!token){
+exports.isAuthenticated = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
             return res.status(401).json({
                 success: false,
                 isLogin: false,
                 message: "Missing Token"
-            })
+            });
         }
 
-        jwt.verify(token, process.env.JWT_SECRET, async(err, user)=>{
-            if(err){
-                return res.status(400).json({
+        const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader;
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await User.findById(decoded.id);
+            
+            if (!user) {
+                return res.status(401).json({
                     success: false,
                     isLogin: false,
-                    message: err.message
-                })
+                    message: "User not found"
+                });
             }
-            req.user = await User.findById(user.id)
-            next()
-        })
-
-    }catch(err){
+            
+            req.user = user;
+            next();
+        } catch (err) {
+            return res.status(401).json({
+                success: false,
+                isLogin: false,
+                message: "Invalid or expired token"
+            });
+        }
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
-        })
+        });
     }
 }
 

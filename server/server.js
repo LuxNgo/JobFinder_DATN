@@ -1,9 +1,29 @@
 const app = require('./app')
 const databaseConnection = require('./config/database')
-const cloudinary = require('cloudinary')
+const cloudinary  = require('cloudinary')
 const dotenv = require('dotenv')
 
+// Load environment variables first
+dotenv.config({ path: './.env' })
+
+// Configure Cloudinary first
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
 try {
+    console.log('Environment variables loaded successfully');
+    console.log('Environment Variables:', {
+        NODE_ENV: process.env.NODE_ENV,
+        PORT: process.env.PORT,
+        MONGODB_URI: process.env.MONGODB_URI,
+        CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+        CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+        CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET
+    });
+
     // Test Cloudinary connection
     try {
         cloudinary.v2.api.resource('sample', (err, result) => {
