@@ -26,6 +26,7 @@ const Job = require('./routes/JobRoutes')
 const Application = require('./routes/ApplicationRoutes')
 const Admin = require('./routes/AdminRoutes')
 const CV = require('./routes/CVRoutes')
+const Stats = require('./routes/StatsRoutes')
 const { errorMiddleware } = require('./middlewares/error')
 
 app.use("/api/v1",User)
@@ -33,6 +34,7 @@ app.use("/api/v1",Job)
 app.use("/api/v1",Application)
 app.use("/api/v1",Admin)
 app.use("/api/v1",CV)
+app.use("/api/v1",Stats)
 
 app.get("/",(req,res)=>{
     res.json("I am working")

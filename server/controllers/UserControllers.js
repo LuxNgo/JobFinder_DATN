@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt')
 const { createToken } = require('../middlewares/auth')
 const cloudinary = require('cloudinary')
 
-
 exports.register = async (req, res) => {
     try {
 
