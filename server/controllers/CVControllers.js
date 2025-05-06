@@ -2,6 +2,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const fs = require('fs').promises;
 const path = require('path');
 const puppeteer = require('puppeteer');
+const Handlebars = require('handlebars');
 const LRU = require('lru-cache');
 const rateLimit = require('express-rate-limit');
 
@@ -29,10 +30,10 @@ const apiLimiter = rateLimit({
 
 // CV Templates
 const CV_TEMPLATES = {
-  modern: 'modern-template.html',
-  traditional: 'traditional-template.html',
-  creative: 'creative-template.html',
-  minimal: 'minimal-template.html'
+  professional: 'professional-template.html',
+  elegant: 'elegant-template.html',
+  bold: 'bold-template.html',
+  techy: 'techy-template.html'
 };
 
 // CV Sections
@@ -49,36 +50,71 @@ const CV_SECTIONS = [
 
 const generatePDF = async (req, res) => {
   try {
-    const { cvData, selectedTemplate } = req.body;
-    
-    // Validate request
-    if (!cvData || !selectedTemplate) {
-      return res.status(400).json({ message: 'CV data and template are required' });
+    console.log('Request body:', req.body);
+    const { cvData, template } = req.body;
+
+    // Validate input
+    if (!cvData || !template) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request',
+        details: 'Both cvData and template are required',
+      });
     }
 
-    // Get template file path
-    const templatePath = path.join(__dirname, '..', 'templates', CV_TEMPLATES[selectedTemplate]);
-    if (!fs.existsSync(templatePath)) {
-      return res.status(404).json({ message: 'Template not found' });
+    if (!CV_TEMPLATES[template]) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid template',
+        details: `Template '${template}' is not supported.`,
+      });
     }
 
-    // Read template file
-    const template = await fs.readFile(templatePath, 'utf8');
+    // Load template HTML file
+    const templatePath = path.join(__dirname, '..', 'templates', CV_TEMPLATES[template]);
+    const htmlTemplate = await fs.readFile(templatePath, 'utf-8');
 
-    // Replace template variables with CV data
-    let renderedHTML = template;
-    CV_SECTIONS.forEach(section => {
-      const sectionData = cvData[section] || '';
-      renderedHTML = renderedHTML.replace(`{{${section}}}`, sectionData);
-    });
+    // Compile template with Handlebars
+    const compiledTemplate = Handlebars.compile(htmlTemplate);
 
-    // Generate PDF using puppeteer
+    // Prepare CV data
+    const transformedData = {
+      personalInfo: {
+        fullName: cvData.personalInfo?.fullName || 'N/A',
+        email: cvData.personalInfo?.email || 'N/A',
+        phone: cvData.personalInfo?.phone || 'N/A',
+        location: cvData.personalInfo?.location || 'N/A',
+        summary: cvData.personalInfo?.summary || '',
+      },
+      experience: cvData.experiences?.map(exp => ({
+        title: exp.title || 'N/A',
+        organization: exp.organization || 'N/A',
+        startDate: exp.startDate || 'N/A',
+        endDate: exp.endDate || 'Hiện tại',
+        description: exp.description || '',
+      })) || [],
+      education: cvData.education?.map(edu => ({
+        degree: edu.degree || 'N/A',
+        institution: edu.institution || 'N/A',
+        startDate: edu.startDate || 'N/A',
+        endDate: edu.endDate || 'Hiện tại',
+      })) || [],
+      skills: cvData.skills || [],
+    };
+
+    // Render HTML with data
+    const renderedHTML = compiledTemplate(transformedData);
+
+    // Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      headless: true,
     });
+
     const page = await browser.newPage();
-    await page.setContent(renderedHTML);
-    
+    await page.setViewport({ width: 1200, height: 1600 });
+    await page.setContent(renderedHTML, { waitUntil: 'networkidle0' });
+
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -86,20 +122,26 @@ const generatePDF = async (req, res) => {
         top: '1cm',
         right: '1cm',
         bottom: '1cm',
-        left: '1cm'
-      }
+        left: '1cm',
+      },
     });
 
     await browser.close();
 
-    // Send PDF as response
+    // Send PDF response
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="CV.pdf"');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${cvData.personalInfo?.fullName || 'CV'}.pdf"`
+    );
     res.send(pdf);
-
   } catch (error) {
     console.error('Error generating PDF:', error);
-    res.status(500).json({ message: 'Error generating PDF' });
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+      details: error.message,
+    });
   }
 };
 

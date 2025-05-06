@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            margin: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #00bcd4;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .contact-info {
+            color: #006064;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            border: 1px solid #e0f7fa;
+        }
+        .section h2 {
+            color: #006064;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .experience-item, .education-item {
+            margin-bottom: 20px;
+        }
+        .experience-item h3, .education-item h3 {
+            color: #263238;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .skills {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .skill {
+            background-color: #00bcd4;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    ${personal_info}
+    
+    ${career_objective ? `
+    <div class="section">
+        <h2>Mục Tiêu Nghề Nghiệp</h2>
+        <p>${career_objective}</p>
+    </div>
+    ` : ''}
+
+    ${work_experience ? `
+    <div class="section">
+        <h2>Kinh Nghiệm Làm Việc</h2>
+        ${work_experience}
+    </div>
+    ` : ''}
+
+    ${education ? `
+    <div class="section">
+        <h2>Học Vấn</h2>
+        ${education}
+    </div>
+    ` : ''}
+
+    ${skills ? `
+    <div class="section">
+        <h2>Kỹ Năng</h2>
+        ${skills}
+    </div>
+    ` : ''}
+</body>
+</html>
