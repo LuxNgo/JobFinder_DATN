@@ -5,6 +5,7 @@ import { BsBriefcase } from 'react-icons/bs'
 import { AiOutlineUser } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import { motion } from "framer-motion"
+import { useLocation } from 'react-router-dom'
 
 
 export const Sidebar = ({sideTog}) => {
@@ -18,64 +19,70 @@ export const Sidebar = ({sideTog}) => {
         },
     };
 
+    const location = useLocation();
+
     return (
         <>
-
-
-           
-
-          
             <motion.div
-            className={`${sideTog ? "flex" : "hidden"} flex-col bg-gray-950 min-h-screen md:w-72 w-64 shadow-lg shadow-gray-700 border-r border-gray-800 z-10 fixed left-0`}
-            variants={sidebarVariants}
-            initial="hidden"
-            animate={sideTog ? "visible" : "hidden"}
-            transition={{ duration: 0.1, ease: "easeIn" }}  
-        >
+                className={`fixed left-0 top-0 min-h-screen w-64 md:w-72 bg-white border-r border-gray-200 shadow-sm z-10 transition-all duration-300 ${sideTog ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+                initial={{ x: '-100%' }}
+                animate={{ x: sideTog ? 0 : '-100%' }}
+                transition={{ duration: 0.3 }}
+            >
 
-                <div className='text-center w-full pt-8 text-xl '>
-                    {/* <p className='underline underline-offset-8'>Dashboard</p> */}
+                <div className='flex flex-col items-center justify-center py-8'>
+                    <div className='rounded-full bg-blue-50 p-2 mb-4'>
+                        <MdOutlineDashboard className='text-blue-500' size={32} />
+                    </div>
+                    <h1 className='text-2xl font-semibold text-gray-800'>Admin Dashboard</h1>
+                    <p className='text-sm text-gray-500'>Quản lý platform</p>
                 </div>
 
-                <div className='flex justify-center  md:pl-12 pl-3 flex-col gap-14 items-start pt-20'>
+                <div className='flex flex-col gap-4 px-4'>
 
-                    <div className='flex justify-center gap-2 items-center'>
-                        <Link  to="/admin/dashboard" className='flex blueCol px-4 py-1 justify-center gap-2 items-center'> <MdOutlineDashboard size={20} />Dashboard</Link>
-                    </div>
-
-                    <div className='flex justify-center gap-2 items-center'>
-                        <Link  to="/admin/postJob" className='flex blueCol px-4 py-1 justify-center gap-2 items-center'> <MdOutlineCreateNewFolder size={20} /> Post Job</Link>
-                    </div>
-
-                    <div className='flex justify-center gap-2 items-center'>
-                        <Link  to="/admin/allJobs" className='flex blueCol px-4 py-1 justify-center gap-2 items-center'>
-                            <BsBriefcase size={20} />View All Jobs
+                    {[
+                        {
+                            title: 'Dashboard',
+                            icon: <MdOutlineDashboard size={20} className='text-blue-500' />,
+                            path: '/admin/dashboard'
+                        },
+                        {
+                            title: 'Đăng tin',
+                            icon: <MdOutlineCreateNewFolder size={20} className='text-green-500' />,
+                            path: '/admin/postJob'
+                        },
+                        {
+                            title: 'Quản lý tin',
+                            icon: <BsBriefcase size={20} className='text-purple-500' />,
+                            path: '/admin/allJobs'
+                        },
+                        {
+                            title: 'Ứng tuyển',
+                            icon: <MdOutlineFeaturedPlayList size={20} className='text-yellow-500' />,
+                            path: '/admin/allApplications'
+                        },
+                        {
+                            title: 'Người dùng',
+                            icon: <AiOutlineUser size={20} className='text-pink-500' />,
+                            path: '/admin/allUsers'
+                        }
+                    ].map((item, index) => (
+                        <Link
+                            key={index}
+                            to={item.path}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                                location.pathname === item.path 
+                                    ? 'bg-blue-50 text-blue-600' 
+                                    : 'hover:bg-gray-50 text-gray-700'
+                            }`}
+                        >
+                            {item.icon}
+                            <span>{item.title}</span>
                         </Link>
-                    </div>
-                    <div className='flex justify-center gap-2 items-center'>
-                        <Link  to="/admin/allApplications" className='flex blueCol px-4 py-1 justify-center gap-2 items-center'>
-                            <MdOutlineFeaturedPlayList size={20} />
-
-                            View All Applications </Link></div>
-
-                    <div className='flex justify-center gap-2 items-center'>
-
-                        <Link to="/admin/allUsers" className='flex blueCol px-4 py-1 justify-center gap-2 items-center'>
-                            <AiOutlineUser size={20} />View All Users
-                        </Link>
-                    </div>
+                    ))}
 
                 </div>
-                </motion.div>
-
-
-
+            </motion.div>
         </>
-
-
-
-
-
-
     )
 }

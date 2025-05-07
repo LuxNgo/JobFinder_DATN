@@ -185,7 +185,6 @@ export const updateUser = (id,userData) => async (dispatch) => {
         const {data} = await axios.put(`${API_BASE_URL}/api/v1/admin/updateUser/${id}`,userData,config)
 
         dispatch(getUserData(id)) ;
-        toast.success("Role Updated Successfully !")
         dispatch(updateUserSuccess())
 
     }catch(err){

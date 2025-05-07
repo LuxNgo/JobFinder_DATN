@@ -7,87 +7,124 @@ import { toast } from 'react-toastify'
 import { getUserData, updateUser } from '../actions/AdminActions'
 import { Sidebar } from '../components/Sidebar'
 import { RxCross1 } from 'react-icons/rx'
+import { motion } from 'framer-motion'
+import { HiOutlineSparkles } from 'react-icons/hi'
+import { MdOutlinePerson } from 'react-icons/md'
 
+
+const SelectField = ({ icon: Icon, ...props }) => (
+  <motion.div 
+    className='bg-white flex items-center gap-3 px-4 py-3 rounded-xl border border-blue-200 shadow-sm transition-all duration-300 hover:shadow-md'
+  >
+    <div className='text-blue-500'>
+      <Icon size={20} />
+    </div>
+    <select 
+      {...props} 
+      className='outline-none w-full text-gray-900 px-1 py-2 placeholder:text-gray-400 placeholder:font-medium transition-all duration-200'
+    />
+  </motion.div>
+);
 
 export const EditUserAdmin = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const { loading, userData } = useSelector(state => state.admin)
+  const [role, setRole] = useState("not");
+  const [sideTog, setSideTog] = useState(false)
 
-    const { id } = useParams();
+  useEffect(() => {
+    dispatch(getUserData(id));
+  }, [])
 
-    const dispatch = useDispatch();
-
-    const { loading, userData } = useSelector(state => state.admin)
-
-    const [role, setRole] = useState("not");
-    const [sideTog, setSideTog] = useState(false)
-
-
-    const updateRolehandler = () => {
-        if (role === "not") {
-            toast.info("Vui lòng chọn vai trò !")
-        }
-        else {
-            dispatch(updateUser(id,{role}))
-            setRole("not") ;
+  const updateRolehandler = () => {
+    if (role === "not") {
+      toast.info("Vui lòng chọn vai trò !")
+    }else {
+        if (userData.role === "admin") {
+            toast.info("Admin không thể thay đổi vai trò của mình !")
+        }else{
+            // Normalize role to lowercase before sending to server
+            const normalizedRole = role.toLowerCase()
+            dispatch(updateUser(id, { role: normalizedRole }))
+            setRole("not")
+            toast.success("Vai trò đã được cập nhật")
         }
     }
-
-
-    useEffect(() => {
-        dispatch(getUserData(id));
-    }, [])
-
+  }
 
     return (
         <>
-            <MetaData title="Edit User Role" />
-            <div className='bg-gray-950 min-h-screen pt-14 md:px-20 px-3 text-white'>
-                {
-                    loading ? <Loader /> :
-
-                        <div>
-                            <div className="pt-1 fixed left-0 z-20 pl-0">
-                                <div onClick={(() => setSideTog(!sideTog))} className='cursor-pointer blueCol px-3 py-2' size={44} >
-                                    {!sideTog ? "Menu" : <RxCross1 />}
-                                </div>
+            <MetaData title="Cập nhật vai trò người dùng" />
+            <div className='bg-gradient-to-br from-blue-50 via-white to-blue-50 min-h-screen pt-14 md:px-20 px-3 text-gray-900'>
+                {loading ? (
+                    <div className="flex justify-center items-center min-h-screen">
+                        <Loader />
+                    </div>
+                ) : (
+                    <div>
+                        <div className="pt-1 fixed left-0 z-20 pl-0">
+                            <div 
+                                onClick={() => setSideTog(!sideTog)} 
+                                className='cursor-pointer px-3 py-2 rounded-lg bg-white hover:bg-blue-100 transition-colors duration-300 shadow-sm'
+                            >
+                                {!sideTog ? "Menu" : <RxCross1 />}
                             </div>
-
-                            <Sidebar sideTog={sideTog} />
-                            <div className='flex flex-col gap-3 md:px-0 px-3  justify-center items-center md:pt-20 pt-28'>
-
-                                <div className='py-4 md:w-1/3 w-full  px-5 shadow-sm shadow-gray-700 border-gray-700 border'>
-                                    <div className='flex gap-3 border-b border-gray-700  pb-3 text-2xl justify-center items-center'>
-                                       <div className='font-semibold'>Update User</div>
-                                    </div>
-                                    <div className='flex gap-3  pt-3 py-2 text-xl justify-start items-center'>
-                                        <div>Name:</div>
-                                        <div>{userData.name}</div>
-                                    </div>
-                                    <div className='flex gap-3   py-2 text-xl justify-start items-center'>
-                                        <div>Email:</div>
-                                        <div>{userData.email}</div>
-                                    </div>
-                                    <div className='flex gap-3 border-b border-gray-700 py-2 text-xl justify-start items-center'>
-                                        <div>Role:</div>
-                                        <div>{userData.role}</div>
-                                    </div>
-                                    <div className='flex gap-3  pt-4 py-2 text-sm justify-start items-center'>
-                                        <select onChange={(e) => setRole(e.target.value)} id="large" className="block w-full px-6 py-2 text-base  border  bg-gray-900 border-gray-600 placeholder-gray-400 text-white ">
-                                            <option value="not" selected>Select Status</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="applicant">Applicant</option>
-                                        </select>
-                                    </div>
-                                    <div className='flex gap-3 font-semibold  py-2 text-sm '>
-                                        <button onClick={() => updateRolehandler()} className='blueCol px-6 w-full py-2'>Update Role</button>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
-                }
+
+                        <Sidebar sideTog={sideTog} />
+                        
+                        <div className='flex flex-col w-full justify-center items-center gap-6 pt-20'>
+                            <div className='flex items-center justify-center gap-2 mb-6'>
+                                <HiOutlineSparkles className='text-blue-500 text-3xl animate-pulse' />
+                                <h2 className='text-3xl font-bold text-blue-700 uppercase'>Cập nhật vai trò người dùng</h2>
+                            </div>
+                            
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 w-full'>
+                                <div className='bg-white rounded-xl p-6 shadow-sm border border-blue-200'>
+                                    <div className='text-xl font-semibold mb-4'>Thông tin người dùng</div>
+                                    <div className='flex flex-col gap-4'>
+                                        <div className='flex items-center justify-between'>
+                                            <span className='text-gray-600'>Tên:</span>
+                                            <span className='font-medium'>{userData.name}</span>
+                                        </div>
+                                        <div className='flex items-center justify-between'>
+                                            <span className='text-gray-600'>Email:</span>
+                                            <span className='font-medium'>{userData.email}</span>
+                                        </div>
+                                        <div className='flex items-center justify-between'>
+                                            <span className='text-gray-600'>Vai trò hiện tại:</span>
+                                            <span className='font-medium'>{userData.role}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='bg-white rounded-xl p-6 shadow-sm border border-blue-200'>
+                                    <div className='text-xl font-semibold mb-4'>Cập nhật vai trò</div>
+                                    <div className='flex flex-col gap-4'>
+                                        <SelectField
+                                            icon={MdOutlinePerson}
+                                            onChange={(e) => setRole(e.target.value)}
+                                            value={role}
+                                        >
+                                            <option value="not" selected>Chọn vai trò mới</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="recruiter">Recruiter</option>
+                                            <option value="applicant">Applicant</option>
+                                        </SelectField>
+                                        <button 
+                                            onClick={updateRolehandler}
+                                            className='w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300'
+                                        >
+                                            Cập nhật vai trò
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
-
-
         </>
     )
 }

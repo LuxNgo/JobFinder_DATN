@@ -35,7 +35,12 @@ export const Login = () => {
 
   useEffect(() => {
     if (isLogin) {
-      navigate("/")
+      const role = localStorage.getItem('role');
+      if (role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     }
   }, [isLogin])
 

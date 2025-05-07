@@ -10,7 +10,7 @@ export const BarChart = ({users=1,jobs,applications}) => {
     new Chart(ctx, {
       type: 'doughnut', 
       data: {
-        labels: ['Users', 'Jobs', 'Applications'],
+        labels: ['Người dùng', 'Công việc', 'Ứng tuyển'],
         datasets: [
           {
             label: 'Data',

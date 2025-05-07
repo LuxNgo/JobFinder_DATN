@@ -1,144 +1,309 @@
 import React, { useState, useEffect } from 'react'
 import { MetaData } from '../components/MetaData'
 import { Sidebar } from '../components/Sidebar'
-import { MdOutlineModeEditOutline } from 'react-icons/md'
-import { AiOutlineDelete } from 'react-icons/ai'
+import { MdOutlineModeEditOutline, MdOutlineSearch, MdOutlineAdd } from 'react-icons/md'
+import { AiOutlineDelete, AiOutlineFilter, AiOutlineCloudDownload } from 'react-icons/ai'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllJobsAdmin, deleteJobData } from '../actions/AdminActions'
 import { Loader } from '../components/Loader'
 import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
-
+import { motion } from 'framer-motion'
+import { toast } from 'react-toastify'
+import { HiOutlineSparkles } from 'react-icons/hi'
 
 export const ViewAllJobAdmin = () => {
-
   const dispatch = useDispatch();
   const { loading, allJobs } = useSelector((state) => state.admin)
   const [sideTog, setSideTog] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedFilter, setSelectedFilter] = useState('all')
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [selectedJob, setSelectedJob] = useState(null)
 
   useEffect(() => {
     dispatch(getAllJobsAdmin());
   }, [])
 
+  const filteredJobs = allJobs?.filter(job => {
+    const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         job.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         job.location.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    if (selectedFilter === 'all') return matchesSearch
+    return matchesSearch && job.status === selectedFilter
+  })
+
   const convertDateFormat = (inputDate) => {
-    const parts = inputDate.split('-');
-    if (parts.length !== 3) {
-      return "Invalid date format";
-    }
-
-    const day = parts[2];
-    const month = parts[1];
-    const year = parts[0];
-
-    return `${day}-${month}-${year}`;
+    const date = new Date(inputDate)
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
   }
 
 
-  const deleteJobHandler = (id) => {
-    dispatch(deleteJobData(id))
+  const deleteJobHandler = async (id) => {
+    try {
+      setIsDeleting(true)
+      await dispatch(deleteJobData(id))
+      toast.success('Job deleted successfully')
+    } catch (error) {
+      toast.error('Failed to delete job')
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
 
   return (
     <>
-
       <MetaData title="All Jobs" />
-      <div className='bg-gray-950 min-h-screen pt-14  md:px-20 px-3  text-white'>
-
+      <div className='bg-gradient-to-br from-blue-50 via-white to-blue-50 min-h-screen pt-14 md:px-20 px-3 text-gray-900'>
         <>
-
-          {loading ? <Loader /> :
+          {loading ? (
+            <div className="flex justify-center items-center min-h-screen">
+              <Loader />
+            </div>
+          ) : (
             <div>
-
               <div className="pt-1 fixed left-0 z-20 pl-0">
-                <div onClick={(() => setSideTog(!sideTog))} className='cursor-pointer blueCol px-3 py-2' size={44} >
+                <div 
+                  onClick={() => setSideTog(!sideTog)} 
+                  className='cursor-pointer px-3 py-2 rounded-lg bg-white hover:bg-blue-100 transition-colors duration-300 shadow-sm'
+                >
                   {!sideTog ? "Menu" : <RxCross1 />}
                 </div>
               </div>
 
               <Sidebar sideTog={sideTog} />
-              <div>
-                <p className='text-center pt-3 pb-4 text-3xl font-medium'>All Jobs</p>
+              
+              <div className="flex justify-between items-center mb-6 pt-14">
+                <div className="flex items-center gap-2">
+                  <HiOutlineSparkles className="text-blue-500 text-2xl" />
+                  <h1 className='text-3xl font-bold text-blue-700 uppercase'>Các tin tuyển dụng</h1>
+                </div>
+                <div className="flex gap-4">
+                  <div className="relative bg-white">
+                    <input
+                      type="text"
+                      placeholder="Tìm kiếm..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="bg-white text-gray-900 rounded-lg px-4 py-2 pr-10 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 border border-blue-200 shadow-sm"
+                    />
+                    <MdOutlineSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 transition-transform duration-300" />
+                  </div>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setIsFilterOpen(!isFilterOpen)}
+                      className="flex items-center gap-2 bg-white hover:bg-blue-50 rounded-lg px-4 py-2 transition-colors duration-300 border border-blue-200 shadow-sm text-blue-700 hover:text-blue-900"
+                    >
+                      <AiOutlineFilter className="text-blue-500" />
+                      <span>Bộ lọc</span>
+                    </button>
+                    <button 
+                      onClick={() => console.log('Exporting...')}
+                      className="flex items-center gap-2 bg-blue-500 text-white rounded-lg px-4 py-2 transition-colors duration-300 hover:bg-blue-600 shadow-sm"
+                    >
+                      <AiOutlineCloudDownload className="text-white" />
+                      <span>Xuất file</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div className="relative pb-24 overflow-x-auto shadow-md ">
+              {isFilterOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="bg-white p-4 rounded-xl mb-6 shadow-lg border border-blue-200"
+                >
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-lg font-semibold text-blue-700">Filter Jobs</h3>
+                      <button 
+                        onClick={() => setIsFilterOpen(false)}
+                        className="text-blue-500 hover:text-blue-700 transition-colors duration-300"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-2">Status</label>
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            onClick={() => setSelectedFilter('all')}
+                            className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+                              selectedFilter === 'all' 
+                                ? 'bg-blue-500 text-white' 
+                                : 'bg-white hover:bg-blue-50 text-blue-700 border border-blue-200'
+                            }`}
+                          >
+                            All
+                          </button>
+                          <button
+                            onClick={() => setSelectedFilter('active')}
+                            className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+                              selectedFilter === 'active' 
+                                ? 'bg-green-500 text-white' 
+                                : 'bg-white hover:bg-blue-50 text-blue-700 border border-blue-200'
+                            }`}
+                          >
+                            Active
+                          </button>
+                          <button
+                            onClick={() => setSelectedFilter('inactive')}
+                            className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+                              selectedFilter === 'inactive' 
+                                ? 'bg-red-500 text-white' 
+                                : 'bg-white hover:bg-blue-50 text-blue-700 border border-blue-200'
+                            }`}
+                          >
+                            Inactive
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
-
-                <table className="w-full  text-sm text-left text-gray-500 dark:text-gray-400">
-
-                  <thead className="text-xs text-gray-200 uppercase blueCol dark:text-gray-200">
-                    <tr>
-                      <th scope="col" className="px-6 py-3">
-                        Job Id
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Job Name
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Company
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Location
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Posted On
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-
-                    {allJobs && allJobs.filter(job => job._id)
-                      .sort((a, b) => {
-                        const dateA = new Date(a.createdAt);
-                        const dateB = new Date(b.createdAt);
-                        return dateB - dateA;
-                      }).map((job, i) => ( 
-                        <tr className=" border-b hover:bg-gray-900 bg-gray-950 border-gray-700 text-white">
-                          <th scope="row" className="px-6 py-4 font-medium  whitespace-nowrap ">
-                            {job._id}
-                          </th>
-                          <td className="px-6 py-4">
-                            {job.title}
-                          </td>
-                          <td className="px-6 py-4">
-                            {job.companyName}
-                          </td>
-                          <td className="px-6 py-4">
-                            {job.location}
-                          </td>
-                          <td className="px-6 py-4">
-                            {convertDateFormat(job.createdAt.substr(0, 10))}
-                          </td>
-                          <td className="px-6 flex gap-4 py-4">
-                            <Link to={`/admin/job/details/${job._id}`} className='text-blue-500 hover:text-blue-400 cursor-pointer'>
-                              <MdOutlineModeEditOutline size={20} />
-                            </Link>
-
-                            <span className='text-red-500 hover:text-red-400 cursor-pointer'>
-                              <AiOutlineDelete onClick={()=> deleteJobHandler(job._id)} size={20} />
-                            </span>
+              <div className="relative overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-50 via-white to-blue-50 opacity-5"></div>
+                <div className="relative overflow-x-auto">
+                  <table className="w-full text-sm text-left text-gray-700">
+                    <thead className="text-xs text-gray-800 uppercase bg-blue-200">
+                      <tr>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="flex items-center gap-2 text-blue-700">
+                            <span>ID</span>
+                          </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="flex items-center gap-2 text-blue-700">
+                            <span>Tên Công Việc</span>
+                          </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="flex items-center gap-2 text-blue-700">
+                            <span>Công ty</span>
+                          </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="flex items-center gap-2 text-blue-700">
+                            <span>Địa chỉ</span>
+                          </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="flex items-center gap-2 text-blue-700">
+                            <span>Ngày Đăng</span>
+                          </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="flex items-center gap-2 text-blue-700">
+                            <span>Status</span>
+                          </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="flex items-center gap-2 text-blue-700">
+                            <span>Thao Tác</span>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredJobs?.length === 0 ? (
+                        <tr>
+                          <td colSpan="7" className="text-center py-8 text-blue-500">
+                            <div className="flex flex-col items-center justify-center gap-4">
+                              <div className="text-4xl text-blue-400">
+                                <MdOutlineSearch />
+                              </div>
+                              <p className="text-lg">No jobs found matching your search criteria</p>
+                              <p className="text-gray-500">Try adjusting your filters or search terms</p>
+                            </div>
                           </td>
                         </tr>
-                      ))
-
-                    }
-
-                  </tbody>
-                </table>
-
-
+                      ) : (
+                        filteredJobs?.map((job, i) => (
+                          <motion.tr
+                            key={job._id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="border-b border-blue-200 bg-white hover:bg-blue-50 transition-colors duration-300"
+                          >
+                            <th scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
+                              {job._id}
+                            </th>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-blue-700">{job.title}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <span>{job.companyName}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <span>{job.location}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <span>{convertDateFormat(job.createdAt)}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-1 rounded-full text-xs ${
+                                  job.status === 'active' ? 'bg-blue-500 text-white' : 
+                                  job.status === 'inactive' ? 'bg-red-500 text-white' : 'bg-gray-500 text-white'
+                                }`}>
+                                  {job.status}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex gap-3">
+                                <Link 
+                                  to={`/admin/job/details/${job._id}`} 
+                                  className='text-blue-500 hover:text-blue-700 transition-colors duration-300 cursor-pointer'
+                                >
+                                  <div className="flex items-center gap-1">
+                                    <MdOutlineModeEditOutline size={20} />
+                                    <span className="text-sm">Edit</span>
+                                  </div>
+                                </Link>
+                                <button
+                                  onClick={() => deleteJobHandler(job._id)}
+                                  className={`text-red-500 hover:text-red-600 transition-colors duration-300 cursor-pointer ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                  disabled={isDeleting}
+                                >
+                                  <div className="flex items-center gap-1">
+                                    <AiOutlineDelete size={20} />
+                                    <span className="text-sm">Delete</span>
+                                  </div>
+                                </button>
+                              </div>
+                            </td>
+                          </motion.tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-
-
-            </div>}
+            </div>
+          )}
         </>
-
       </div>
-
-
     </>
   )
 }
