@@ -6,6 +6,7 @@ import {createApplicationRequest , createApplicationSuccess, createApplicationFa
     
 import {me} from '../actions/UserActions'
 import {toast} from 'react-toastify'
+import { API_BASE_URL } from '../config/api.config'
 
 export const createApplication = (id) => async (dispatch) =>{
     try{
@@ -18,11 +19,14 @@ export const createApplication = (id) => async (dispatch) =>{
         }
 
 
-        const { data } = await axios.post(`https://joblane-backend.onrender.com/api/v1/createApplication/${id}`,config,config) ;
+        const { data } = await axios.post(`${API_BASE_URL}/createApplication/${id}`, {}, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('userToken')}`
+            }
+        });
         
         console.log(data)
         dispatch(createApplicationSuccess())
-        toast.success("Applied Successfully")   
         dispatch(me())
 
     }catch(err){
@@ -44,7 +48,7 @@ export const getAppliedJob = () => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get("https://joblane-backend.onrender.com/api/v1/getAllApplication",config) ;
+        const {data} = await axios.get(`${API_BASE_URL}/getAllApplication`,config) ;
 
         dispatch(allAppliedJobsSuccess(data.allApplications))
 
@@ -65,7 +69,7 @@ export const getSingleApplication = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.get(`https://joblane-backend.onrender.com/api/v1/singleApplication/${id}`,config) ;
+        const {data} = await axios.get(`${API_BASE_URL}/singleApplication/${id}`,config) ;
 
         dispatch(applicationDetailsSuccess(data.application))
 
@@ -85,13 +89,13 @@ export const deleteApplication = (id) => async (dispatch) => {
             } 
         }
 
-        const {data} = await axios.delete(`https://joblane-backend.onrender.com/api/v1/deleteApplication/${id}`,config)
+        const {data} = await axios.delete(`${API_BASE_URL}/deleteApplication/${id}`,config)
 
         dispatch(deleteApplicationSuccess())
         dispatch(getAppliedJob())
         dispatch(me())
         
-        toast.success("Application Deleted Successfully !") 
+        toast.success("Đơn xóa thành công !") 
 
     }catch(err){
         dispatch(deleteApplicationFail(err.response.data.message))

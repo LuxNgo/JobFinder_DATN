@@ -10,6 +10,8 @@ import { HiStatusOnline } from 'react-icons/hi';
 import { BsPersonWorkspace, BsSend } from 'react-icons/bs';
 import { TbLoader2 } from 'react-icons/tb';
 import { toast } from 'react-toastify';
+import { FaArrowLeft } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export const JobDetails = () => {
   const dispatch = useDispatch();
@@ -48,8 +50,17 @@ export const JobDetails = () => {
           <Loader />
         ) : (
           <>
+          {/* Back Button */}
+            
             {jobDetails && (
               <div className='max-w-4xl mx-auto my-10'>
+                <Link 
+                to="/jobs" 
+                className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
+            >
+                <FaArrowLeft className='mr-2' />
+                Back to Jobs
+            </Link> 
                 <div className='bg-white shadow-lg rounded-lg p-6 mb-8'>
                   <div className='flex flex-col md:flex-row gap-6 items-start md:items-center'>
                     <div className='w-24 h-24 md:w-32 md:h-32 flex items-center justify-center bg-gray-50 rounded-lg p-2'>

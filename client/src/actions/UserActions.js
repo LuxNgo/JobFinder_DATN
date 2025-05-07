@@ -18,12 +18,12 @@ export const registerUser = (userData) => async (dispatch) => {
         dispatch(registerSuccess())
         localStorage.setItem('userToken', data.token)
         dispatch(logOrNot())
-        toast.success("Registration successful !")
+        toast.success("Đăng ký thành công !")
 
     } catch (err) {
         dispatch(registerFail(err.response.data.message))
         if (err.response.data.message.includes("duplicate")) {
-            toast.error("User already exists.")
+            toast.error("Người dùng đã tồn tại")
         } else {
             toast.error(err.response.data.message)
         }

@@ -32,8 +32,8 @@ export const getAllJobsAdmin = () => async (dispatch) => {
         dispatch(getAllJobsSuccess(data.jobs))
 
     }catch(err){
-        dispatch(getAllJobsFail(err.response?.data?.message || 'Failed to fetch jobs')) ;
-        toast.error(err.response?.data?.message || 'Failed to fetch jobs')
+        dispatch(getAllJobsFail(err.response?.data?.message || 'Lỗi khi lấy dữ liệu công việc')) ;
+        toast.error(err.response?.data?.message || 'Lỗi khi lấy dữ liệu công việc')
     }
 }
 
@@ -52,8 +52,8 @@ export const getAllUsersAdmin = () => async (dispatch) => {
         dispatch(getAllUsersSuccess(data.users))
 
     }catch(err){
-        dispatch(getAllUsersFail(err.response?.data?.message || 'Failed to fetch users')) ;
-        toast.error(err.response?.data?.message || 'Failed to fetch users')
+        dispatch(getAllUsersFail(err.response?.data?.message || 'Lỗi khi lấy dữ liệu users')) ;
+        toast.error(err.response?.data?.message || 'Lỗi khi lấy dữ liệu users')
     }
 }
 
@@ -72,8 +72,8 @@ export const getAllAppAdmin = () => async (dispatch) => {
         dispatch(getAllAppSuccess(data.applications))
 
     }catch(err){
-        dispatch(getAllAppFail(err.response?.data?.message || 'Failed to fetch applications')) ;
-        toast.error(err.response?.data?.message || 'Failed to fetch applications')
+        dispatch(getAllAppFail(err.response?.data?.message || 'Lỗi khi lấy dữ liệu')) ;
+        toast.error(err.response?.data?.message || 'Lỗi khi lấy dữ liệu')
     }
 }
 
@@ -92,8 +92,8 @@ export const getAppData = (id) => async (dispatch) => {
         dispatch(getAppSuccess(data.application))
 
     }catch(err){
-        dispatch(getAppFail(err.response?.data?.message || 'Failed to fetch application'))
-        toast.error(err.response?.data?.message || 'Failed to fetch application')
+        dispatch(getAppFail(err.response?.data?.message || 'Lỗi khi lấy dữ liệu'))
+        toast.error(err.response?.data?.message || 'Lỗi khi lấy dữ liệu')
     }
 }
 
@@ -101,7 +101,7 @@ export const updateApplication = (id,dataBody) => async (dispatch) => {
     try{    
         console.log(dataBody.status)
         if(dataBody.status === "not"){
-            toast.info("Please Select Status !")
+            toast.info("Lựa chọn trạng thái !")
         }else{
          dispatch(updateAppRequest())    
 
@@ -116,12 +116,12 @@ export const updateApplication = (id,dataBody) => async (dispatch) => {
         
          dispatch(updateAppSuccess())
          dispatch(getAppData(id))
-         toast.success("Status Updated !") 
+         toast.success("Trạng thái được cập nhật !") 
         }
         
     }catch(err){
-        dispatch(updateAppFail(err.response?.data?.message || 'Failed to update application'))
-        toast.error(err.response?.data?.message || 'Failed to update application')
+        dispatch(updateAppFail(err.response?.data?.message || 'Lỗi khi cập nhật dữ liệu'))
+        toast.error(err.response?.data?.message || 'Lỗi khi cập nhật dữ liệu')
     }
 }  
 
@@ -141,11 +141,11 @@ export const deleteApp = (id) => async (dispatch) => {
         
         dispatch(getAllAppAdmin()) 
         dispatch(deleteAppSuccess())
-        toast.success("Application Deleted !")
+        toast.success("Đơn xóa thành công!")
 
     }catch(err){
-        dispatch(deleteAppFail(err.response?.data?.message || 'Failed to delete application'))
-        toast.error(err.response?.data?.message || 'Failed to delete application')
+        dispatch(deleteAppFail(err.response?.data?.message || 'Lỗi khi xóa dữ liệu'))
+        toast.error(err.response?.data?.message || 'Lỗi khi xóa dữ liệu')
     }
 }
 
@@ -166,8 +166,8 @@ export const getUserData = (id) => async (dispatch) => {
         dispatch(getUserSuccess(data.user))
 
     }catch(err){
-        dispatch(getUserFail(err.response?.data?.message || 'Failed to fetch user')) ;
-        toast.error(err.response?.data?.message || 'Failed to fetch user')
+        dispatch(getUserFail(err.response?.data?.message || 'Lỗi khi lấy dữ liệu user')) ;
+        toast.error(err.response?.data?.message || 'Lỗi khi lấy dữ liệu user')
     }
 } 
 
@@ -188,8 +188,8 @@ export const updateUser = (id,userData) => async (dispatch) => {
         dispatch(updateUserSuccess())
 
     }catch(err){
-        dispatch(updateUserFail(err.response?.data?.message || 'Failed to update user'))
-        toast.error(err.response?.data?.message || 'Failed to update user')
+        dispatch(updateUserFail(err.response?.data?.message || 'Lỗi khi cập nhật dữ liệu user'))
+        toast.error(err.response?.data?.message || 'Lỗi khi cập nhật dữ liệu user')
     }
 }
 
@@ -207,12 +207,12 @@ export const deleteUser = (id) => async (dispatch) => {
         const {data} = await axios.delete(`${API_BASE_URL}/api/v1/admin/deleteUser/${id}`,config)
 
         dispatch(getAllUsersAdmin()) ;
-        toast.success("User Deleted Successfully !")
+        toast.success("Xóa user thành công !")
         dispatch(deleteUserSuccess())
 
     }catch(err){
-        dispatch(deleteUserFail(err.response?.data?.message || 'Failed to delete user'))
-        toast.error(err.response?.data?.message || 'Failed to delete user')
+        dispatch(deleteUserFail(err.response?.data?.message || 'Lỗi khi xóa dữ liệu user'))
+        toast.error(err.response?.data?.message || 'Lỗi khi xóa dữ liệu user')
     }
 }
 
@@ -232,8 +232,8 @@ export const getJobData = (id) => async (dispatch) => {
         dispatch(getJobSuccess(data.job))
 
     }catch(err){    
-        dispatch(getJobFail(err.response?.data?.message || 'Failed to fetch job')) ;
-        toast.error(err.response?.data?.message || 'Failed to fetch job')
+        dispatch(getJobFail(err.response?.data?.message || 'Lỗi khi lấy dữ liệu job')) ;
+        toast.error(err.response?.data?.message || 'Lỗi khi lấy dữ liệu job')
     }
 }
 
@@ -252,11 +252,11 @@ export const updateJobData = (id,jobData) => async (dispatch) => {
         dispatch(updateJobSuccess())
         dispatch(getAllJobsAdmin())
         dispatch(getJobData(id)) 
-        toast.success("Job Updated Successfully !")
+        toast.success("Cập nhật công việc thành công !")
 
     }catch(err){    
-        dispatch(updateJobFail(err.response?.data?.message || 'Failed to update job')) ;
-        toast.error(err.response?.data?.message || 'Failed to update job')
+        dispatch(updateJobFail(err.response?.data?.message || 'Lỗi khi cập nhật dữ liệu job')) ;
+        toast.error(err.response?.data?.message || 'Lỗi khi cập nhật dữ liệu job')
     }
 }
 
@@ -275,10 +275,10 @@ export const deleteJobData = (id) => async (dispatch) => {
 
         dispatch(deleteJobSuccess())
         dispatch(getAllJobsAdmin())
-        toast.success("Job Deleted Successfully !")
+        toast.success("Xóa công việc thành công !")
 
     }catch(err){    
-        dispatch(deleteJobFail(err.response?.data?.message || 'Failed to delete job')) ;
-        toast.error(err.response?.data?.message || 'Failed to delete job')
+        dispatch(deleteJobFail(err.response?.data?.message || 'Lỗi khi xóa dữ liệu job')) ;
+        toast.error(err.response?.data?.message || 'Lỗi khi xóa dữ liệu job')
     }
 }

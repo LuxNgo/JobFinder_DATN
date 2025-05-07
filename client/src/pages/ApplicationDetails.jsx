@@ -85,27 +85,27 @@ export const ApplicationDetails = () => {
                                     <div className='mb-8'>
                                         <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
                                             <FaBriefcase className='mr-2' />
-                                            Job Details
+                                            Chi tiết công việc
                                         </h2>
                                         <div className='bg-gray-50 rounded-lg p-6 space-y-3'>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaSuitcase className='mr-2' />
-                                                <span className='font-medium w-24'>Role:</span>
+                                                <span className='font-medium w-24'>Vị trí:</span>
                                                 <span>{applicationDetails?.job?.title}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaBuilding className='mr-2' />
-                                                <span className='font-medium w-24'>Company:</span>
+                                                <span className='font-medium w-24'>Công ty:</span>
                                                 <span>{applicationDetails?.job?.companyName}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaMapMarkerAlt className='mr-2' />
-                                                <span className='font-medium w-24'>Location:</span>
+                                                <span className='font-medium w-24'>Địa chỉ:</span>
                                                 <span>{applicationDetails?.job?.location}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaGraduationCap className='mr-2' />
-                                                <span className='font-medium w-24'>Experience:</span>
+                                                <span className='font-medium w-24'>Kinh nghiệm:</span>
                                                 <span>{applicationDetails?.job?.experience}</span>
                                             </div>
                                         </div>
@@ -115,12 +115,12 @@ export const ApplicationDetails = () => {
                                     <div className='mb-8'>
                                         <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
                                             <FaUser className='mr-2' />
-                                            Applicant Details
+                                            Chi tiết người ứng tuyển
                                         </h2>
                                         <div className='bg-gray-50 rounded-lg p-6 space-y-3'>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaUser className='mr-2' />
-                                                <span className='font-medium w-24'>Name:</span>
+                                                <span className='font-medium w-24'>Tên:</span>
                                                 <span>{applicationDetails?.applicant?.name}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
@@ -130,7 +130,7 @@ export const ApplicationDetails = () => {
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaFileAlt className='mr-2' />
-                                                <span className='font-medium w-24'>Resume:</span>
+                                                <span className='font-medium w-24'>Hồ sơ:</span>
                                                 <Link 
                                                     to={applicationDetails?.applicantResume?.url} 
                                                     target="_blank"
@@ -147,11 +147,11 @@ export const ApplicationDetails = () => {
                                     <div className='mb-8'>
                                         <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
                                             <FaClock className='mr-2' />
-                                            Application Timeline
+                                            Lịch sử ứng tuyển
                                         </h2>
                                         <div className='bg-gray-50 rounded-lg p-6'>
                                             <div className='flex items-center text-gray-700'>
-                                                <span className='font-medium'>Created:</span>
+                                                <span className='font-medium'>Tạo:</span>
                                                 <span className='ml-2'>
                                                     {formatDateTime(applicationDetails?.createdAt).date} at {formatDateTime(applicationDetails?.createdAt).time}
                                                 </span>
@@ -171,7 +171,7 @@ export const ApplicationDetails = () => {
                                             ) : (
                                                 <>
                                                     <FaTrash className='mr-2' />
-                                                    Delete Application
+                                                    Xóa đơn
                                                 </>
                                             )}
                                         </button>

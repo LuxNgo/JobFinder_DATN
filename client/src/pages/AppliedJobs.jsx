@@ -44,9 +44,9 @@ export const AppliedJobs = () => {
                 <div className='max-w-7xl mx-auto mt-10'>
                     {/* Header */}
                     <div className='mb-8'>
-                        <h1 className='text-3xl font-bold text-gray-900'>My Applications</h1>
+                        <h1 className='text-3xl font-bold text-gray-900'>Danh sách đơn ứng tuyển</h1>
                         <p className='mt-2 text-sm text-gray-600'>
-                            Track and manage your job applications
+                            Theo dõi và quản lý đơn ứng tuyển của bạn
                         </p>
                     </div>
 
@@ -54,12 +54,12 @@ export const AppliedJobs = () => {
                         <Loader />
                     ) : appliedJobs.length === 0 ? (
                         <div className='text-center py-12'>
-                            <div className='text-gray-500 mb-4'>No applications found</div>
+                            <div className='text-gray-500 mb-4'>Không tìm thấy đơn ứng tuyển</div>
                             <Link 
                                 to="/jobs" 
                                 className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700'
                             >
-                                Browse Jobs
+                                Tìm kiếm công việc
                             </Link>
                         </div>
                     ) : (
@@ -89,11 +89,11 @@ export const AppliedJobs = () => {
                                             </div>
                                             <div className='flex items-center text-gray-600'>
                                                 <FaMoneyBillWave className='mr-2' />
-                                                ₹{application.job.salary}
+                                                {application.job.salary}
                                             </div>
                                             <div className='flex items-center text-gray-600'>
                                                 <FaClock className='mr-2' />
-                                                Applied on {formatDate(application.createdAt)}
+                                                Đã ứng tuyển vào {formatDate(application.createdAt)}
                                             </div>
                                         </div>
 
@@ -110,7 +110,7 @@ export const AppliedJobs = () => {
                                                 to={`/Application/Details/${application._id}`}
                                                 className='inline-flex items-center text-blue-600 hover:text-blue-800'
                                             >
-                                                View Details
+                                                Xem chi tiết
                                                 <FaExternalLinkAlt className='ml-2' />
                                             </Link>
                                             <button
@@ -118,7 +118,7 @@ export const AppliedJobs = () => {
                                                 className='inline-flex items-center text-red-600 hover:text-red-800'
                                             >
                                                 <FaTrash className='mr-2' />
-                                                Delete
+                                                Xóa
                                             </button>
                                         </div>
                                     </div>

@@ -46,7 +46,7 @@ export const JobCard = ({ job }) => {
                                     {job.companyName}
                                 </p>
                             </div>
-                            <button className='shrink-0 blueCol text-white text-sm font-semibold 
+                            <button className='shrink-0 bg-blue-400 hover:bg-blue-600 text-white text-sm font-semibold 
                                 px-5 py-2.5 rounded-full border-2 border-transparent
                                 hover:scale-105 transition-all duration-300 shadow-sm'>
                                 Ứng tuyển
