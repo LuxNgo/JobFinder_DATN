@@ -109,7 +109,7 @@ exports.saveJob = async (req, res) => {
 
             res.status(200).json({
                 success: true,
-                message: "Job UnSaved"
+                message: "Đã xóa công việc"
             })
 
         } else {
@@ -118,7 +118,7 @@ exports.saveJob = async (req, res) => {
             await user.save();
             res.status(200).json({
                 success: true,
-                message: "Job saved"
+                message: "Đã lưu công việc"
             })
         }
 

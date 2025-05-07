@@ -1,6 +1,6 @@
 const Job = require('../models/JobModel')
 const User = require('../models/UserModel')
-const Application = require('../models/AppModel')
+const Application = require('../models/ApplicationModel')
 
 const mongoose = require('mongoose')
 
@@ -15,26 +15,21 @@ exports.createApplication = async (req, res) => {
         if (user.appliedJobs.includes(job._id)) {
             return res.status(400).json({
                 success: false,
-                message: "you are already applied"
+                message: "Bạn đã đăng ký công việc này rồi"
             })
         }
 
-        const application = await Application.create(
-            {
-                job: job._id,
-                applicant: user._id,
-                applicantResume: {
-                    public_id: user.resume.public_id,
-                    url: user.resume.url
-                }
-            }
-        )
+        const application = await Application.create({
+            jobId: job._id,
+            applicant: user._id,
+            status: 'pending'
+        });
         user.appliedJobs.push(job._id)
         await user.save();
 
         res.status(200).json({
             success: true,
-            message: "Application created",
+            message: "Đăng ký thành công",
             application
         })
 
