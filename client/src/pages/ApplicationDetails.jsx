@@ -7,12 +7,15 @@ import { getSingleApplication, deleteApplication } from '../actions/ApplicationA
 import { Link, useNavigate } from 'react-router-dom'
 import { TbLoader2 } from 'react-icons/tb'
 import { FaBuilding, FaMapMarkerAlt, FaBriefcase, FaUser, FaEnvelope, FaFileAlt, FaClock, FaTrash, FaArrowLeft, FaSuitcase, FaGraduationCap } from 'react-icons/fa'
+import { useDisclosure } from '@mantine/hooks'
+import { Modal } from '@mantine/core'
 
 export const ApplicationDetails = () => {
-    const { applicationDetails, loading } = useSelector(state => state.application)
+    const { loading, applicationDetails } = useSelector(state => state.application)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { id } = useParams()
+    const [opened, { open, close }] = useDisclosure(false)
 
     const deleteApplicationHandler = () => {
         dispatch(deleteApplication(id))
@@ -21,7 +24,7 @@ export const ApplicationDetails = () => {
 
     useEffect(() => {
         dispatch(getSingleApplication(id))
-    }, [])
+    }, [id])
 
     const getStatusColor = (status) => {
         switch (status?.toLowerCase()) {
@@ -90,23 +93,23 @@ export const ApplicationDetails = () => {
                                         <div className='bg-gray-50 rounded-lg p-6 space-y-3'>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaSuitcase className='mr-2' />
-                                                <span className='font-medium w-24'>Vị trí:</span>
-                                                <span>{applicationDetails?.job?.title}</span>
+                                                <span className='font-medium w-32'>Vị trí:</span>
+                                                <span>{applicationDetails?.jobTitle}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaBuilding className='mr-2' />
-                                                <span className='font-medium w-24'>Công ty:</span>
-                                                <span>{applicationDetails?.job?.companyName}</span>
+                                                <span className='font-medium w-32'>Công ty:</span>
+                                                <span>{applicationDetails?.jobCompany}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaMapMarkerAlt className='mr-2' />
-                                                <span className='font-medium w-24'>Địa chỉ:</span>
-                                                <span>{applicationDetails?.job?.location}</span>
+                                                <span className='font-medium w-32'>Địa chỉ:</span>
+                                                <span>{applicationDetails?.jobLocation}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaGraduationCap className='mr-2' />
-                                                <span className='font-medium w-24'>Kinh nghiệm:</span>
-                                                <span>{applicationDetails?.job?.experience}</span>
+                                                <span className='font-medium w-32'>Kinh nghiệm:</span>
+                                                <span>{applicationDetails?.jobExperience}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -120,25 +123,23 @@ export const ApplicationDetails = () => {
                                         <div className='bg-gray-50 rounded-lg p-6 space-y-3'>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaUser className='mr-2' />
-                                                <span className='font-medium w-24'>Tên:</span>
-                                                <span>{applicationDetails?.applicant?.name}</span>
+                                                <span className='font-medium w-32'>Tên:</span>
+                                                <span>{applicationDetails?.applicantName}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaEnvelope className='mr-2' />
-                                                <span className='font-medium w-24'>Email:</span>
-                                                <span>{applicationDetails?.applicant?.email}</span>
+                                                <span className='font-medium w-32'>Email:</span>
+                                                <span>{applicationDetails?.applicantEmail}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <FaFileAlt className='mr-2' />
-                                                <span className='font-medium w-24'>Hồ sơ:</span>
-                                                <Link 
-                                                    to={applicationDetails?.applicantResume?.url} 
-                                                    target="_blank"
-                                                    rel="noreferrer" 
-                                                    className='text-blue-600 hover:text-blue-800 underline'
+                                                <span className='font-medium w-32'>Hồ sơ:</span>
+                                                <button
+                                                    onClick={open}
+                                                    className='flex items-center text-blue-400 hover:text-blue-700 underline transition-colors'
                                                 >
                                                     View Resume
-                                                </Link>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -178,7 +179,17 @@ export const ApplicationDetails = () => {
                                     </div>
                                 </div>
                             </div>
+                            <Modal
+                            opened={opened}
+                            onClose={close}
+                            title="Xem CV"
+                            size="xl"
+                            centered
+                            >
+                                <img src={applicationDetails?.applicantResume.url} alt="CV" />
+                            </Modal>
                         </>
+                        
                     )}
                 </div>
             </div>

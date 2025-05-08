@@ -110,14 +110,14 @@ export const AppliedJobs = () => {
                                         {/* Actions */}
                                         <div className='flex justify-between items-center mt-4 pt-4 border-t border-gray-200'>
                                             <Link 
-                                                to={`/Application/Details/${application.jobId}`}
+                                                to={`/Application/Details/${application._id}`}
                                                 className='inline-flex items-center text-blue-600 hover:text-blue-800'
                                             >
                                                 Xem chi tiết
                                                 <FaExternalLinkAlt className='ml-2' />
                                             </Link>
                                             <button
-                                                onClick={() => handleDelete(application.jobId)}
+                                                onClick={() => handleDelete(application._id)}
                                                 className='inline-flex items-center text-red-600 hover:text-red-800'
                                             >
                                                 <FaTrash className='mr-2' />
