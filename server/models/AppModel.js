@@ -22,6 +22,10 @@ const ApplicationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    jobSalary: {
+        type: String,
+        required: true
+    },
     applicantId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -32,8 +36,14 @@ const ApplicationSchema = new mongoose.Schema({
         required: true
     },
     applicantResume: {
-        type: String,
-        required: true
+        public_id: {
+            type: String,
+            required: false
+        },
+        url: {
+            type: String,
+            required: false
+        },
     },
     applicantEmail: {
         type: String,

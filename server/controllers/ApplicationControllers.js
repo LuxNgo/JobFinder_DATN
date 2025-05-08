@@ -64,7 +64,7 @@ exports.createApplication = async (req, res) => {
 // Get a single application
 exports.getSingleApplication = async (req, res) => {
     try {
-        const application = await Application.findById(req.params.id).populate('job applicant');
+        const application = await Application.findById(req.params.id);
 
         res.status(200).json({
             success: true,
@@ -111,7 +111,7 @@ exports.deleteApplication = async (req, res) => {
         }
 
         // Remove jobId from user's appliedJobs array
-        const user = await User.findById(application.applicant);
+        const user = await User.findById(application.applicantId);
         if (user) {
             user.appliedJobs = user.appliedJobs.filter(id => id.toString() !== application.jobId.toString());
             await user.save();
