@@ -111,7 +111,6 @@ function App() {
           }
         >
           <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/postJob" element={<CreateJob />} />
           <Route path="/admin/allJobs" element={<ViewAllJobAdmin />} />
           <Route path="/admin/allApplications" element={<ViewAllAppli />} />
           <Route path="/admin/allUsers" element={<ViewAllUsersAdmin />} />

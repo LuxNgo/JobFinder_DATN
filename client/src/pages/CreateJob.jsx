@@ -144,7 +144,6 @@ export const CreateJob = () => {
                       <input
                         id="logo"
                         name="logo"
-                        required
                         onChange={logoChange}
                         accept="image/*"
                         type="file"
