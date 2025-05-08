@@ -11,7 +11,7 @@ import { AiOutlineUser } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export const Sidebar = () => {
+export const SidebarRecruiter = () => {
   const [sideTog, setSideTog] = useState(false);
   const sidebarVariants = {
     hidden: {
@@ -55,21 +55,31 @@ export const Sidebar = () => {
             <p className="text-2xl font-bold text-blue-600 uppercase">
               JobFinder
             </p>
-            <p className="text-sm text-gray-600">Admin Dashboard</p>
+            <p className="text-sm text-gray-600">Recruiter Dashboard</p>
           </div>
         </div>
 
         <nav className="flex flex-col gap-2 mt-8 px-4">
           <div className="flex flex-col gap-2">
             <Link
-              to="/admin/dashboard"
+              to="/recruiter/dashboard"
               className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-50 transition-all duration-200 text-gray-800 font-medium hover:text-blue-600 hover:shadow-sm"
             >
               <MdOutlineDashboard className="text-blue-600" size={20} />
               Dashboard
             </Link>
             <Link
-              to="/admin/allJobs"
+              to="/recruiter/postJob"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-50 transition-all duration-200 text-gray-800 font-medium hover:text-blue-600 hover:shadow-sm"
+            >
+              <MdOutlineCreateNewFolder
+                className="text-blue-600 transition-colors duration-200"
+                size={20}
+              />
+              Đăng tuyển
+            </Link>
+            <Link
+              to="/recruiter/allJobs"
               className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-50 transition-all duration-200 text-gray-800 font-medium hover:text-blue-600 hover:shadow-sm"
             >
               <BsBriefcase
@@ -79,7 +89,7 @@ export const Sidebar = () => {
               Xem tất cả công việc
             </Link>
             <Link
-              to="/admin/allApplications"
+              to="/recruiter/allApplications"
               className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-50 transition-all duration-200 text-gray-800 font-medium hover:text-blue-600 hover:shadow-sm"
             >
               <MdOutlineFeaturedPlayList
@@ -87,16 +97,6 @@ export const Sidebar = () => {
                 size={20}
               />
               Xem các đơn ứng tuyển
-            </Link>
-            <Link
-              to="/admin/allUsers"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-50 transition-all duration-200 text-gray-800 font-medium hover:text-blue-600 hover:shadow-sm"
-            >
-              <AiOutlineUser
-                className="text-blue-600 transition-colors duration-200"
-                size={20}
-              />
-              Xem tất cả người dùng
             </Link>
           </div>
         </nav>

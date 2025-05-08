@@ -18,6 +18,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import { InputField, TextAreaField } from "./EditJobAdmin";
 import { motion } from "framer-motion";
 import { Loader } from "../components/Loader";
+import { SidebarRecruiter } from "../components/SidebarRecruiter";
 
 export const CreateJob = () => {
   const { loading } = useSelector((state) => state.job);
@@ -87,7 +88,7 @@ export const CreateJob = () => {
           <Loader />
         ) : (
           <div>
-            <Sidebar />
+            <SidebarRecruiter />
             <div className=" flex justify-center w-full items-start pt-6 pb-10">
               <form
                 onSubmit={postHandler}

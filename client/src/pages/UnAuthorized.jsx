@@ -1,25 +1,28 @@
 import { Link } from "react-router-dom";
 
 function UnAuthorized() {
-
-    return (
-        <main className="flex flex-col md:flex-col xl:flex-row w-100 px-4 py-20 sm:px-6 md:px-8 lg:px-10 bg-black">
-            <div className="flex flex-col justify-center items-center px-4 py-20 md:px-8 lg:px-2 text-gray-700 w-full">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl mb-4 text-white">
-                    401 - Unauthorized!
-                </h1>
-                <p className="text-base items-center sm:text-lg md:text-xl mt-8 mb-10 text-center text-white w-full max-w-[900px]">
-                    Sorry, Looks like you have attempted to access a page for which you are not authorized! Try login as a different user or go back to the home page. 
-                </p>
-                <Link to="/">
-                    <button className="w-40 text-white font-semibold px-4 py-2 blueCol rounded bg-grey md:text-sm text-xs mb-10">
-                        Go to Home
-                    </button>
-                </Link>
-            </div>
-
-        </main>
-    )
+  return (
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white px-6 py-20">
+      <div className="text-center">
+        <h1 className="text-6xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
+          401
+        </h1>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-4">
+          Truy cập không được ủy quyền
+        </h2>
+        <p className="text-lg sm:text-xl md:text-2xl mb-10 max-w-2xl mx-auto">
+          Rất tiếc, bạn đã cố gắng truy cập một trang mà bạn không được ủy
+          quyền. Vui lòng đăng nhập với một người dùng khác hoặc quay lại trang
+          chủ.
+        </p>
+        <Link to="/">
+          <button className="text-lg font-medium px-8 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 hover:from-red-500 hover:to-orange-500 transition-all duration-300 ease-in-out text-white">
+            Trở về trang chủ
+          </button>
+        </Link>
+      </div>
+    </main>
+  );
 }
 
 export default UnAuthorized;

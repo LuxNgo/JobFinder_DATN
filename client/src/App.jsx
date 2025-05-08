@@ -1,41 +1,42 @@
-import { useEffect } from 'react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { Navbar } from './components/Navbar';
-import { Footer } from './components/Footer';
-import { Jobs } from './pages/Jobs';
-import { Contact } from './pages/Contact';
-import { About } from './pages/About';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { MyProfile } from './pages/MyProfile';
-import { AppliedJobs } from './pages/AppliedJobs';
-import { SavedJobs } from './pages/SavedJobs';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { JobDetails } from './pages/JobDetails';
-import { ChangePassword } from './pages/ChangePassword';
-import { useSelector, useDispatch } from 'react-redux';
-import { logOrNot, me } from './actions/UserActions';
-import { EditProfile } from './pages/EditProfile';
-import { DeleteAccount } from './pages/DeleteAccount';
-import { Dashboard } from './pages/Dashboard';
-import { CreateJob } from './pages/CreateJob';
-import { getAllJobs } from './actions/JobActions';
-import { JobsLayout } from './pages/JobsLayout';
-import { Application } from './pages/Application';
-import { ApplicationDetails } from './pages/ApplicationDetails';
-import { ViewAllJobAdmin } from './pages/VIewAllJobAdmin';
-import { ViewAllAppli } from './pages/ViewAllAppli';
-import { ViewAllUsersAdmin } from './pages/ViewAllUsersAdmin';
-import { EditAppAdmin } from './pages/EditAppAdmin';
-import { EditUserAdmin } from './pages/EditUserAdmin';
-import { EditJobAdmin } from './pages/EditJobAdmin';
-import { Test } from './pages/Test';
-import NotFound from './pages/NotFound';
-import UnAuthorized from './pages/UnAuthorized';
-import ScrollToTopWhenRouteChanges from './components/ScrollToTopOnRouteChange';
-import CVBuilder from './pages/CVBuilder';
+import { useEffect } from "react";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Home } from "./pages/Home";
+import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/Footer";
+import { Jobs } from "./pages/Jobs";
+import { Contact } from "./pages/Contact";
+import { About } from "./pages/About";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { MyProfile } from "./pages/MyProfile";
+import { AppliedJobs } from "./pages/AppliedJobs";
+import { SavedJobs } from "./pages/SavedJobs";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+import { JobDetails } from "./pages/JobDetails";
+import { ChangePassword } from "./pages/ChangePassword";
+import { useSelector, useDispatch } from "react-redux";
+import { logOrNot, me } from "./actions/UserActions";
+import { EditProfile } from "./pages/EditProfile";
+import { DeleteAccount } from "./pages/DeleteAccount";
+import { Dashboard } from "./pages/Dashboard";
+import { CreateJob } from "./pages/CreateJob";
+import { getAllJobs } from "./actions/JobActions";
+import { JobsLayout } from "./pages/JobsLayout";
+import { Application } from "./pages/Application";
+import { ApplicationDetails } from "./pages/ApplicationDetails";
+import { ViewAllJobAdmin } from "./pages/VIewAllJobAdmin";
+import { ViewAllAppli } from "./pages/ViewAllAppli";
+import { ViewAllUsersAdmin } from "./pages/ViewAllUsersAdmin";
+import { EditAppAdmin } from "./pages/EditAppAdmin";
+import { EditUserAdmin } from "./pages/EditUserAdmin";
+import { EditJobAdmin } from "./pages/EditJobAdmin";
+import { Test } from "./pages/Test";
+import NotFound from "./pages/NotFound";
+import UnAuthorized from "./pages/UnAuthorized";
+import ScrollToTopWhenRouteChanges from "./components/ScrollToTopOnRouteChange";
+import CVBuilder from "./pages/CVBuilder";
+import { DashboardRecruiter } from "./pages/DashboardRecruiter";
 
 function App() {
   const dispatch = useDispatch();
@@ -53,7 +54,11 @@ function App() {
     LogOrNot();
   }, []);
 
-  const ProtectedRoute = ({ isAllowed, redirectPath = '/unauthorized', children }) => {
+  const ProtectedRoute = ({
+    isAllowed,
+    redirectPath = "/unauthorized",
+    children,
+  }) => {
     if (!isAllowed) {
       return <Navigate to={redirectPath} replace />;
     }
@@ -75,7 +80,13 @@ function App() {
 
         {/* Protected Routes for Applicants, Admins, and Recruiters */}
         <Route
-          element={<ProtectedRoute isAllowed={['applicant', 'admin', 'recruiter'].includes(localStorage.getItem('role'))} />}
+          element={
+            <ProtectedRoute
+              isAllowed={["applicant", "admin", "recruiter"].includes(
+                localStorage.getItem("role")
+              )}
+            />
+          }
         >
           <Route path="/profile" element={<MyProfile />} />
           <Route path="/applied" element={<AppliedJobs />} />
@@ -85,25 +96,42 @@ function App() {
           <Route path="/deleteAccount" element={<DeleteAccount />} />
           <Route path="/JobsLayout" element={<JobsLayout />} />
           <Route path="/Application/:id" element={<Application />} />
-          <Route path="/Application/Details/:id" element={<ApplicationDetails />} />
+          <Route
+            path="/Application/Details/:id"
+            element={<ApplicationDetails />}
+          />
         </Route>
 
         {/* Protected Routes for Admin */}
-        <Route element={<ProtectedRoute isAllowed={['admin'].includes(localStorage.getItem('role'))} />}>
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={["admin"].includes(localStorage.getItem("role"))}
+            />
+          }
+        >
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/postJob" element={<CreateJob />} />
           <Route path="/admin/allJobs" element={<ViewAllJobAdmin />} />
           <Route path="/admin/allApplications" element={<ViewAllAppli />} />
           <Route path="/admin/allUsers" element={<ViewAllUsersAdmin />} />
-          <Route path="/admin/update/application/:id" element={<EditAppAdmin />} />
+          <Route
+            path="/admin/update/application/:id"
+            element={<EditAppAdmin />}
+          />
           <Route path="/admin/user/role/:id" element={<EditUserAdmin />} />
           <Route path="/admin/job/details/:id" element={<EditJobAdmin />} />
         </Route>
 
         {/* Protected Routes for Recruiters */}
         <Route
-          element={<ProtectedRoute isAllowed={['recruiter'].includes(localStorage.getItem('role'))} />}
+          element={
+            <ProtectedRoute
+              isAllowed={["recruiter"].includes(localStorage.getItem("role"))}
+            />
+          }
         >
+          <Route path="/recruiter/dashboard" element={<DashboardRecruiter />} />
           <Route path="/recruiter/postJob" element={<CreateJob />} />
         </Route>
 
