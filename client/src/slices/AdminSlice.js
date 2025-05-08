@@ -86,7 +86,7 @@ const AdminSlice = createSlice({
         },
         getAllAppFail: (state, action) => {
             state.loading = false
-            error = action.payload
+            state.error = action.payload
         },
 
         getAppRequest: (state) => {

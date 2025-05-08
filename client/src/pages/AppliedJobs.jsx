@@ -17,6 +17,9 @@ export const AppliedJobs = () => {
 
     const handleDelete = (id) => {
         dispatch(deleteApplication(id))
+        .then(() => {
+            dispatch(getAppliedJob())
+        })
     }
 
     const getStatusColor = (status) => {
@@ -73,11 +76,11 @@ export const AppliedJobs = () => {
                                         {/* Job Title and Company */}
                                         <div className='mb-4'>
                                             <h2 className='text-xl font-semibold text-gray-900 mb-1'>
-                                                {application.job.title}
+                                                {application.jobTitle}
                                             </h2>
                                             <div className='flex items-center text-gray-600'>
                                                 <FaBuilding className='mr-2' />
-                                                {application.job.companyName}
+                                                {application.jobCompany}
                                             </div>
                                         </div>
 
@@ -85,11 +88,11 @@ export const AppliedJobs = () => {
                                         <div className='space-y-2 mb-4'>
                                             <div className='flex items-center text-gray-600'>
                                                 <FaMapMarkerAlt className='mr-2' />
-                                                {application.job.location}
+                                                {application.jobLocation}
                                             </div>
                                             <div className='flex items-center text-gray-600'>
                                                 <FaMoneyBillWave className='mr-2' />
-                                                {application.job.salary}
+                                                {application.jobSalary}
                                             </div>
                                             <div className='flex items-center text-gray-600'>
                                                 <FaClock className='mr-2' />
@@ -107,14 +110,14 @@ export const AppliedJobs = () => {
                                         {/* Actions */}
                                         <div className='flex justify-between items-center mt-4 pt-4 border-t border-gray-200'>
                                             <Link 
-                                                to={`/Application/Details/${application._id}`}
+                                                to={`/Application/Details/${application.jobId}`}
                                                 className='inline-flex items-center text-blue-600 hover:text-blue-800'
                                             >
                                                 Xem chi tiết
                                                 <FaExternalLinkAlt className='ml-2' />
                                             </Link>
                                             <button
-                                                onClick={() => handleDelete(application._id)}
+                                                onClick={() => handleDelete(application.jobId)}
                                                 className='inline-flex items-center text-red-600 hover:text-red-800'
                                             >
                                                 <FaTrash className='mr-2' />

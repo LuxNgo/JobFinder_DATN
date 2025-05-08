@@ -108,8 +108,9 @@ export const ViewAllAppli = () => {
                   {allApplications && allApplications
                     .filter(app => 
                       app._id && 
-                      (app.job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                       app.applicant.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                      app.jobTitle && app.applicantName &&
+                      (app.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       app.applicantName.toLowerCase().includes(searchQuery.toLowerCase()))
                     )
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     .map((app, i) => (
@@ -118,10 +119,10 @@ export const ViewAllAppli = () => {
                           {app._id}
                         </th>
                         <td className="px-6 py-4">
-                          {app.job.title}
+                          {app.jobTitle}
                         </td>
                         <td className="px-6 py-4">
-                          {app.applicant.name}
+                          {app.applicantName}
                         </td>
                         <td className={`px-6 py-4 ${
                           app.status === "pending" ? "text-blue-500" : 
@@ -141,14 +142,14 @@ export const ViewAllAppli = () => {
                             className='text-blue-500 hover:text-blue-400 cursor-pointer flex items-center gap-2'
                           >
                             <MdOutlineModeEditOutline size={20} />
-                            <span>Cập nhật</span>
+                            <span>Edit</span>
                           </Link>
                           <button 
                             onClick={() => deleteApplication(app._id)}
                             className='text-red-500 hover:text-red-400 cursor-pointer flex items-center gap-2'
                           >
                             <AiOutlineDelete size={20} />
-                            <span>Xóa</span>
+                            <span>Delete</span>
                           </button>
                         </td>
                       </tr>

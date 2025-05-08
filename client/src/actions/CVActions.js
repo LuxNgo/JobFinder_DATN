@@ -96,7 +96,7 @@ export const generateCV = (cvData, template) => async (dispatch) => {
     try {
         const token = localStorage.getItem('userToken');
         if (!token) {
-            throw new Error('Please log in first');
+            throw new Error('Vui lòng đăng nhập trước');
         }
 
         dispatch(cvGenerateRequest());
@@ -119,14 +119,14 @@ export const generateCV = (cvData, template) => async (dispatch) => {
         
         if (cvContent) {
           dispatch(cvGenerateSuccess(cvContent));
-          toast.success('CV generated successfully!');
+          toast.success('CV đã được tạo thành công!');
           return cvContent;
         } else {
-          throw new Error('Invalid CV content received from server');
+          throw new Error('Nội dung CV không hợp lệ');
         }
     } catch (error) {
-        dispatch(cvGenerateFail(error.response?.data?.message || 'Failed to generate CV'));
-        toast.error(error.response?.data?.message || 'Failed to generate CV');
+        dispatch(cvGenerateFail(error.response?.data?.message || 'Lỗi khi tạo CV'));
+        toast.error(error.response?.data?.message || 'Lỗi khi tạo CV');
         throw error;
     }
 };
@@ -135,7 +135,7 @@ export const suggestCareerObjective = (jobTitle, industry) => async (dispatch) =
     try {
         const token = localStorage.getItem('userToken');
         if (!token) {
-            throw new Error('Please log in first');
+            throw new Error('Vui lòng đăng nhập trước');
         }
 
         dispatch(cvSuggestObjectiveRequest());
@@ -156,7 +156,7 @@ export const suggestCareerObjective = (jobTitle, industry) => async (dispatch) =
         dispatch(cvSuggestObjectiveSuccess(data.objective));
         return data.objective;
     } catch (error) {
-        dispatch(cvSuggestObjectiveFail(error.response?.data?.message || 'Failed to suggest objective'));
+        dispatch(cvSuggestObjectiveFail(error.response?.data?.message || 'Lỗi khi gợi ý mục tiêu nghề nghiệp'));
         throw error;
     }
 };
@@ -165,7 +165,7 @@ export const generateWorkExperience = (experience) => async (dispatch) => {
     try {
         const token = localStorage.getItem('userToken');
         if (!token) {
-            throw new Error('Please log in first');
+            throw new Error('Vui lòng đăng nhập trước');
         }
 
         dispatch(cvGenerateExperienceRequest());
@@ -191,7 +191,7 @@ export const generateWorkExperience = (experience) => async (dispatch) => {
         dispatch(cvGenerateExperienceSuccess(data.experience));
         return data.experience;
     } catch (error) {
-        dispatch(cvGenerateExperienceFail(error.response?.data?.message || 'Failed to generate experience points'));
+        dispatch(cvGenerateExperienceFail(error.response?.data?.message || 'Lỗi khi tạo kinh nghiệm'));
         throw error;
     }
 };
@@ -200,7 +200,7 @@ export const suggestSkills = (jobTitle, industry) => async (dispatch) => {
     try {
         const token = localStorage.getItem('userToken');
         if (!token) {
-            throw new Error('Please log in first');
+            throw new Error('Vui lòng đăng nhập trước');
         }
 
         dispatch(cvSuggestSkillsRequest());
@@ -221,7 +221,7 @@ export const suggestSkills = (jobTitle, industry) => async (dispatch) => {
         dispatch(cvSuggestSkillsSuccess(data.skills));
         return data.skills;
     } catch (error) {
-        dispatch(cvSuggestSkillsFail(error.response?.data?.message || 'Failed to suggest skills'));
+        dispatch(cvSuggestSkillsFail(error.response?.data?.message || 'Lỗi khi gợi ý kỹ năng'));
         throw error;
     }
 };
@@ -232,8 +232,8 @@ export const generatePDF = (data) => async (dispatch) => {
     try {
         const token = localStorage.getItem('userToken');
         if (!token) {
-            dispatch(cvGenerateFail('Please log in first'));
-            toast.error('Please log in first');
+            dispatch(cvGenerateFail('Vui lòng đăng nhập trước'));
+            toast.error('Vui lòng đăng nhập trước');
             return;
         }
 
@@ -252,7 +252,7 @@ export const generatePDF = (data) => async (dispatch) => {
             data,
             config
         );
-        toast.success('CV PDF has been downloaded!');
+        toast.success('CV PDF đã được tải xuống!');
 
         
         // Create a blob URL for the PDF
@@ -268,10 +268,10 @@ export const generatePDF = (data) => async (dispatch) => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
 
-        dispatch(cvGenerateSuccess({ message: 'PDF generated successfully' }));
-        toast.success('CV PDF has been downloaded!');
+        dispatch(cvGenerateSuccess({ message: 'CV PDF đã được tải xuống!' }));
+        toast.success('CV PDF đã được tải xuống!');
     } catch (error) {
-        const errorMessage = error.response?.data?.error || error.message || 'Failed to generate PDF';
+        const errorMessage = error.response?.data?.error || error.message || 'Lỗi khi tạo PDF';
         dispatch(cvGenerateFail(errorMessage));
         // toast.error(errorMessage);
     }

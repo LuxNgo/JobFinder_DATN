@@ -19,10 +19,10 @@ const UserSlice = createSlice({
             _id: "",
             name: "",
             email: "",
-            password: "",
             role: "",
             skills: [],
-            createdAt: ""
+            createdAt: "",
+            appliedJobs: []
         },
         userDetails: {
             avatar: {
@@ -36,7 +36,6 @@ const UserSlice = createSlice({
             _id: "",
             name: "",
             email: "",
-            password: "",
             role: "",
             skills: [],
             createdAt: ""
@@ -69,9 +68,8 @@ const UserSlice = createSlice({
         isLoginRequest: (state) => {
             state.isLogin = false
         },
-        isLoginSuccess: (state, action) => {
-            state.isLogin = action.payload
-
+        isLoginSuccess: (state) => {
+            state.isLogin = true
         },
         isLoginFail: (state, action) => {
             state.isLogin = false
@@ -124,7 +122,7 @@ const UserSlice = createSlice({
             state.error = action.payload
         },
 
-        logoutClearState:(state)=>{
+        logoutClearState: (state) => {
             state.me = {
                 avatar: {
                     public_id: "",
@@ -137,22 +135,60 @@ const UserSlice = createSlice({
                 _id: "",
                 name: "",
                 email: "",
-                password: "",
+                role: "",
+                skills: [],
+                createdAt: "",
+                appliedJobs: []
+            };
+            state.userDetails = {
+                avatar: {
+                    public_id: "",
+                    url: "",
+                },
+                resume: {
+                    public_id: "",
+                    url: "",
+                },
+                _id: "",
+                name: "",
+                email: "",
                 role: "",
                 skills: [],
                 createdAt: ""
-            }
+            };
+            state.isLogin = false;
+        },
+        removeAppliedJob: (state, action) => {
+            state.me.appliedJobs = state.me.appliedJobs.filter(jobId => jobId !== action.payload);
         }
 
     }
-})
+});
 
-
-export const { registerRequest, registerSuccess, registerFail, loginRequest, loginSuccess, loginFail
-    , isLoginRequest, isLoginSuccess, isLoginFail, getMeRequest, getMeSuccess, getMeFail,
-    changePasswordRequest,changePasswordSuccess,changePasswordFail,
-    updateProfileRequest,updateProfileSuccess,updateProfileFail,
-    deleteAccountRequest, deleteAccountSuccess, deleteAccountFail, logoutClearState
+export const {
+    registerRequest,
+    registerSuccess,
+    registerFail,
+    loginRequest,
+    loginSuccess,
+    loginFail,
+    isLoginRequest,
+    isLoginSuccess,
+    isLoginFail,
+    getMeRequest,
+    getMeSuccess,
+    getMeFail,
+    changePasswordRequest,
+    changePasswordSuccess,
+    changePasswordFail,
+    updateProfileRequest,
+    updateProfileSuccess,
+    updateProfileFail,
+    deleteAccountRequest,
+    deleteAccountSuccess,
+    deleteAccountFail,
+    logoutClearState,
+    removeAppliedJob
 } = UserSlice.actions
 
 export default UserSlice.reducer

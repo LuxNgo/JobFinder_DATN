@@ -12,6 +12,7 @@ import { TbLoader2 } from 'react-icons/tb';
 import { toast } from 'react-toastify';
 import { FaArrowLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { createApplication } from '../actions/ApplicationActions';
 
 export const JobDetails = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,11 @@ export const JobDetails = () => {
     const [year, month, day] = parts;
     return `${day}-${month}-${year}`;
   };
+
+  const appliedJobHandler = () => {
+    const isUnapply = me.appliedJobs && me.appliedJobs.includes(jobDetails._id);
+    dispatch(createApplication(id, isUnapply));
+  }
 
   const saveJobHandler = () => {
     dispatch(saveJob(id));
@@ -108,8 +114,7 @@ export const JobDetails = () => {
                       <div className='flex items-center gap-2'>
                         <span className='font-semibold'>Mức lương:</span>
                         <span className='flex items-center'>
-                          <BiRupee />
-                          {(jobDetails.salary / 100000).toFixed(0)} LPA
+                          {jobDetails.salary} VNĐ
                         </span>
                       </div>
                       <div className='flex items-center gap-2'>
@@ -139,9 +144,7 @@ export const JobDetails = () => {
                     <button
                       onClick={() => {
                         isLogin
-                          ? me.appliedJobs && me.appliedJobs.includes(jobDetails._id)
-                            ? toast.error("Bạn đã ứng tuyển công việc này!")
-                            : navigate(`/Application/${jobDetails._id}`)
+                          ? appliedJobHandler()
                           : notLoginHandler("ứng tuyển");
                       }}
                       className='flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200'

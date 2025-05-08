@@ -20,7 +20,7 @@ export const createJobPost = (jobData) => async (dispatch) => {
         const {data} = await axios.post(`${API_BASE_URL}/create/job`,jobData,config) ;        
 
         dispatch(newPostSuccess()) ;
-        toast.success("Job posted successfully !")
+        toast.success("Tạo tin tuyển dụng thành công !")
 
     }catch(err){
         dispatch(newPostFail(err.response.data.message))
@@ -28,15 +28,20 @@ export const createJobPost = (jobData) => async (dispatch) => {
 }
 
 export const getAllJobs = () => async (dispatch) => {
-    try{
+    try {
         dispatch(allJobsRequest()) ;
 
-        const {data} = await axios.get(`${API_BASE_URL}/jobs`) ;
+        const { data } = await axios.get(`${API_BASE_URL}/jobs`) ;
+        
+        // The server returns data in the format { success: true, Jobs: [] }
+        if (data && data.success && data.Jobs) {
+            dispatch(allJobsSuccess(data.Jobs)) ;
+        } else {
+            dispatch(allJobsFail('Định dạng dữ liệu không hợp lệ')) ;
+        }
 
-        dispatch(allJobsSuccess(data.Jobs)) ;
-
-    }catch(err){
-        dispatch(allJobsFail(err.response.data.message))   
+    } catch (err) {
+        dispatch(allJobsFail(err.response?.data?.message || 'Lỗi khi lấy danh sách công việc')) ;
     }
 }
 

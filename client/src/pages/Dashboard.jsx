@@ -7,113 +7,88 @@ import { getAllJobsAdmin, getAllUsersAdmin, getAllAppAdmin } from '../actions/Ad
 import CountUp from 'react-countup';
 import {BarChart} from '../components/Chart'
 import { Loader } from '../components/Loader'
-import { motion } from 'framer-motion'
-import { FaUsers, FaBriefcase, FaFileAlt } from 'react-icons/fa'
 
 export const Dashboard = () => {
 
   const [sideTog, setSideTog] = useState(false);
   const dispatch = useDispatch();
+
   const { loading, allJobs, allApplications, allUsers } = useSelector(state => state.admin);
+
 
   useEffect(() => {
     dispatch(getAllJobsAdmin());
     dispatch(getAllUsersAdmin());
     dispatch(getAllAppAdmin());
-  }, [dispatch]);
+  }, []);
+
+
+
+
+
+
 
   return (
     <>
 
       <MetaData title="Dashboard" />
-      <div className='min-h-screen bg-gray-50 pt-14 md:px-12 px-4'>
-        <div className='fixed left-0 top-14 z-20'>
-          <div 
-            onClick={() => setSideTog(!sideTog)} 
-            className='cursor-pointer bg-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2'
-          >
-            {!sideTog ? "Menu" : <RxCross1 className='text-xl' />}
+      <div className='bg-gray-950 min-h-screen pt-14  md:px-20 px-3  text-white'>
+
+        <div className="pt-1 fixed left-0 z-20 pl-0">
+          <div onClick={(() => setSideTog(!sideTog))} className='cursor-pointer blueCol px-3 py-2' size={44} >
+            {!sideTog ? "Menu" : <RxCross1 />}
           </div>
         </div>
 
         <Sidebar sideTog={sideTog} />
 
-        <div className='w-full transition-all duration-300 ml-[250px] md:ml-0'>
-          {loading ? (
-            <div className='flex items-center justify-center h-[calc(100vh-14rem)]'>
-              <Loader />
+
+        <div className='w-full'>
+          {loading?
+          
+          <Loader/>
+          
+          :
+        <>
+          <div className=' pt-8 flex justify-center items-center  text-4xl'>
+            <p className='pb-3 border-b border-gray-600 text-center font-medium w-1/2'>Dashboard</p>
+          </div>
+
+          <div className='grid md:grid-cols-3 grid-cols-1 md:gap-0 gap-16 md:pt-28 pt-16 pb-28'>
+
+            <div className='flex  flex-col gap-3  justify-center items-center '>
+              <div className='text-8xl '> <CountUp start={0} end={allUsers && allUsers.length} /></div>
+              <p className='text-2xl '>Users</p>
             </div>
-          ) : (
-            <>
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='mb-8 mt-14' 
-              >
-                <h1 className='text-4xl font-bold text-gray-800 text-center border-b-2 border-blue-500 pb-2'>Dashboard</h1>
-              </motion.div>
+            <div className='flex flex-col gap-3  justify-center items-center '>
+              <div className='text-8xl '> <CountUp start={0} end={allJobs && allJobs.length} /></div>
+              <p className='text-2xl'>Jobs</p>
+            </div>
+            <div className='flex flex-col gap-3  justify-center items-center '>
+              <div className='text-8xl '><CountUp start={0} end={allApplications && allApplications.length} /></div>
+              <p className='text-2xl'>Applications</p>
+            </div>
 
-              <div className='grid md:grid-cols-3 grid-cols-1 gap-6 mb-8'>
-                {[
-                  { 
-                  title: 'Người dùng', 
-                  value: allUsers?.length, 
-                  color: 'bg-blue-100', 
-                  icon: <FaUsers className='text-blue-600' /> 
-                },
-                { 
-                  title: 'Công việc', 
-                  value: allJobs?.length, 
-                  color: 'bg-green-100', 
-                  icon: <FaBriefcase className='text-green-600' /> 
-                },
-                { 
-                  title: 'Ứng tuyển', 
-                  value: allApplications?.length, 
-                  color: 'bg-purple-100', 
-                  icon: <FaFileAlt className='text-purple-600' /> 
-                }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className={`p-6 rounded-xl shadow-lg ${stat.color} flex flex-col items-center justify-center gap-4`}
-                  >
-                    <div className='flex flex-col items-center justify-center gap-2'>
-                      <div className='text-6xl font-bold text-gray-800'>
-                        <CountUp start={0} end={stat.value} duration={2} />
-                      </div>
-                      <div className='text-3xl font-semibold text-gray-600'>{stat.title}</div>
-                      <div className='text-2xl text-gray-500 mt-2'>{stat.icon}</div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='w-full mb-10'
-              >
-                <div className='w-full h-[40rem] bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center gap-4 mt-14'>
-                  <h2 className='text-5xl font-bold mb-4'>Thống kê</h2>
-                  <div className='w-full h-[26rem] flex items-center justify-center'>
-                    <BarChart 
-                      applications={allApplications?.length} 
-                      users={allUsers?.length} 
-                      jobs={allJobs?.length} 
-                    />
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
+          </div>
+
+        <div className='w-full  flex justify-center items-center pb-28'>
+          <div className='w-[27rem] md:px-0 px-6 h-[27rem]'>
+
+          <BarChart applications={allApplications && allApplications.length} users={allUsers && allUsers.length} jobs={allJobs && allJobs.length} />
+          </div>
         </div>
+        
+        </>
+
+          }
+
+        </div>
+
+
       </div>
+
+
     </>
   )
 }

@@ -25,6 +25,6 @@ export const getStats = () => async (dispatch) => {
         const response = await axios.get(`${API_BASE_URL}/stats`);
         dispatch(fetchStatsSuccess(response.data));
     } catch (error) {
-        dispatch(fetchStatsFail(error.response?.data?.message || 'Failed to fetch stats'));
+        dispatch(fetchStatsFail(error.response?.data?.message || 'Lỗi khi lấy thống kê'));
     }
 };

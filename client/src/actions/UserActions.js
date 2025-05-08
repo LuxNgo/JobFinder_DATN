@@ -3,7 +3,8 @@ import {
     , isLoginRequest, isLoginSuccess, isLoginFail, getMeRequest, getMeSuccess, getMeFail,
     changePasswordRequest, changePasswordSuccess, changePasswordFail,
     updateProfileRequest, updateProfileSuccess, updateProfileFail,
-    deleteAccountRequest, deleteAccountSuccess, deleteAccountFail, logoutClearState
+    deleteAccountRequest, deleteAccountSuccess, deleteAccountFail, logoutClearState,
+    removeAppliedJob
 } from '../slices/UserSlice'
 import { toast } from 'react-toastify'
 import axios from 'axios'
@@ -34,9 +35,7 @@ export const registerUser = (userData) => async (dispatch) => {
 export const loginUser = (userData) => async (dispatch) => {
     try {
         dispatch(loginRequest())
-
         const { data } = await axios.post(`${API_BASE_URL}/login`, userData);
-
         dispatch(loginSuccess())
         localStorage.setItem('userToken', data.token)
         dispatch(logOrNot())
