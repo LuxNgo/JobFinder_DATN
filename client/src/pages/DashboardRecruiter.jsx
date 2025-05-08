@@ -1,31 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { MetaData } from "../components/MetaData";
-import { Sidebar } from "../components/Sidebar";
-import { RxCross1 } from "react-icons/rx";
 import { FaUser, FaBriefcase, FaFileAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getAllJobsAdmin,
-  getAllUsersAdmin,
-  getAllAppAdmin,
-} from "../actions/AdminActions";
+  getAllJobsRecruiter,
+  getAllAppRecruiter,
+} from "../actions/RecruiterActions";
 import CountUp from "react-countup";
 import { BarChart } from "../components/Chart";
 import { Loader } from "../components/Loader";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { SidebarRecruiter } from "../components/SidebarRecruiter";
+import { BarChartRecruiter } from "../components/ChartRecruiter";
 
 export const DashboardRecruiter = () => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
 
-  const { loading, allJobs, allApplications, allUsers } = useSelector(
-    (state) => state.admin
-  );
+  const { loading, allJobsRecruiter, allApplicationsRecruiter } = useSelector((state) => state.recruiter);
 
   useEffect(() => {
-    dispatch(getAllJobsAdmin());
-    dispatch(getAllUsersAdmin());
-    dispatch(getAllAppAdmin());
+    dispatch(getAllJobsRecruiter());
+    dispatch(getAllAppRecruiter());
   }, []);
 
   return (
@@ -45,22 +41,17 @@ export const DashboardRecruiter = () => {
                 </h1>
               </div>
 
-              <div className="grid md:grid-cols-3 grid-cols-1 gap-6 md:pt-10 pt-4 pb-10">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-6 md:pt-10 pt-4 pb-10">
                 {[
                   {
-                    title: "Người dùng",
-                    value: allUsers?.length,
+                    title: "Ứng viên",
+                    value: allApplicationsRecruiter?.length || 0,
                     icon: <FaUser className="text-blue-500" size={24} />,
                   },
                   {
-                    title: "Công việc",
-                    value: allJobs?.length,
+                    title: "Công việc đang tuyển",
+                    value: allJobsRecruiter?.length || 0,
                     icon: <FaBriefcase className="text-blue-500" size={24} />,
-                  },
-                  {
-                    title: "Đơn ứng tuyển",
-                    value: allApplications?.length,
-                    icon: <FaFileAlt className="text-blue-500" size={24} />,
                   },
                 ].map((stat, index) => (
                   <div
@@ -91,10 +82,9 @@ export const DashboardRecruiter = () => {
                   <h3 className="text-3xl font-bold text-blue-500 mb-4">
                     Thống kê
                   </h3>
-                  <BarChart
-                    applications={allApplications && allApplications.length}
-                    users={allUsers && allUsers.length}
-                    jobs={allJobs && allJobs.length}
+                  <BarChartRecruiter
+                    applications={allApplicationsRecruiter?.length || 0}
+                    jobs={allJobsRecruiter?.length || 0}
                   />
                 </div>
               </div>
