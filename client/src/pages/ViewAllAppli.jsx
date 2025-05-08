@@ -6,9 +6,7 @@ import { AiOutlineDelete } from 'react-icons/ai'
 import { getAllAppAdmin, deleteApp } from '../actions/AdminActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { Loader } from '../components/Loader'
-import { RxCross1 } from 'react-icons/rx'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { toast } from 'react-toastify'
 import { HiOutlineSparkles } from 'react-icons/hi'
 
@@ -16,7 +14,6 @@ import { HiOutlineSparkles } from 'react-icons/hi'
 export const ViewAllAppli = () => {
   const dispatch = useDispatch();
   const { loading, allApplications } = useSelector((state) => state.admin)
-  const [sideTog, setSideTog] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
@@ -52,17 +49,7 @@ export const ViewAllAppli = () => {
           </div>
         ) : (
           <div>
-            <div className="pt-1 fixed left-0 z-20 pl-0">
-              <div 
-                onClick={() => setSideTog(!sideTog)} 
-                className='cursor-pointer px-3 py-2 rounded-lg bg-white hover:bg-blue-100 transition-colors duration-300 shadow-sm'
-              >
-                {!sideTog ? "Menu" : <RxCross1 />}
-              </div>
-            </div>
-
-            <Sidebar sideTog={sideTog} />
-            
+            <Sidebar />
             <div className="flex justify-between items-center mb-6 pt-14">
               <div className="flex items-center gap-2">
                 <HiOutlineSparkles className="text-blue-500 text-2xl" />

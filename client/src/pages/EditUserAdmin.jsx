@@ -6,7 +6,6 @@ import { Loader } from '../components/Loader'
 import { toast } from 'react-toastify'
 import { getUserData, updateUser } from '../actions/AdminActions'
 import { Sidebar } from '../components/Sidebar'
-import { RxCross1 } from 'react-icons/rx'
 import { motion } from 'framer-motion'
 import { HiOutlineSparkles } from 'react-icons/hi'
 import { MdOutlinePerson } from 'react-icons/md'
@@ -31,7 +30,6 @@ export const EditUserAdmin = () => {
   const dispatch = useDispatch();
   const { loading, userData } = useSelector(state => state.admin)
   const [role, setRole] = useState("not");
-  const [sideTog, setSideTog] = useState(false)
 
   useEffect(() => {
     dispatch(getUserData(id));
@@ -63,16 +61,7 @@ export const EditUserAdmin = () => {
                     </div>
                 ) : (
                     <div>
-                        <div className="pt-1 fixed left-0 z-20 pl-0">
-                            <div 
-                                onClick={() => setSideTog(!sideTog)} 
-                                className='cursor-pointer px-3 py-2 rounded-lg bg-white hover:bg-blue-100 transition-colors duration-300 shadow-sm'
-                            >
-                                {!sideTog ? "Menu" : <RxCross1 />}
-                            </div>
-                        </div>
-
-                        <Sidebar sideTog={sideTog} />
+                        <Sidebar />
                         
                         <div className='flex flex-col w-full justify-center items-center gap-6 pt-20'>
                             <div className='flex items-center justify-center gap-2 mb-6'>
