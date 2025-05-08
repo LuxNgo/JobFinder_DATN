@@ -1,6 +1,6 @@
 const express = require('express')
 const {isAuthenticated} = require('../middlewares/auth')
-const {createApplication, getSingleApplication, getUsersAllApplications, deleteApplication} = require('../controllers/ApplicationControllers')
+const {createApplication, getSingleApplication, getUsersAllApplications, deleteApplication, removeAppliedJob} = require('../controllers/ApplicationControllers')
 const {applicationIdValidator,validateHandler} = require('../middlewares/validators');
 const router = express.Router()
 
@@ -12,6 +12,8 @@ router.route('/singleApplication/:id').get(isAuthenticated,applicationIdValidato
 router.route('/getAllApplication').get(isAuthenticated, getUsersAllApplications)
 
 router.route('/deleteApplication/:id').delete(isAuthenticated,applicationIdValidator(),validateHandler, deleteApplication)
+
+router.route('/remove-applied-job').post(isAuthenticated, removeAppliedJob)
 
 
 module.exports = router 

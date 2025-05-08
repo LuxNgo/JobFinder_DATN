@@ -43,14 +43,13 @@ exports.getAllUsers = async (req,res) => {
 // Get all applications
 exports.getAllApp = async (req,res) => {
     try{
-        const applications = await Application.find().populate("job applicant") ;
+        const applications = await Application.find();
 
         res.status(200).json({
             success: true,
             applications
         })
-
-    }catch(err){
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
@@ -101,7 +100,7 @@ exports.deleteApplication = async (req,res) => {
 // Get Application
 exports.getApplication = async (req,res) => {
     try{
-        const application = await Application.findById(req.params.id).populate("job applicant") ;
+        const application = await Application.findById(req.params.id);
 
         res.status(200).json({
             success: true,

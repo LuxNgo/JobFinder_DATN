@@ -1,26 +1,44 @@
 const mongoose = require('mongoose') ;
 
-const ApplicationSchema =  new mongoose.Schema({
-    job: {
+const ApplicationSchema = new mongoose.Schema({
+    jobId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Job',
         required: true
     },
-    applicant: {
+    jobTitle: {
+        type: String,
+        required: true
+    },
+    jobLocation: {
+        type: String,
+        required: true
+    },
+    jobExperience: {
+        type: String,
+        required: true
+    },
+    jobCompany: {
+        type: String,
+        required: true
+    },
+    applicantId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
+    applicantName: {
+        type: String,
+        required: true
+    },
     applicantResume: {
-        public_id: {
-            type: String,
-            required: true
-        },
-        url: {
-            type: String,
-            required: true
-        }
-    }, 
+        type: String,
+        required: true
+    },
+    applicantEmail: {
+        type: String,
+        required: true
+    },
     status: {
         type: String,
         enum: ['pending', 'accepted', 'rejected'],
@@ -32,5 +50,5 @@ const ApplicationSchema =  new mongoose.Schema({
     }
 })
 
-const Application = mongoose.model('Application', ApplicationSchema) ;
-module.exports = Application
+const Application = mongoose.model('Application', ApplicationSchema);
+module.exports = Application;
