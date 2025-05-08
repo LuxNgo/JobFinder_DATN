@@ -47,7 +47,7 @@ exports.updateApplicationRecruiter = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Application Updated",
+      message: "Đơn ứng tuyển đã được cập nhật",
     });
   } catch (err) {
     res.status(500).json({
@@ -63,7 +63,7 @@ exports.deleteApplicationRecruiter = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Application Deleted",
+      message: "Đơn ứng tuyển đã được xóa",
     });
   } catch (err) {
     res.status(500).json({
@@ -116,7 +116,7 @@ exports.updateJobRecruiter = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Job Updated",
+      message: "Công việc đã được cập nhật",
     });
   } catch (err) {
     res.status(500).json({
@@ -150,7 +150,7 @@ exports.deleteJobRecruiter = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Job Deleted",
+      message: "Công việc đã được xóa",
     });
   } catch (err) {
     res.status(500).json({
