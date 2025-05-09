@@ -76,14 +76,25 @@ export const Home = () => {
                       />
                     </svg>
                   </Link>
-                  <Link
-                    to="/recruiter/postJob"
-                    className="px-8 py-4 text-lg font-semibold text-blue-500 bg-white rounded-full 
-                                                 hover:bg-blue-50 transition-all duration-300 shadow-lg
-                                                 flex items-center gap-2 hover:-translate-y-1"
-                  >
-                    Đăng Tin Tuyển Dụng
-                  </Link>
+                  {localStorage.getItem("role") === "recruiter" ? (
+                    <Link
+                      to="/recruiter/dashboard"
+                      className="px-8 py-4 text-lg font-semibold text-blue-500 bg-white rounded-full 
+                               hover:bg-blue-50 transition-all duration-300 shadow-lg
+                               flex items-center gap-2 hover:-translate-y-1"
+                    >
+                      Đăng tin tuyển dụng
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/upgrade-to-recruiter"
+                      className="px-8 py-4 text-lg font-semibold text-blue-500 bg-white rounded-full 
+                               hover:bg-blue-50 transition-all duration-300 shadow-lg
+                               flex items-center gap-2 hover:-translate-y-1"
+                    >
+                      Đăng tin tuyển dụng
+                    </Link>
+                  )}
                 </div>
               </div>
               {/* Hero Image */}

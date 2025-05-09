@@ -39,6 +39,8 @@ import CVBuilder from "./pages/CVBuilder";
 import { DashboardRecruiter } from "./pages/DashboardRecruiter";
 import { ViewAllJobRecruiter } from "./pages/VIewAllJobRecruiter";
 import { ViewAllAppliRecruiter } from "./pages/ViewAllAppliRecruiter";
+import { UpgradeToRecruiter } from "./pages/UpgradeToRecruiter";
+import Payment from "./pages/Payment";
 
 function App() {
   const dispatch = useDispatch();
@@ -79,6 +81,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/details/:id" element={<JobDetails />} />
+        <Route path="/upgrade-to-recruiter" element={<UpgradeToRecruiter />} />
+        <Route path="/payment" element={<Payment />} />
 
         {/* Protected Routes for Applicants, Admins, and Recruiters */}
         <Route
@@ -102,6 +106,7 @@ function App() {
             path="/Application/Details/:id"
             element={<ApplicationDetails />}
           />
+          <Route path="/recruiter/postJob" element={<CreateJob />} />
         </Route>
 
         {/* Protected Routes for Admin */}
@@ -131,11 +136,15 @@ function App() {
             />
           }
         >
-          <Route path="/recruiter/dashboard" element={<DashboardRecruiter />} />
-          <Route path="/recruiter/postJob" element={<CreateJob />} />
-          <Route path="/recruiter/allJobs" element={<ViewAllJobRecruiter />} />
           <Route
-            path="/recruiter/allApplications"
+            path="/upgrade-to-recruiter"
+            element={<UpgradeToRecruiter />}
+          />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/recruiter/dashboard" element={<DashboardRecruiter />} />
+          <Route path="/recruiter/jobs" element={<ViewAllJobRecruiter />} />
+          <Route
+            path="/recruiter/applications"
             element={<ViewAllAppliRecruiter />}
           />
         </Route>
