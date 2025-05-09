@@ -92,7 +92,7 @@ router
   .route("/admin/getJob/:id")
   .get(
     isAuthenticated,
-    authorizationRoles("admin"),
+    authorizationRoles("admin", "recruiter"),
     JobIdValidator(),
     validateHandler,
     getJob
@@ -101,7 +101,7 @@ router
   .route("/admin/updateJob/:id")
   .put(
     isAuthenticated,
-    authorizationRoles("admin"),
+    authorizationRoles("admin", "recruiter"),
     JobIdValidator(),
     validateHandler,
     updateJob
@@ -110,7 +110,7 @@ router
   .route("/admin/deleteJob/:id")
   .delete(
     isAuthenticated,
-    authorizationRoles("admin"),
+    authorizationRoles("admin", "recruiter"),
     JobIdValidator(),
     validateHandler,
     deleteJob
