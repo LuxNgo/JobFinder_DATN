@@ -22,7 +22,13 @@ exports.getAllJobsRecruiter = async (req, res) => {
 // Get all applications
 exports.getAllAppRecruiter = async (req, res) => {
   try {
-    const applications = await Application.find({ applicantId: req.user._id });
+    // First get all jobs posted by this recruiter
+    const jobs = await Job.find({ postedBy: req.user._id });
+
+    // Get all applications for these jobs
+    const applications = await Application.find({
+      jobId: { $in: jobs.map((job) => job._id) },
+    });
 
     res.status(200).json({
       success: true,
@@ -39,7 +45,7 @@ exports.getAllAppRecruiter = async (req, res) => {
 // Update Application Status
 exports.updateApplicationRecruiter = async (req, res) => {
   try {
-    const application = await Application.findById(req.params.id);
+    const application = await Application.findById(req.body.id);
 
     application.status = req.body.status;
 

@@ -17,6 +17,7 @@ const {
 } = require("../middlewares/validators");
 const router = express.Router();
 
+// Recruiter Routes
 router
   .route("/recruiter/allJobs")
   .get(isAuthenticated, authorizationRoles("recruiter"), getAllJobsRecruiter);
@@ -51,6 +52,7 @@ router
     deleteApplicationRecruiter
   );
 
+// Job Routes
 router
   .route("/recruiter/getJob/:id")
   .get(
