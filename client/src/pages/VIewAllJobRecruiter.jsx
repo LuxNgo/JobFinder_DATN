@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MetaData } from "../components/MetaData";
-import { Sidebar } from "../components/Sidebar";
-import {
-  MdOutlineModeEditOutline,
-  MdOutlineSearch,
-  MdOutlineAdd,
-} from "react-icons/md";
+import { MdOutlineModeEditOutline, MdOutlineSearch } from "react-icons/md";
 import {
   AiOutlineDelete,
   AiOutlineFilter,
@@ -21,6 +16,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { HiOutlineSparkles } from "react-icons/hi";
+import { SidebarRecruiter } from "../components/SidebarRecruiter";
 
 export const ViewAllJobRecruiter = () => {
   const dispatch = useDispatch();
@@ -76,7 +72,7 @@ export const ViewAllJobRecruiter = () => {
             </div>
           ) : (
             <div>
-              <Sidebar />
+              <SidebarRecruiter />
 
               <div className="flex justify-between items-center mb-6 pt-14">
                 <div className="flex items-center gap-2">

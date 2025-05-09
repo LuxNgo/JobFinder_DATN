@@ -68,7 +68,6 @@ export const getAllAppRecruiter = () => async (dispatch) => {
       `${API_BASE_URL}/recruiter/allApp`,
       config
     );
-
     dispatch(getAllAppSuccess(data.applications));
   } catch (err) {
     dispatch(
@@ -89,7 +88,7 @@ export const getAppData = (id) => async (dispatch) => {
     };
 
     const { data } = await axios.get(
-      `${API_BASE_URL}/admin/getApplication/${id}`,
+      `${API_BASE_URL}/recruiter/getApplication/${id}`,
       config
     );
 
@@ -102,7 +101,6 @@ export const getAppData = (id) => async (dispatch) => {
 
 export const updateApplication = (id, dataBody) => async (dispatch) => {
   try {
-    console.log(dataBody.status);
     if (dataBody.status === "not") {
       toast.info("Lựa chọn trạng thái !");
     } else {
@@ -115,7 +113,7 @@ export const updateApplication = (id, dataBody) => async (dispatch) => {
       };
 
       const { data } = await axios.put(
-        `${API_BASE_URL}/admin/updateApplication/${id}`,
+        `${API_BASE_URL}/recruiter/updateApplication/${id}`,
         dataBody,
         config
       );
@@ -143,11 +141,11 @@ export const deleteApp = (id) => async (dispatch) => {
     };
 
     const { data } = await axios.delete(
-      `${API_BASE_URL}/admin/deleteApplication/${id}`,
+      `${API_BASE_URL}/recruiter/deleteApplication/${id}`,
       config
     );
 
-    dispatch(getAllAppAdmin());
+    dispatch(getAllAppRecruiter());
     dispatch(deleteAppSuccess());
     toast.success("Đơn xóa thành công!");
   } catch (err) {
@@ -169,7 +167,7 @@ export const getJobData = (id) => async (dispatch) => {
     };
 
     const { data } = await axios.get(
-      `${API_BASE_URL}/admin/getJob/${id}`,
+      `${API_BASE_URL}/recruiter/getJob/${id}`,
       config
     );
 
@@ -193,7 +191,7 @@ export const updateJobData = (id, jobData) => async (dispatch) => {
     };
 
     const { data } = await axios.put(
-      `${API_BASE_URL}/admin/updateJob/${id}`,
+      `${API_BASE_URL}/recruiter/updateJob/${id}`,
       jobData,
       config
     );
@@ -223,12 +221,12 @@ export const deleteJobData = (id) => async (dispatch) => {
     };
 
     const { data } = await axios.delete(
-      `${API_BASE_URL}/admin/deleteJob/${id}`,
+      `${API_BASE_URL}/recruiter/deleteJob/${id}`,
       config
     );
 
     dispatch(deleteJobSuccess());
-    dispatch(getAllJobsAdmin());
+    dispatch(getAllJobsRecruiter());
     toast.success("Xóa công việc thành công !");
   } catch (err) {
     dispatch(
