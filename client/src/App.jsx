@@ -121,7 +121,6 @@ function App() {
             element={<EditAppAdmin />}
           />
           <Route path="/admin/user/role/:id" element={<EditUserAdmin />} />
-          <Route path="/admin/job/details/:id" element={<EditJobAdmin />} />
         </Route>
 
         {/* Protected Routes for Recruiters */}
@@ -139,6 +138,19 @@ function App() {
             path="/recruiter/allApplications"
             element={<ViewAllAppliRecruiter />}
           />
+        </Route>
+
+        {/* general routes admin and recruiter */}
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={["admin", "recruiter"].includes(
+                localStorage.getItem("role")
+              )}
+            />
+          }
+        >
+          <Route path="/admin/job/details/:id" element={<EditJobAdmin />} />
         </Route>
 
         {/* Test Page */}

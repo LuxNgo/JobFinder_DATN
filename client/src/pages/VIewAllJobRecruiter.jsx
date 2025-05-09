@@ -283,7 +283,9 @@ export const ViewAllJobRecruiter = () => {
                                       : "bg-gray-500 text-white"
                                   }`}
                                 >
-                                  {job.status}
+                                  {job.status === "active"
+                                    ? "Đang Hoạt Động"
+                                    : "Không Hoạt Động"}
                                 </span>
                               </div>
                             </td>

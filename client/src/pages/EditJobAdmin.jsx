@@ -19,6 +19,8 @@ import { BiBuilding } from "react-icons/bi";
 import { toast } from "react-toastify";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 export const EditJobAdmin = () => {
   const { id } = useParams();
@@ -107,6 +109,17 @@ export const EditJobAdmin = () => {
                 onSubmit={postEditHandler}
                 className="max-w-4xl mx-auto bg-white mt-10 rounded-xl shadow-xl p-6"
               >
+                <Link
+                  to={
+                    localStorage.getItem("role") === "recruiter"
+                      ? "/recruiter/allJobs"
+                      : "/admin/allJobs"
+                  }
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
+                >
+                  <FaArrowLeft className="mr-2" />
+                  Back to
+                </Link>
                 <div className="flex flex-col w-full justify-center items-center gap-6">
                   <div className="flex items-center justify-center gap-2 mb-6">
                     <HiOutlineSparkles className="text-blue-500 text-3xl animate-pulse" />
