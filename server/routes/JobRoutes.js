@@ -16,13 +16,7 @@ const router = express.Router();
 
 router
   .route("/create/job")
-  .post(
-    isAuthenticated,
-    authorizationRoles("recruiter"),
-    jobValidator(),
-    validateHandler,
-    createJob
-  );
+  .post(isAuthenticated, jobValidator(), validateHandler, createJob);
 
 router.route("/jobs").get(allJobs);
 
