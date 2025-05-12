@@ -221,7 +221,7 @@ export const deleteAccount = (userData) => async (dispatch) => {
       dispatch(logOrNot());
       dispatch(logoutClearState());
     } else {
-      toast.error("Wrong Password !");
+      toast.error("Xin vui lòng nhập đúng mật khẩu !");
     }
   } catch (err) {
     dispatch(deleteAccountFail(err.response.data.message));
