@@ -1,21 +1,21 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const fs = require('fs').promises;
-const path = require('path');
-const puppeteer = require('puppeteer');
-const Handlebars = require('handlebars');
-const LRU = require('lru-cache');
-const rateLimit = require('express-rate-limit');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const fs = require("fs").promises;
+const path = require("path");
+const puppeteer = require("puppeteer");
+const Handlebars = require("handlebars");
+const LRU = require("lru-cache");
+const rateLimit = require("express-rate-limit");
 
 // Initialize Gemini API with proper API version
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY, {
-  apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta'
+  apiEndpoint: "https://generativelanguage.googleapis.com/v1beta",
 });
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // Create a cache for API responses
 const apiCache = new LRU({
   max: 500, // Maximum number of items to cache
-  maxAge: 1000 * 60 * 5 // Cache items expire after 5 minutes
+  maxAge: 1000 * 60 * 5, // Cache items expire after 5 minutes
 });
 
 // Rate limiter middleware
@@ -24,55 +24,60 @@ const apiLimiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   message: {
     status: 429,
-    message: 'Too many requests. Please try again later.'
-  }
+    message: "Too many requests. Please try again later.",
+  },
 });
 
 // CV Templates
 const CV_TEMPLATES = {
-  professional: 'professional-template.html',
-  elegant: 'elegant-template.html',
-  bold: 'bold-template.html',
-  techy: 'techy-template.html'
+  professional: "professional-template.html",
+  elegant: "elegant-template.html",
+  bold: "bold-template.html",
+  techy: "techy-template.html",
 };
 
 // CV Sections
 const CV_SECTIONS = [
-  'personal_info',
-  'career_objective',
-  'work_experience',
-  'education',
-  'skills',
-  'certifications',
-  'languages',
-  'projects_achievements'
+  "personal_info",
+  "career_objective",
+  "work_experience",
+  "education",
+  "skills",
+  "certifications",
+  "languages",
+  "projects_achievements",
 ];
 
 const generatePDF = async (req, res) => {
   try {
-    console.log('Request body:', req.body);
+    console.log("Request body:", req.body);
     const { cvData, template } = req.body;
 
     // Validate input
     if (!cvData || !template) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid request',
-        details: 'Both cvData and template are required',
+        error: "Invalid request",
+        details: "Both cvData and template are required",
       });
     }
 
     if (!CV_TEMPLATES[template]) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid template',
+        error: "Invalid template",
         details: `Template '${template}' is not supported.`,
       });
     }
 
     // Load template HTML file
-    const templatePath = path.join(__dirname, '..', 'templates', CV_TEMPLATES[template]);
-    const htmlTemplate = await fs.readFile(templatePath, 'utf-8');
+    const templatePath = path.join(
+      __dirname,
+      "..",
+      "templates",
+      CV_TEMPLATES[template]
+    );
+    const htmlTemplate = await fs.readFile(templatePath, "utf-8");
 
     // Compile template with Handlebars
     const compiledTemplate = Handlebars.compile(htmlTemplate);
@@ -80,25 +85,27 @@ const generatePDF = async (req, res) => {
     // Prepare CV data
     const transformedData = {
       personalInfo: {
-        fullName: cvData.personalInfo?.fullName || 'N/A',
-        email: cvData.personalInfo?.email || 'N/A',
-        phone: cvData.personalInfo?.phone || 'N/A',
-        location: cvData.personalInfo?.location || 'N/A',
-        summary: cvData.personalInfo?.summary || '',
+        fullName: cvData.personalInfo?.fullName || "N/A",
+        email: cvData.personalInfo?.email || "N/A",
+        phone: cvData.personalInfo?.phone || "N/A",
+        location: cvData.personalInfo?.location || "N/A",
+        summary: cvData.personalInfo?.summary || "",
       },
-      experience: cvData.experiences?.map(exp => ({
-        title: exp.title || 'N/A',
-        organization: exp.organization || 'N/A',
-        startDate: exp.startDate || 'N/A',
-        endDate: exp.endDate || 'Hiện tại',
-        description: exp.description || '',
-      })) || [],
-      education: cvData.education?.map(edu => ({
-        degree: edu.degree || 'N/A',
-        institution: edu.institution || 'N/A',
-        startDate: edu.startDate || 'N/A',
-        endDate: edu.endDate || 'Hiện tại',
-      })) || [],
+      experience:
+        cvData.experiences?.map((exp) => ({
+          title: exp.title || "N/A",
+          organization: exp.organization || "N/A",
+          startDate: exp.startDate || "N/A",
+          endDate: exp.endDate || "Hiện tại",
+          description: exp.description || "",
+        })) || [],
+      education:
+        cvData.education?.map((edu) => ({
+          degree: edu.degree || "N/A",
+          institution: edu.institution || "N/A",
+          startDate: edu.startDate || "N/A",
+          endDate: edu.endDate || "Hiện tại",
+        })) || [],
       skills: cvData.skills || [],
     };
 
@@ -107,39 +114,39 @@ const generatePDF = async (req, res) => {
 
     // Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
       headless: true,
     });
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 1600 });
-    await page.setContent(renderedHTML, { waitUntil: 'networkidle0' });
+    await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
 
     const pdf = await page.pdf({
-      format: 'A4',
+      format: "A4",
       printBackground: true,
       margin: {
-        top: '1cm',
-        right: '1cm',
-        bottom: '1cm',
-        left: '1cm',
+        top: "1cm",
+        right: "1cm",
+        bottom: "1cm",
+        left: "1cm",
       },
     });
 
     await browser.close();
 
     // Send PDF response
-    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="${cvData.personalInfo?.fullName || 'CV'}.pdf"`
+      "Content-Disposition",
+      `attachment; filename="${cvData.personalInfo?.fullName || "CV"}.pdf"`
     );
     res.send(pdf);
   } catch (error) {
-    console.error('Error generating PDF:', error);
+    console.error("Error generating PDF:", error);
     res.status(500).json({
       success: false,
-      error: 'Internal Server Error',
+      error: "Internal Server Error",
       details: error.message,
     });
   }
@@ -166,45 +173,49 @@ const generateContent = async (prompt, cacheKey) => {
     // Format the request to match the curl command format
     const result = await model.generateContent(
       {
-        contents: [{
-          parts: [{
-            text: `${systemPrompt}\n\n${prompt}`
-          }]
-        }]
+        contents: [
+          {
+            parts: [
+              {
+                text: `${systemPrompt}\n\n${prompt}`,
+              },
+            ],
+          },
+        ],
       },
       {
         generationConfig: {
           temperature: 0.7,
           topP: 0.8,
           topK: 40,
-          maxOutputTokens: 1024
-        }
+          maxOutputTokens: 1024,
+        },
       }
     );
 
     // Get the response text
     const response = await result.response;
-    const text = response.candidates[0]?.content?.parts[0]?.text || '';
-    
+    const text = response.candidates[0]?.content?.parts[0]?.text || "";
+
     // Clean the text by removing markdown formatting
     const cleanedText = text
-      .replace(/\*\*([^*]+)\*\*/g, '$1')     // Remove **bold** formatting
-      .replace(/\*([^*]+)\*/g, '$1')          // Remove *italic* formatting
-      .replace(/`([^`]+)`/g, '$1')             // Remove `code` formatting
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove [link](url) formatting
-      .replace(/#+\s+/g, '')                  // Remove # headings
-      .replace(/-{3,}/g, '')                   // Remove --- horizontal rules
+      .replace(/\*\*([^*]+)\*\*/g, "$1") // Remove **bold** formatting
+      .replace(/\*([^*]+)\*/g, "$1") // Remove *italic* formatting
+      .replace(/`([^`]+)`/g, "$1") // Remove `code` formatting
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // Remove [link](url) formatting
+      .replace(/#+\s+/g, "") // Remove # headings
+      .replace(/-{3,}/g, "") // Remove --- horizontal rules
       .trim();
-    
+
     return cleanedText;
   } catch (error) {
-    console.error('Gemini API error:', error);
-    throw new Error('Failed to generate content. Please try again.');
+    console.error("Gemini API error:", error);
+    throw new Error("Lỗi khi tạo CV. Vui lòng thử lại.");
   }
 };
 
 // Generate CV
-  // Generate CV
+// Generate CV
 const generateCV = async (req, res) => {
   try {
     // Destructure with default empty arrays for optional fields
@@ -218,14 +229,14 @@ const generateCV = async (req, res) => {
       certifications = [],
       languages = [],
       projects = [],
-      template = 'modern'
+      template = "modern",
     } = req.body;
 
     // Validate required fields
     if (!jobTitle || !industry) {
       return res.status(400).json({
         success: false,
-        error: 'jobTitle and industry are required fields'
+        error: "jobTitle and industry are required fields",
       });
     }
 
@@ -238,14 +249,19 @@ const generateCV = async (req, res) => {
     `);
 
     // Generate work experience bullet points if workExperience exists and has items
-    const workExperienceBullets = workExperience.length > 0 
-      ? await Promise.all(workExperience.map(exp => generateContent(`
+    const workExperienceBullets =
+      workExperience.length > 0
+        ? await Promise.all(
+            workExperience.map((exp) =>
+              generateContent(`
         Generate impactful bullet points for the role of ${exp.title} at ${exp.company}.
       Return the result in Vietnamese
         Focus on achievements and quantifiable results.
         Format: List of 3-5 bullet points highlighting key responsibilities and accomplishments.
-      `)))
-    : [];
+      `)
+            )
+          )
+        : [];
 
     // Generate skills section with industry-specific suggestions
     const skillsSection = await generateContent(`
@@ -267,49 +283,61 @@ const generateCV = async (req, res) => {
 
     // Select appropriate template based on industry
     const selectedTemplate = CV_TEMPLATES[template];
-    const templatePath = path.join(__dirname, '..', 'templates', selectedTemplate);
+    const templatePath = path.join(
+      __dirname,
+      "..",
+      "templates",
+      selectedTemplate
+    );
 
     // Read template
-    const templateContent = await fs.readFile(templatePath, 'utf-8');
+    const templateContent = await fs.readFile(templatePath, "utf-8");
 
     // Generate final CV content in the expected format
     const cvContent = {
       personalInfo: {
-        fullName: personalInfo?.fullName || '',
-        email: personalInfo?.email || '',
-        phone: personalInfo?.phone || '',
-        location: personalInfo?.location || '',
-        summary: careerObjective || 'Career objective will appear here'
+        fullName: personalInfo?.fullName || "",
+        email: personalInfo?.email || "",
+        phone: personalInfo?.phone || "",
+        location: personalInfo?.location || "",
+        summary: careerObjective || "Career objective will appear here",
       },
       experience: workExperienceBullets.map((bullet, index) => ({
-        jobTitle: workExperience[index]?.title || '',
-        company: workExperience[index]?.company || '',
-        location: workExperience[index]?.location || '',
-        startDate: workExperience[index]?.startDate || '',
-        endDate: workExperience[index]?.endDate || '',
-        description: bullet
+        jobTitle: workExperience[index]?.title || "",
+        company: workExperience[index]?.company || "",
+        location: workExperience[index]?.location || "",
+        startDate: workExperience[index]?.startDate || "",
+        endDate: workExperience[index]?.endDate || "",
+        description: bullet,
       })),
-      education: education.map(edu => ({
-        degree: edu.degree || '',
-        institution: edu.institution || '',
-        startDate: edu.startDate || '',
-        endDate: edu.endDate || ''
+      education: education.map((edu) => ({
+        degree: edu.degree || "",
+        institution: edu.institution || "",
+        startDate: edu.startDate || "",
+        endDate: edu.endDate || "",
       })),
-      skills: skillsSection ? skillsSection.split(',').map(skill => skill.trim()) : [],
-      certifications: certifications.map(cert => ({
-        name: cert.name || '',
-        organization: cert.organization || '',
-        date: cert.date || ''
+      skills: skillsSection
+        ? skillsSection.split(",").map((skill) => skill.trim())
+        : [],
+      certifications: certifications.map((cert) => ({
+        name: cert.name || "",
+        organization: cert.organization || "",
+        date: cert.date || "",
       })),
-      languages: languages.map(lang => ({
-        language: lang.language || '',
-        level: lang.level || ''
+      languages: languages.map((lang) => ({
+        language: lang.language || "",
+        level: lang.level || "",
       })),
-      projects: projectsSection ? projectsSection.split('\n').filter(Boolean).map(project => ({
-        title: project,
-        description: ''
-      })) : [],
-      template
+      projects: projectsSection
+        ? projectsSection
+            .split("\n")
+            .filter(Boolean)
+            .map((project) => ({
+              title: project,
+              description: "",
+            }))
+        : [],
+      template,
     };
 
     // Format for download
@@ -320,13 +348,13 @@ const generateCV = async (req, res) => {
     res.json({
       success: true,
       cvContent,
-      message: 'CV generated successfully'
+      message: "CV đã được tạo thành công",
     });
   } catch (error) {
-    console.error('CV generation error:', error);
+    console.error("CV generation error:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to generate CV. Please try again later.'
+      error: "Lỗi khi tạo CV. Vui lòng thử lại.",
     });
   }
 };
@@ -335,7 +363,7 @@ const generateCV = async (req, res) => {
 const suggestCareerObjective = async (req, res) => {
   try {
     const { jobTitle, industry } = req.body;
-    
+
     // Create a focused prompt that generates a specific career objective
     const prompt = `You are a professional CV writer. Generate a concise and compelling career objective for a ${jobTitle} position in the ${industry} industry.
     Return the result in Vietnamese 
@@ -353,28 +381,28 @@ const suggestCareerObjective = async (req, res) => {
     Note: Return just the text without any formatting characters. Do not show text "Career Objective"`;
 
     const response = await generateContent(prompt);
-    
+
     // Clean up the response and format it properly
     const formattedResponse = response
-      .replace(/###.*?\n/g, '') // Remove markdown headings
-      .replace(/\*\*/g, '') // Remove bold markdown
-      .replace(/\*/g, '') // Remove bullet points
-      .replace(/\n\s*\n/g, ' ') // Replace multiple newlines with space
-      .replace(/\n/g, ' ') // Replace newlines with space
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .replace(/Career Objective.*?\n/g, '') // Remove any Career Objective heading
-      .replace(/###.*?\n/g, '') // Remove any other markdown headings
+      .replace(/###.*?\n/g, "") // Remove markdown headings
+      .replace(/\*\*/g, "") // Remove bold markdown
+      .replace(/\*/g, "") // Remove bullet points
+      .replace(/\n\s*\n/g, " ") // Replace multiple newlines with space
+      .replace(/\n/g, " ") // Replace newlines with space
+      .replace(/\s+/g, " ") // Replace multiple spaces with single space
+      .replace(/Career Objective.*?\n/g, "") // Remove any Career Objective heading
+      .replace(/###.*?\n/g, "") // Remove any other markdown headings
       .trim();
-    
+
     res.json({
       success: true,
-      objective: formattedResponse
+      objective: formattedResponse,
     });
   } catch (error) {
-    console.error('Career objective generation error:', error);
+    console.error("Career objective generation error:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to generate career objective'
+      error: "Lỗi khi tạo career objective",
     });
   }
 };
@@ -403,17 +431,17 @@ const generateWorkExperience = async (req, res) => {
       Return the result in Vietnamese
       Note: Return only the final paragraph
           `);
-    const bulletPoints = response.split('\n').filter(point => point.trim());
+    const bulletPoints = response.split("\n").filter((point) => point.trim());
     apiCache.set(cacheKey, { success: true, experience: bulletPoints });
     res.json({
       success: true,
-      experience: bulletPoints
+      experience: bulletPoints,
     });
   } catch (error) {
-    console.error('Work experience generation error:', error);
+    console.error("Work experience generation error:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to generate work experience'
+      error: "Lỗi khi tạo work experience",
     });
   }
 };
@@ -435,17 +463,17 @@ const suggestSkills = async (req, res) => {
       Return the skills as a simple list without any markdown formatting or special characters.
       Return the result in Vietnamese
     `);
-    const skills = response.split('\n').filter(skill => skill.trim());
+    const skills = response.split("\n").filter((skill) => skill.trim());
     apiCache.set(cacheKey, { success: true, skills });
     res.json({
       success: true,
-      skills
+      skills,
     });
   } catch (error) {
-    console.error('Skills suggestion error:', error);
+    console.error("Skills suggestion error:", error);
     res.status(500).json({
       success: false,
-      error: 'Failed to suggest skills'
+      error: "Lỗi khi gợi ý skills",
     });
   }
 };
@@ -456,5 +484,5 @@ module.exports = {
   generateWorkExperience,
   suggestSkills,
   generatePDF,
-  apiLimiter
+  apiLimiter,
 };

@@ -97,7 +97,7 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User does not exists",
+        message: "Người dùng không tồn tại !",
       });
     }
 
@@ -106,7 +106,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Wrong Password",
+        message: "Xin vui lòng nhập đúng mật khẩu !",
       });
     }
 
@@ -114,7 +114,7 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "User logged In Successfully",
+      message: "Đăng nhập thành công !",
       token,
     });
   } catch (err) {
@@ -177,21 +177,21 @@ exports.changePassword = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Old password is wrong",
+        message: "",
       });
     }
 
     if (newPassword === oldPassword) {
       return res.status(400).json({
         success: false,
-        message: "New password is same as old Password",
+        message: "Mật khẩu mới không được trùng với mật khẩu cũ !",
       });
     }
 
     if (newPassword !== confirmPassword) {
       return res.status(401).json({
         success: false,
-        message: "New Pasword and Confirm Password are not matching",
+        message: "Mật khẩu mới và xác nhận mật khẩu không khớp !",
       });
     }
 
@@ -203,7 +203,7 @@ exports.changePassword = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "User password changed",
+      message: "Mật khẩu đã được thay đổi !",
     });
   } catch (err) {
     res.status(500).json({
@@ -251,7 +251,7 @@ exports.updateProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Profile Updated",
+      message: "Hồ sơ đã được cập nhật !",
     });
   } catch (err) {
     res.status(500).json({
@@ -272,13 +272,13 @@ exports.deleteAccount = async (req, res) => {
     } else {
       return res.status(200).json({
         success: false,
-        message: "Password does not match !",
+        message: "Mật khẩu không khớp !",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Account Deleted",
+      message: "Tài khoản đã được xóa !",
     });
   } catch (err) {
     res.status(500).json({
