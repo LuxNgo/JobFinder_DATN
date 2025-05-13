@@ -236,7 +236,7 @@ const generateCV = async (req, res) => {
     if (!jobTitle || !industry) {
       return res.status(400).json({
         success: false,
-        error: "jobTitle and industry are required fields",
+        error: "Vui lòng nhập chức danh và ngành nghề",
       });
     }
 
@@ -249,6 +249,38 @@ const generateCV = async (req, res) => {
     `);
 
     // Generate work experience bullet points if workExperience exists and has items
+    let enhancedWorkExperience = [];
+    if (workExperience && workExperience.length > 0) {
+      for (const exp of workExperience) {
+        try {
+          // Create a mock request object for generateWorkExperience
+          const mockReq = { 
+            body: {
+              title: exp.title || '',
+              organization: exp.organization || '',
+              description: exp.description || '',
+              type: exp.type || 'full-time'
+            } 
+          };
+          const mockRes = {
+            json: (data) => {
+              if (data.success && data.experience) {
+                enhancedWorkExperience.push({
+                  ...exp,
+                  generatedDescription: data.experience.join('\n')
+                });
+              }
+            }
+          };
+          
+          await generateWorkExperience(mockReq, mockRes);
+        } catch (error) {
+          console.error('Error generating work experience:', error);
+          // If generation fails, keep the original experience
+          enhancedWorkExperience.push(exp);
+        }
+      }
+    }
     const workExperienceBullets =
       workExperience.length > 0
         ? await Promise.all(
@@ -302,13 +334,13 @@ const generateCV = async (req, res) => {
         location: personalInfo?.location || "",
         summary: careerObjective || "Career objective will appear here",
       },
-      experience: workExperienceBullets.map((bullet, index) => ({
-        jobTitle: workExperience[index]?.title || "",
-        company: workExperience[index]?.company || "",
-        location: workExperience[index]?.location || "",
-        startDate: workExperience[index]?.startDate || "",
-        endDate: workExperience[index]?.endDate || "",
-        description: bullet,
+      experience: (enhancedWorkExperience.length > 0 ? enhancedWorkExperience : workExperience).map((exp, index) => ({
+        jobTitle: exp.title || "",
+        company: exp.organization || "",
+        location: exp.location || "",
+        startDate: exp.startDate || "",
+        endDate: exp.endDate || "",
+        description: exp.generatedDescription || workExperienceBullets[index] || "",
       })),
       education: education.map((edu) => ({
         degree: edu.degree || "",
@@ -417,25 +449,43 @@ const generateWorkExperience = async (req, res) => {
       return res.json(cachedResponse);
     }
 
-    const response = await generateContent(`
-      You are a professional CV writer. Based on the following input, generate a concise and compelling experience paragraph that summarizes the candidate's role and achievements as a ${title} focused on ${description} with ${type} at ${organization}.
+        const prompt = `
+      You are a professional CV writer. Based on the following input, generate a concise and compelling experience paragraph in Vietnamese that summarizes the candidate's role and achievements.
       
-      Important: Return only the paragraph text. The tone should be professional, achievement-oriented, and easy to paste directly into a CV or resume.
+      Job Title: ${title}
+      Company: ${organization}
+      Job Type: ${type}
+      Description: ${description}
       
       The paragraph should:
-      Start by briefly describing the role and scope
-      Highlight key responsibilities using action verbs
-      Emphasize accomplishments and quantify results where possible
-      Be no more than 4–5 sentences
+      1. Start by briefly describing the role and scope
+      2. Highlight key responsibilities using action verbs
+      3. Emphasize accomplishments and quantify results where possible
+      4. Be 4-5 sentences long
       
-      Return the result in Vietnamese
-      Note: Return only the final paragraph
-          `);
-    const bulletPoints = response.split("\n").filter((point) => point.trim());
-    apiCache.set(cacheKey, { success: true, experience: bulletPoints });
+      Return ONLY the Vietnamese paragraph text, no explanations or additional text.
+      `;
+
+    const response = await generateContent(prompt);
+    
+    // Clean up the response to ensure we only get the content
+    let cleanedResponse = response.trim();
+    // Remove any markdown formatting or code blocks
+    cleanedResponse = cleanedResponse.replace(/```(?:[a-z]*\n)?([\s\S]*?)\n```/g, '$1');
+    // Remove any surrounding quotes
+    cleanedResponse = cleanedResponse.replace(/^["']|["']$/g, '').trim();
+    // Split into bullet points if multiple lines, otherwise return as a single paragraph
+    let experienceContent;
+    if (cleanedResponse.includes('\n')) {
+      experienceContent = cleanedResponse.split('\n').filter(point => point.trim());
+    } else {
+      experienceContent = [cleanedResponse];
+    }
+    
+    apiCache.set(cacheKey, { success: true, experience: experienceContent });
     res.json({
       success: true,
-      experience: bulletPoints,
+      experience: experienceContent,
     });
   } catch (error) {
     console.error("Work experience generation error:", error);
