@@ -491,11 +491,18 @@ export const Jobs = () => {
               {/* Job Listings */}
               <div className='lg:col-span-9'>
                 <div className='space-y-6'>
-                  {displayedData.map((job, index) => (
-                    <div key={index}>
-                      <JobCard job={job} />
+                  {displayedData.length === 0 ? (
+                    <div className='text-center py-12'>
+                      <div className='text-2xl font-semibold text-gray-600 mb-4'>Không tìm thấy công việc</div>
+                      <p className='text-gray-500'>Không có công việc nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
                     </div>
-                  ))}
+                  ) : (
+                    displayedData.map((job, index) => (
+                      <div key={index}>
+                        <JobCard job={job} />
+                      </div>
+                    ))
+                  )}
                 </div>
   
                 {/* Enhanced Pagination */}
