@@ -31,7 +31,16 @@ const CVBuilder = () => {
     },
     jobTitle: "",
     industry: "",
-    experiences: [],
+    careerObjective: "",
+    experiences: [
+      {
+        title: "",
+        organization: "",
+        time: "",
+        description: "",
+        summary: "",
+      },
+    ],
     education: [],
     skills: [],
   });
@@ -46,7 +55,7 @@ const CVBuilder = () => {
   // AI Suggestions State
   const [aiSuggestions, setAiSuggestions] = useState({
     careerObjective: "",
-    experiences: [],
+    experience: "",
     skills: [],
   });
   const [isGenerating, setIsGenerating] = useState(false);
@@ -186,6 +195,29 @@ const CVBuilder = () => {
     },
   ];
 
+  // Handle career objective suggestion
+  const handleCareerSuggestion = async () => {
+    try {
+      if (!cvData.jobTitle || !cvData.industry) {
+        toast.error("Vui lòng nhập chức danh và ngành nghề!");
+        return;
+      }
+      setIsGenerating(true);
+      const careerObjective = await dispatch(
+        suggestCareerObjective(cvData.jobTitle, cvData.industry)
+      );
+      setAiSuggestions((prev) => ({
+        ...prev,
+        careerObjective: [...prev.careerObjective, ...careerObjective],
+      }));
+      toast.success("Mục tiêu nghề nghiệp được đề xuất thành công!");
+    } catch (error) {
+      toast.error("Thất bại khi đề xuất mục tiêu nghề nghiệp");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   // Handle skills suggestion
   const handleSkillsSuggestion = async () => {
     try {
@@ -258,9 +290,29 @@ const CVBuilder = () => {
     setLoading(true);
 
     try {
-      await dispatch(generateCVAction(cvData, selectedTemplate));
+      // Use the local form data directly
+      const cvContent = {
+        ...cvData,
+        // Ensure all required fields are present
+        personalInfo: {
+          fullName: cvData.personalInfo?.fullName || "",
+          email: cvData.personalInfo?.email || "",
+          phone: cvData.personalInfo?.phone || "",
+          location: cvData.personalInfo?.location || "",
+          summary: cvData.personalInfo?.summary || "",
+        },
+        jobTitle: cvData.jobTitle || "",
+        industry: cvData.industry || "",
+        experiences: cvData.experiences || [],
+        education: cvData.education || [],
+        skills: cvData.skills || [],
+        certifications: cvData.certifications || [],
+        languages: cvData.languages || [],
+        projects: cvData.projects || [],
+        template: selectedTemplate,
+      };
       toast.success("CV đã được tạo thành công!");
-      setGeneratedCV(true);
+      setGeneratedCV(cvContent);
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -325,7 +377,7 @@ const CVBuilder = () => {
           </div>
         </div>
 
-        <PersonalInfoForm
+        {/* <PersonalInfoForm
           personalInfo={cvData.personalInfo}
           setPersonalInfo={(newInfo) => {
             setCvData((prev) => ({
@@ -333,9 +385,92 @@ const CVBuilder = () => {
               personalInfo: newInfo,
             }));
           }}
-        />
+        /> */}
 
-        <CareerObjective
+        {/* Personal Info */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4">Thông Tin Cá Nhân</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Họ và Tên
+              </label>
+              <input
+                type="text"
+                value={cvData.personalInfo.fullName}
+                onChange={(e) =>
+                  setCvData((prev) => ({
+                    ...prev,
+                    personalInfo: {
+                      ...prev.personalInfo,
+                      fullName: e.target.value,
+                    },
+                  }))
+                }
+                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                value={cvData.personalInfo.email}
+                onChange={(e) =>
+                  setCvData((prev) => ({
+                    ...prev,
+                    personalInfo: {
+                      ...prev.personalInfo,
+                      email: e.target.value,
+                    },
+                  }))
+                }
+                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Số Điện Thoại
+              </label>
+              <input
+                type="tel"
+                value={cvData.personalInfo.phone}
+                onChange={(e) =>
+                  setCvData((prev) => ({
+                    ...prev,
+                    personalInfo: {
+                      ...prev.personalInfo,
+                      phone: e.target.value,
+                    },
+                  }))
+                }
+                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Địa Chỉ
+              </label>
+              <input
+                type="text"
+                value={cvData.personalInfo.location}
+                onChange={(e) =>
+                  setCvData((prev) => ({
+                    ...prev,
+                    personalInfo: {
+                      ...prev.personalInfo,
+                      location: e.target.value,
+                    },
+                  }))
+                }
+                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* <CareerObjective
           summary={cvData.personalInfo.summary}
           setSummary={(newSummary) => {
             setCvData((prev) => ({
@@ -358,7 +493,96 @@ const CVBuilder = () => {
           }}
           isGenerating={isGenerating}
           aiSuggestions={aiSuggestions}
-        />
+        /> */}
+
+        {/* career */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4">Mục Tiêu Nghề Nghiệp</h2>
+          <div className="mb-4">
+            <textarea
+              value={cvData.careerObjective}
+              onChange={(e) =>
+                setCvData((prev) => ({
+                  ...prev,
+                  careerObjective: e.target.value,
+                }))
+              }
+              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+              placeholder="Nhập mục tiêu nghề nghiệp của bạn..."
+            />
+          </div>
+          <button
+            onClick={handleCareerSuggestion}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2"
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Đang Tạo...
+              </>
+            ) : (
+              "Lấy Gợi Ý từ AI"
+            )}
+          </button>
+          {aiSuggestions.careerObjective && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="space-y-2">
+                <p className="text-blue-800 font-medium">
+                  Gợi Ý Mục Tiêu Nghề Nghiệp:
+                </p>
+                <div className="prose prose-blue max-w-none">
+                  <p>{aiSuggestions.careerObjective}</p>
+                </div>
+                <button
+                  onClick={() =>
+                    setCvData((prev) => ({
+                      ...prev,
+                      careerObjective: aiSuggestions.careerObjective
+                        .join("")
+                        .trim(),
+                    }))
+                  }
+                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <svg
+                    className="-ml-1 mr-2 h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Áp dụng gợi ý này
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Education */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -515,13 +739,13 @@ const CVBuilder = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Địa Điểm
+                    Thời gian
                   </label>
                   <input
                     type="text"
-                    value={exp.location}
+                    value={exp.time}
                     onChange={(e) =>
-                      handleExperienceChange(index, "location", e.target.value)
+                      handleExperienceChange(index, "time", e.target.value)
                     }
                     className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -595,69 +819,66 @@ const CVBuilder = () => {
                   Tóm tắt kinh nghiệm
                 </label>
                 <textarea
-                  value={cvData.experiences[index].experience}
+                  value={cvData.experiences[index].summary}
                   onChange={(e) =>
                     setCvData((prev) => ({
                       ...prev,
                       experiences: prev.experiences.map((exp, i) =>
-                        i === index
-                          ? { ...exp, experience: e.target.value }
-                          : exp
+                        i === index ? { ...exp, summary: e.target.value } : exp
                       ),
                     }))
                   }
                   className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
                 />
               </div>
-              {aiSuggestions.experience &&
-                aiSuggestions.experience !== "null" && (
-                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="space-y-2">
-                      <p className="text-blue-800 font-medium">
-                        Gợi Ý Kinh Nghiệm:
-                      </p>
-                      <div className="prose prose-blue max-w-none">
-                        <p>{aiSuggestions.experience}</p>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setCvData((prev) => {
-                            const updatedExperiences = [...prev.experiences];
-                            updatedExperiences[index] = {
-                              ...updatedExperiences[index],
-                              experience: aiSuggestions.experience,
-                            };
-                            return {
-                              ...prev,
-                              experiences: updatedExperiences,
-                            };
-                          });
-                          // Clear the suggestion after applying
-                          setAiSuggestions((prev) => ({
-                            ...prev,
-                            experience: "",
-                          }));
-                        }}
-                        className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        <svg
-                          className="-ml-1 mr-2 h-5 w-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        Áp dụng gợi ý này
-                      </button>
+              {aiSuggestions.experience && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="space-y-2">
+                    <p className="text-blue-800 font-medium">
+                      Gợi Ý Kinh Nghiệm:
+                    </p>
+                    <div className="prose prose-blue max-w-none">
+                      <p>{aiSuggestions.experience}</p>
                     </div>
+                    <button
+                      onClick={() => {
+                        setCvData((prev) => {
+                          const updatedExperiences = [...prev.experiences];
+                          updatedExperiences[index] = {
+                            ...updatedExperiences[index],
+                            summary: aiSuggestions.experience,
+                          };
+                          return {
+                            ...prev,
+                            experiences: updatedExperiences,
+                          };
+                        });
+                        // Clear the suggestion after applying
+                        setAiSuggestions((prev) => ({
+                          ...prev,
+                          experience: "",
+                        }));
+                      }}
+                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      <svg
+                        className="-ml-1 mr-2 h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Áp dụng gợi ý này
+                    </button>
                   </div>
-                )}
+                </div>
+              )}
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={() => {
@@ -880,7 +1101,7 @@ const CVBuilder = () => {
                         : "#3498db",
                     }}
                   >
-                    {generatedCV.personalInfo?.fullName}
+                    {cvData.personalInfo?.fullName}
                   </h1>
                   <h2
                     className="text-xl font-semibold"
@@ -891,7 +1112,7 @@ const CVBuilder = () => {
                         : "#2c3e50",
                     }}
                   >
-                    {generatedCV.jobTitle}
+                    {cvData.jobTitle}
                   </h2>
                 </div>
                 <div className="mt-4 flex flex-col flex-wrap justify-center gap-4">
@@ -993,21 +1214,13 @@ const CVBuilder = () => {
                           }}
                         >
                           {field === "industry" &&
-                            `Ngành nghề: ${
-                              generatedCV.industry || "Ngành nghề"
-                            }`}
+                            `Ngành nghề: ${cvData.industry}`}
                           {field === "email" &&
-                            `Email: ${
-                              generatedCV.personalInfo?.email || "Email"
-                            }`}
+                            `Email: ${cvData.personalInfo?.email}`}
                           {field === "phone" &&
-                            `Số điện thoại: ${
-                              generatedCV.personalInfo?.phone || "Số điện thoại"
-                            }`}
+                            `Số điện thoại: ${cvData.personalInfo?.phone}`}
                           {field === "location" &&
-                            `Địa chỉ: ${
-                              generatedCV.personalInfo?.location || "Địa chỉ"
-                            }`}
+                            `Địa chỉ: ${cvData.personalInfo?.location}`}
                         </p>
                       </div>
                     )
@@ -1074,7 +1287,7 @@ const CVBuilder = () => {
                           : "#333333",
                       }}
                     >
-                      {generatedCV.personalInfo?.summary ||
+                      {cvData.personalInfo?.summary ||
                         "Mục tiêu nghề nghiệp sẽ hiển thị ở đây"}
                     </p>
                   </div>
@@ -1111,10 +1324,10 @@ const CVBuilder = () => {
                   >
                     Học Vấn
                   </h3>
-                  {Array.isArray(generatedCV.education) &&
-                  generatedCV.education.length > 0 ? (
+                  {Array.isArray(cvData.education) &&
+                  cvData.education.length > 0 ? (
                     <div className="space-y-6">
-                      {generatedCV.education.map((edu, index) => (
+                      {cvData.education.map((edu, index) => (
                         <div
                           key={index}
                           className="border-l-4 pl-4"
@@ -1191,10 +1404,10 @@ const CVBuilder = () => {
                   >
                     Kinh Nghiệm
                   </h3>
-                  {Array.isArray(generatedCV.experiences) &&
-                  generatedCV.experiences.length > 0 ? (
+                  {Array.isArray(cvData.experiences) &&
+                  cvData.experiences.length > 0 ? (
                     <div className="space-y-6">
-                      {generatedCV.experiences.map((exp, index) => (
+                      {cvData.experiences.map((exp, index) => (
                         <div
                           key={index}
                           className="border-l-4 pl-4"
@@ -1223,10 +1436,7 @@ const CVBuilder = () => {
                                 Công ty: {exp.organization}
                               </p>
                               <p className="text-gray-600 mt-1">
-                                Thời gian: {exp.startDate} - {exp.endDate}
-                              </p>
-                              <p className="text-gray-600 mt-1">
-                                Nơi làm việc: {exp.location}
+                                Thời gian: {exp.time}
                               </p>
                               {exp.summary && (
                                 <div className="mt-4 space-y-2">
@@ -1277,9 +1487,9 @@ const CVBuilder = () => {
                     Kỹ Năng
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {Array.isArray(generatedCV.skills) &&
-                    generatedCV.skills.length > 0 ? (
-                      generatedCV.skills.map((skill, i) => (
+                    {Array.isArray(cvData.skills) &&
+                    cvData.skills.length > 0 ? (
+                      cvData.skills.map((skill, i) => (
                         <div
                           key={i}
                           className="relative p-3 rounded-lg"
