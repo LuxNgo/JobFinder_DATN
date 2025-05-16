@@ -10,14 +10,15 @@ import CountUp from "react-countup";
 import { BarChart } from "../components/Chart";
 import { Loader } from "../components/Loader";
 import { HiOutlineSparkles } from "react-icons/hi";
-import { SidebarRecruiter } from "../components/SidebarRecruiter";
 import { BarChartRecruiter } from "../components/ChartRecruiter";
 
 export const DashboardRecruiter = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
-  const { loading, allJobsRecruiter, allApplicationsRecruiter } = useSelector((state) => state.recruiter);
+  const { loading, allJobsRecruiter, allApplicationsRecruiter } = useSelector(
+    (state) => state.recruiter
+  );
 
   useEffect(() => {
     dispatch(getAllJobsRecruiter());
@@ -28,13 +29,12 @@ export const DashboardRecruiter = () => {
     <>
       <MetaData title="DashboardRecruiter" />
       <div className="bg-blue-50 min-h-screen pt-14 md:px-20 px-3">
-        <SidebarRecruiter />
         <div className="w-full">
           {loading ? (
             <Loader />
           ) : (
             <>
-              <div className="flex justify-center items-center pt-10 gap-2">
+              <div className="flex justify-center items-center gap-2">
                 <HiOutlineSparkles className="text-blue-500 text-3xl" />
                 <h1 className="text-4xl font-bold text-blue-700 uppercase">
                   Dashboard

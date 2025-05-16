@@ -40,8 +40,8 @@ import { UpgradeToRecruiter } from "./pages/UpgradeToRecruiter";
 import Payment from "./pages/Payment";
 import { ViewAllJobRecruiter } from "./pages/VIewAllJobRecruiter";
 import UserLayout from "./layouts/UserLayout";
-import { Footer } from "./components/Footer";
 import { AdminLayout } from "./layouts/AdminLayout";
+import { RecruiterLayout } from "./layouts/RecruiterLayout";
 
 function App() {
   const dispatch = useDispatch();
@@ -113,7 +113,6 @@ function App() {
               path="/Application/Details/:id"
               element={<ApplicationDetails />}
             />
-            <Route path="/recruiter/postJob" element={<CreateJob />} />
           </Route>
         </Route>
 
@@ -132,7 +131,6 @@ function App() {
             <Route path="allUsers" element={<ViewAllUsersAdmin />} />
             <Route path="update/application/:id" element={<EditAppAdmin />} />
             <Route path="user/role/:id" element={<EditUserAdmin />} />
-            <Route path="job/details/:id" element={<EditJobAdmin />} />
           </Route>
         </Route>
 
@@ -144,11 +142,12 @@ function App() {
             />
           }
         >
-          <Route element={<UserLayout />}>
+          <Route element={<RecruiterLayout />}>
             <Route
               path="/recruiter/dashboard"
               element={<DashboardRecruiter />}
             />
+            <Route path="/recruiter/postJob" element={<CreateJob />} />
             <Route
               path="/recruiter/allJobs"
               element={<ViewAllJobRecruiter />}
@@ -170,7 +169,16 @@ function App() {
             />
           }
         >
-          <Route path="/admin/job/details/:id" element={<EditJobAdmin />} />
+          {localStorage.getItem("role") === "admin" && (
+            <Route element={<AdminLayout />}>
+              <Route path="admin/job/details/:id" element={<EditJobAdmin />} />
+            </Route>
+          )}
+          {localStorage.getItem("role") === "recruiter" && (
+            <Route element={<RecruiterLayout />}>
+              <Route path="admin/job/details/:id" element={<EditJobAdmin />} />
+            </Route>
+          )}
         </Route>
 
         {/* Test Page */}

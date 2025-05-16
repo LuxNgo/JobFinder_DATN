@@ -17,7 +17,6 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import { InputField, TextAreaField } from "./EditJobAdmin";
 import { motion } from "framer-motion";
 import { Loader } from "../components/Loader";
-import { SidebarRecruiter } from "../components/SidebarRecruiter";
 
 export const CreateJob = () => {
   const { loading } = useSelector((state) => state.job);
@@ -82,13 +81,12 @@ export const CreateJob = () => {
   return (
     <>
       <MetaData title="Chỉnh sửa tin tuyển dụng" />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 pt-14 md:px-20 px-3">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 md:px-20 px-3">
         {loading ? (
           <Loader />
         ) : (
           <div>
-            <SidebarRecruiter />
-            <div className=" flex justify-center w-full items-start pt-6 pb-10">
+            <div className=" flex justify-center w-full items-start pb-10">
               <form
                 onSubmit={postHandler}
                 className="max-w-4xl mx-auto bg-white mt-10 rounded-xl shadow-xl p-6"
@@ -241,12 +239,12 @@ export const CreateJob = () => {
                   <div className="flex w-full">
                     <button
                       disabled={loading}
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 w-full"
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-32 px-8 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 w-full"
                     >
                       {loading ? (
                         <TbLoader2 className="animate-spin" size={24} />
                       ) : (
-                        "Post Job"
+                        "Đăng tin"
                       )}
                     </button>
                   </div>
