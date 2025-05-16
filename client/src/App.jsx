@@ -37,10 +37,10 @@ import UnAuthorized from "./pages/UnAuthorized";
 import ScrollToTopWhenRouteChanges from "./components/ScrollToTopOnRouteChange";
 import CVBuilder from "./pages/CVBuilder";
 import { DashboardRecruiter } from "./pages/DashboardRecruiter";
-import { ViewAllJobRecruiter } from "./pages/VIewAllJobRecruiter";
 import { ViewAllAppliRecruiter } from "./pages/ViewAllAppliRecruiter";
 import { UpgradeToRecruiter } from "./pages/UpgradeToRecruiter";
 import Payment from "./pages/Payment";
+import { ViewAllJobRecruiter } from "./pages/VIewAllJobRecruiter";
 
 function App() {
   const dispatch = useDispatch();
@@ -142,7 +142,7 @@ function App() {
           />
           <Route path="/payment" element={<Payment />} />
           <Route path="/recruiter/dashboard" element={<DashboardRecruiter />} />
-          <Route path="/recruiter/jobs" element={<ViewAllJobRecruiter />} />
+          <Route path="/recruiter/allJobs" element={<ViewAllJobRecruiter />} />
           <Route
             path="/recruiter/applications"
             element={<ViewAllAppliRecruiter />}
