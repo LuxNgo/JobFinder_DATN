@@ -113,6 +113,7 @@ function App() {
               path="/Application/Details/:id"
               element={<ApplicationDetails />}
             />
+            <Route path="/cv-builder" element={<CVBuilder />} />
           </Route>
         </Route>
 
@@ -183,7 +184,6 @@ function App() {
 
         {/* Test Page */}
         <Route path="/test" element={<Test />} />
-        <Route path="/cv-builder" element={<CVBuilder />} />
 
         {/* Error Routes */}
         <Route path="*" element={<NotFound />} />
