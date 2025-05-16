@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "../components/Loader";
 import { toast } from "react-toastify";
 import { getUserData, updateUser } from "../actions/AdminActions";
-import { Sidebar } from "../components/Sidebar";
 import { motion } from "framer-motion";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { MdOutlinePerson } from "react-icons/md";
@@ -60,11 +59,10 @@ export const EditUserAdmin = () => {
           </div>
         ) : (
           <div>
-            <Sidebar />
             {/* Back Button */}
             <Link
               to="/admin/allUsers"
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 mt-10"
+              className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
             >
               <FaArrowLeft className="mr-2" />
               Back to

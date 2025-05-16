@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { MetaData } from "../components/MetaData";
-import { Sidebar } from "../components/Sidebar";
-import { RxCross1 } from "react-icons/rx";
 import { FaUser, FaBriefcase, FaFileAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -31,13 +29,12 @@ export const Dashboard = () => {
     <>
       <MetaData title="Dashboard" />
       <div className="bg-blue-50 min-h-screen pt-14 md:px-20 px-3">
-        <Sidebar />
         <div className="w-full">
           {loading ? (
             <Loader />
           ) : (
             <>
-              <div className="flex justify-center items-center pt-10 gap-2">
+              <div className="flex justify-center items-center gap-2">
                 <HiOutlineSparkles className="text-blue-500 text-3xl" />
                 <h1 className="text-4xl font-bold text-blue-700 uppercase">
                   Dashboard

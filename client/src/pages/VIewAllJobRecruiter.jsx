@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MetaData } from "../components/MetaData";
-import { Sidebar } from "../components/Sidebar";
-import {
-  MdOutlineModeEditOutline,
-  MdOutlineSearch,
-  MdOutlineAdd,
-} from "react-icons/md";
+import { MdOutlineModeEditOutline, MdOutlineSearch } from "react-icons/md";
 import {
   AiOutlineDelete,
   AiOutlineFilter,

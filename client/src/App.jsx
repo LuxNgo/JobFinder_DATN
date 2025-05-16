@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Home } from "./pages/Home";
-import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
 import { Jobs } from "./pages/Jobs";
 import { Contact } from "./pages/Contact";
 import { About } from "./pages/About";
@@ -41,6 +39,9 @@ import { ViewAllAppliRecruiter } from "./pages/ViewAllAppliRecruiter";
 import { UpgradeToRecruiter } from "./pages/UpgradeToRecruiter";
 import Payment from "./pages/Payment";
 import { ViewAllJobRecruiter } from "./pages/VIewAllJobRecruiter";
+import UserLayout from "./layouts/UserLayout";
+import { Footer } from "./components/Footer";
+import { AdminLayout } from "./layouts/AdminLayout";
 
 function App() {
   const dispatch = useDispatch();
@@ -72,44 +73,51 @@ function App() {
   return (
     <>
       <ScrollToTopWhenRouteChanges />
-      <Navbar />
       <Routes>
-        <Route exact path="/" element={<Home />} />
-        <Route path="/jobs" element={<Jobs />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/details/:id" element={<JobDetails />} />
-        <Route path="/upgrade-to-recruiter" element={<UpgradeToRecruiter />} />
-        <Route path="/payment" element={<Payment />} />
+        {/* Public Routes */}
+        <Route element={<UserLayout />}>
+          <Route exact path="/" element={<Home />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/details/:id" element={<JobDetails />} />
+          <Route
+            path="/upgrade-to-recruiter"
+            element={<UpgradeToRecruiter />}
+          />
+          <Route path="/payment" element={<Payment />} />
+        </Route>
 
-        {/* Protected Routes for Applicants, Admins, and Recruiters */}
+        {/* Protected Routes for Applicants and Recruiters */}
         <Route
           element={
             <ProtectedRoute
-              isAllowed={["applicant", "admin", "recruiter"].includes(
+              isAllowed={["applicant", "recruiter"].includes(
                 localStorage.getItem("role")
               )}
             />
           }
         >
-          <Route path="/profile" element={<MyProfile />} />
-          <Route path="/applied" element={<AppliedJobs />} />
-          <Route path="/saved" element={<SavedJobs />} />
-          <Route path="/changePassword" element={<ChangePassword />} />
-          <Route path="/editProfile" element={<EditProfile />} />
-          <Route path="/deleteAccount" element={<DeleteAccount />} />
-          <Route path="/JobsLayout" element={<JobsLayout />} />
-          <Route path="/Application/:id" element={<Application />} />
-          <Route
-            path="/Application/Details/:id"
-            element={<ApplicationDetails />}
-          />
-          <Route path="/recruiter/postJob" element={<CreateJob />} />
+          <Route element={<UserLayout />}>
+            <Route path="/profile" element={<MyProfile />} />
+            <Route path="/applied" element={<AppliedJobs />} />
+            <Route path="/saved" element={<SavedJobs />} />
+            <Route path="/changePassword" element={<ChangePassword />} />
+            <Route path="/editProfile" element={<EditProfile />} />
+            <Route path="/deleteAccount" element={<DeleteAccount />} />
+            <Route path="/JobsLayout" element={<JobsLayout />} />
+            <Route path="/Application/:id" element={<Application />} />
+            <Route
+              path="/Application/Details/:id"
+              element={<ApplicationDetails />}
+            />
+            <Route path="/recruiter/postJob" element={<CreateJob />} />
+          </Route>
         </Route>
 
-        {/* Protected Routes for Admin */}
+        {/* Admin Routes */}
         <Route
           element={
             <ProtectedRoute
@@ -117,18 +125,18 @@ function App() {
             />
           }
         >
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/allJobs" element={<ViewAllJobAdmin />} />
-          <Route path="/admin/allApplications" element={<ViewAllAppli />} />
-          <Route path="/admin/allUsers" element={<ViewAllUsersAdmin />} />
-          <Route
-            path="/admin/update/application/:id"
-            element={<EditAppAdmin />}
-          />
-          <Route path="/admin/user/role/:id" element={<EditUserAdmin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="allJobs" element={<ViewAllJobAdmin />} />
+            <Route path="allApplications" element={<ViewAllAppli />} />
+            <Route path="allUsers" element={<ViewAllUsersAdmin />} />
+            <Route path="update/application/:id" element={<EditAppAdmin />} />
+            <Route path="user/role/:id" element={<EditUserAdmin />} />
+            <Route path="job/details/:id" element={<EditJobAdmin />} />
+          </Route>
         </Route>
 
-        {/* Protected Routes for Recruiters */}
+        {/* Recruiter Routes */}
         <Route
           element={
             <ProtectedRoute
@@ -136,17 +144,20 @@ function App() {
             />
           }
         >
-          <Route
-            path="/upgrade-to-recruiter"
-            element={<UpgradeToRecruiter />}
-          />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/recruiter/dashboard" element={<DashboardRecruiter />} />
-          <Route path="/recruiter/allJobs" element={<ViewAllJobRecruiter />} />
-          <Route
-            path="/recruiter/allApplications"
-            element={<ViewAllAppliRecruiter />}
-          />
+          <Route element={<UserLayout />}>
+            <Route
+              path="/recruiter/dashboard"
+              element={<DashboardRecruiter />}
+            />
+            <Route
+              path="/recruiter/allJobs"
+              element={<ViewAllJobRecruiter />}
+            />
+            <Route
+              path="/recruiter/allApplications"
+              element={<ViewAllAppliRecruiter />}
+            />
+          </Route>
         </Route>
 
         {/* general routes admin and recruiter */}
@@ -166,7 +177,7 @@ function App() {
         <Route path="/test" element={<Test />} />
         <Route path="/cv-builder" element={<CVBuilder />} />
 
-        {/* 404 and Unauthorized */}
+        {/* Error Routes */}
         <Route path="*" element={<NotFound />} />
         <Route path="/unauthorized" element={<UnAuthorized />} />
       </Routes>
@@ -184,7 +195,6 @@ function App() {
         theme="dark"
         className="mt-14 font-bold"
       />
-      <Footer />
     </>
   );
 }

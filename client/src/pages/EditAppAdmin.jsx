@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import { Loader } from "../components/Loader";
 import { toast } from "react-toastify";
 import { updateApplication } from "../actions/AdminActions";
-import { Sidebar } from "../components/Sidebar";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { useDisclosure } from "@mantine/hooks";
@@ -22,6 +21,7 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaCalendarCheck,
+  FaArrowLeft,
 } from "react-icons/fa";
 import { Modal } from "@mantine/core";
 
@@ -79,8 +79,18 @@ export const EditAppAdmin = () => {
           <Loader />
         ) : (
           <div>
-            <Sidebar />
-            <div className="max-w-4xl mx-auto py-16">
+            <div className="max-w-4xl mx-auto pb-16">
+              <Link
+                to={
+                  localStorage.getItem("role") === "recruiter"
+                    ? "/recruiter/allApplications"
+                    : "/admin/allApplications"
+                }
+                className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
+              >
+                <FaArrowLeft className="mr-2" />
+                Back to
+              </Link>
               <div className="flex flex-col items-center justify-center gap-2 mb-6">
                 <div className="flex items-center gap-2">
                   <HiOutlineSparkles className="text-blue-500 text-3xl animate-pulse" />

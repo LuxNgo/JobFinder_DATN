@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { MetaData } from "../components/MetaData";
-import { Sidebar } from "../components/Sidebar";
 import {
   MdOutlineLocationOn,
   MdOutlineFeaturedPlayList,

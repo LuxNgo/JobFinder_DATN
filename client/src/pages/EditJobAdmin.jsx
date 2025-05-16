@@ -4,7 +4,6 @@ import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "../components/Loader";
 import { getJobData, updateJobData } from "../actions/AdminActions";
-import { Sidebar } from "../components/Sidebar";
 import {
   MdOutlineLocationOn,
   MdOutlineFeaturedPlayList,
@@ -98,13 +97,12 @@ export const EditJobAdmin = () => {
   return (
     <>
       <MetaData title="Chỉnh sửa tin tuyển dụng" />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 pt-14 md:px-20 px-3">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 md:px-20 px-3">
         {loading ? (
           <Loader />
         ) : (
           <div>
-            <Sidebar />
-            <div className=" flex justify-center w-full items-start pt-6 pb-10">
+            <div className=" flex justify-center w-full items-start pb-10">
               <form
                 onSubmit={postEditHandler}
                 className="max-w-4xl mx-auto bg-white mt-10 rounded-xl shadow-xl p-6"

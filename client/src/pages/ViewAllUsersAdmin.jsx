@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { MetaData } from "../components/MetaData";
-import { Sidebar } from "../components/Sidebar";
 import { MdOutlineModeEditOutline, MdOutlineSearch } from "react-icons/md";
 import {
   AiOutlineDelete,
@@ -140,9 +139,7 @@ export const ViewAllUsersAdmin = () => {
           </div>
         ) : (
           <div>
-            <Sidebar />
-
-            <div className="flex justify-between items-center mb-6 pt-14">
+            <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
                 <HiOutlineSparkles className="text-blue-500 text-2xl" />
                 <h1 className="text-3xl font-bold text-blue-700 uppercase">
