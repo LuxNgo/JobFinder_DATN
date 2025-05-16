@@ -144,7 +144,7 @@ function App() {
           <Route path="/recruiter/dashboard" element={<DashboardRecruiter />} />
           <Route path="/recruiter/allJobs" element={<ViewAllJobRecruiter />} />
           <Route
-            path="/recruiter/applications"
+            path="/recruiter/allApplications"
             element={<ViewAllAppliRecruiter />}
           />
         </Route>

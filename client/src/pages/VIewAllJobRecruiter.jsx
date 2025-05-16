@@ -21,6 +21,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { getAllJobsRecruiter } from "../actions/RecruiterActions";
+import { SidebarRecruiter } from "../components/SidebarRecruiter";
 
 // Export PDF function
 const exportToPDF = (data) => {
@@ -155,7 +156,7 @@ export const ViewAllJobRecruiter = () => {
             </div>
           ) : (
             <div>
-              <Sidebar />
+              <SidebarRecruiter />
 
               <div className="flex justify-between items-center mb-6 pt-14">
                 <div className="flex items-center gap-2">
