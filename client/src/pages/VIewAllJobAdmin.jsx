@@ -18,6 +18,85 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { HiOutlineSparkles } from "react-icons/hi";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+
+// Export PDF function
+const exportToPDF = (data) => {
+  // Create PDF with UTF-8 support
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+    compress: true,
+    putOnlyUsedFonts: true,
+  });
+
+  // Add header
+  doc.setFontSize(16);
+  doc.setTextColor(30);
+  doc.text("Danh sach cong viec", 105, 20, { align: "center" });
+
+  // Add date
+  const currentDate = new Date().toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  doc.setFontSize(12);
+  doc.setTextColor(100);
+  doc.text(`Ngay xuat: ${currentDate}`, 105, 30, { align: "center" });
+
+  // Add table
+  const headers = [
+    { label: "ID", dataKey: "_id" },
+    { label: "Tieu de", dataKey: "title" },
+    { label: "Cong ty", dataKey: "companyName" },
+    { label: "Dia diem", dataKey: "location" },
+    { label: "Ngay dang", dataKey: "createdAt" },
+    { label: "Trang thai", dataKey: "status" },
+  ];
+
+  const rows = data.map((item) => {
+    return [
+      item._id,
+      item.title,
+      item.companyName,
+      item.location,
+      new Date(item.createdAt).toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+      item.status === "active" ? "Dang hoat dong" : "Khong hoat dong",
+    ];
+  });
+
+  // Use autotable with the correct syntax
+  autoTable(doc, {
+    head: [headers.map((h) => [h.label])],
+    body: rows,
+    startY: 40,
+    theme: "grid",
+    styles: {
+      font: "helvetica",
+      fontSize: 10,
+      cellPadding: 2,
+      halign: "center",
+    },
+    headStyles: {
+      fillColor: [0, 120, 215],
+      textColor: 255,
+      fontSize: 11,
+      halign: "center",
+    },
+  });
+
+  // Save PDF
+  const fileName = `jobs_${new Date().toISOString().split("T")[0]}.pdf`;
+  doc.save(fileName);
+  toast.success("Đã xuất file PDF thành công!");
+};
 
 export const ViewAllJobAdmin = () => {
   const dispatch = useDispatch();
@@ -26,6 +105,8 @@ export const ViewAllJobAdmin = () => {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     dispatch(getAllJobsAdmin());
@@ -37,8 +118,14 @@ export const ViewAllJobAdmin = () => {
       job.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-    if (selectedFilter === "all") return matchesSearch;
-    return matchesSearch && job.status === selectedFilter;
+    const matchesDate =
+      !startDate ||
+      !endDate ||
+      (new Date(job.createdAt) >= new Date(startDate) &&
+        new Date(job.createdAt) <= new Date(endDate));
+
+    if (selectedFilter === "all") return matchesSearch && matchesDate;
+    return matchesSearch && matchesDate && job.status === selectedFilter;
   });
 
   const convertDateFormat = (inputDate) => {
@@ -54,9 +141,9 @@ export const ViewAllJobAdmin = () => {
     try {
       setIsDeleting(true);
       await dispatch(deleteJobData(id));
-      toast.success("Job deleted successfully");
+      toast.success("Xóa công việc thành công !");
     } catch (error) {
-      toast.error("Failed to delete job");
+      toast.error("Xóa công việc thất bại !");
     } finally {
       setIsDeleting(false);
     }
@@ -102,11 +189,13 @@ export const ViewAllJobAdmin = () => {
                       <span>Bộ lọc</span>
                     </button>
                     <button
-                      onClick={() => console.log("Exporting...")}
-                      className="flex items-center gap-2 bg-blue-500 text-white rounded-lg px-4 py-2 transition-colors duration-300 hover:bg-blue-600 shadow-sm"
+                      onClick={() => {
+                        exportToPDF(filteredJobs);
+                      }}
+                      className="flex items-center gap-2 bg-green-500 text-white rounded-lg px-4 py-2 transition-colors duration-300 hover:bg-green-600 shadow-sm"
                     >
                       <AiOutlineCloudDownload className="text-white" />
-                      <span>Xuất file</span>
+                      <span>Xuất PDF</span>
                     </button>
                   </div>
                 </div>
@@ -125,7 +214,13 @@ export const ViewAllJobAdmin = () => {
                         Filter Jobs
                       </h3>
                       <button
-                        onClick={() => setIsFilterOpen(false)}
+                        onClick={() => {
+                          setIsFilterOpen(false);
+                          setSearchQuery("");
+                          setSelectedFilter("all");
+                          setStartDate(null);
+                          setEndDate(null);
+                        }}
                         className="text-blue-500 hover:text-blue-700 transition-colors duration-300"
                       >
                         Clear All
@@ -167,6 +262,29 @@ export const ViewAllJobAdmin = () => {
                           >
                             Inactive
                           </button>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-2">
+                          Ngày đăng
+                        </label>
+                        <div className="flex gap-4">
+                          <div className="relative">
+                            <input
+                              type="date"
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                              className="w-full px-3 py-2 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                            />
+                          </div>
+                          <div className="relative">
+                            <input
+                              type="date"
+                              value={endDate}
+                              onChange={(e) => setEndDate(e.target.value)}
+                              className="w-full px-3 py-2 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -229,10 +347,10 @@ export const ViewAllJobAdmin = () => {
                                 <MdOutlineSearch />
                               </div>
                               <p className="text-lg">
-                                No jobs found matching your search criteria
+                                Không tìm thấy công việc
                               </p>
                               <p className="text-gray-500">
-                                Try adjusting your filters or search terms
+                                Thử điều chỉnh các bộ lọc hoặc từ tìm kiếm
                               </p>
                             </div>
                           </td>
@@ -285,8 +403,8 @@ export const ViewAllJobAdmin = () => {
                                   }`}
                                 >
                                   {job.status === "active"
-                                    ? "Đang Hoạt Động"
-                                    : "Không Hoạt Động"}
+                                    ? "Active"
+                                    : "Inactive"}
                                 </span>
                               </div>
                             </td>
