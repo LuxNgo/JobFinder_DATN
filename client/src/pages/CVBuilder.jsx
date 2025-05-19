@@ -14,6 +14,7 @@ import TemplateSelector from "../components/cv-builder/TemplateSelector";
 import PersonalInfoForm from "../components/cv-builder/PersonalInfoForm";
 import CareerObjective from "../components/cv-builder/CareerObjective";
 import DownloadButton from "../components/cv-builder/DownloadButton";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 const CVBuilder = () => {
   const dispatch = useDispatch();
@@ -331,235 +332,498 @@ const CVBuilder = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white mx-32 px-4 py-8 pt-24">
-      <TemplateSelector
-        selectedTemplate={selectedTemplate}
-        setSelectedTemplate={setSelectedTemplate}
-      />
+    <div className="min-h-screen  mx-64 px-4 py-8 pt-16">
+      <h1 className="text-4xl font-bold mb-8 text-center text-blue-500">
+        Tạo hồ sơ xin việc
+      </h1>
       <div className="space-y-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Thông Tin Công Việc</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Chức Danh
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
+              <span>💼 Thông Tin Công Việc</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                <span className="flex items-center gap-2">
+                  <span className="font-semibold">Chức Danh</span>
+                </span>
               </label>
-              <input
-                type="text"
-                value={cvData.jobTitle}
-                onChange={(e) =>
-                  setCvData((prev) => ({ ...prev, jobTitle: e.target.value }))
-                }
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ví dụ: Kỹ Sư Phần Mềm"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={cvData.jobTitle}
+                  onChange={(e) =>
+                    setCvData((prev) => ({ ...prev, jobTitle: e.target.value }))
+                  }
+                  className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+            hover:border-blue-100 hover:bg-white"
+                  placeholder="Ví dụ: Kỹ Sư Phần Mềm"
+                />
+                {cvData.jobTitle && (
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                    {cvData.jobTitle.length} ký tự
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ngành Nghề
+
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                <span className="flex items-center gap-2">
+                  <span className="font-semibold">Ngành Nghề</span>
+                </span>
               </label>
-              <input
-                type="text"
-                value={cvData.industry}
-                onChange={(e) =>
-                  setCvData((prev) => ({ ...prev, industry: e.target.value }))
-                }
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ví dụ: Công Nghệ Thông Tin"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={cvData.industry}
+                  onChange={(e) =>
+                    setCvData((prev) => ({ ...prev, industry: e.target.value }))
+                  }
+                  className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+            hover:border-blue-100 hover:bg-white"
+                  placeholder="Ví dụ: Công Nghệ Thông Tin"
+                />
+                {cvData.industry && (
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                    {cvData.industry.length} ký tự
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-
-        {/* <PersonalInfoForm
-          personalInfo={cvData.personalInfo}
-          setPersonalInfo={(newInfo) => {
-            setCvData((prev) => ({
-              ...prev,
-              personalInfo: newInfo,
-            }));
-          }}
-        /> */}
 
         {/* Personal Info */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Thông Tin Cá Nhân</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Họ và Tên
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
+              <span className="text-blue-500">👤</span> Thông Tin Cá Nhân
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                <span className="flex items-center gap-2">
+                  <span className="font-semibold">Họ và Tên</span>
+                </span>
               </label>
-              <input
-                type="text"
-                value={cvData.personalInfo.fullName}
-                onChange={(e) =>
-                  setCvData((prev) => ({
-                    ...prev,
-                    personalInfo: {
-                      ...prev.personalInfo,
-                      fullName: e.target.value,
-                    },
-                  }))
-                }
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={cvData.personalInfo.fullName}
+                  onChange={(e) =>
+                    setCvData((prev) => ({
+                      ...prev,
+                      personalInfo: {
+                        ...prev.personalInfo,
+                        fullName: e.target.value,
+                      },
+                    }))
+                  }
+                  className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+            hover:border-blue-100 hover:bg-white"
+                  placeholder="Ví dụ: Nguyễn Văn A"
+                />
+                {cvData.personalInfo.fullName && (
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                    {cvData.personalInfo.fullName.length} ký tự
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                <span className="flex items-center gap-2">
+                  <span className="font-semibold">Email</span>
+                </span>
               </label>
-              <input
-                type="email"
-                value={cvData.personalInfo.email}
-                onChange={(e) =>
-                  setCvData((prev) => ({
-                    ...prev,
-                    personalInfo: {
-                      ...prev.personalInfo,
-                      email: e.target.value,
-                    },
-                  }))
-                }
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type="email"
+                  value={cvData.personalInfo.email}
+                  onChange={(e) =>
+                    setCvData((prev) => ({
+                      ...prev,
+                      personalInfo: {
+                        ...prev.personalInfo,
+                        email: e.target.value,
+                      },
+                    }))
+                  }
+                  className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+            hover:border-blue-100 hover:bg-white"
+                  placeholder="Ví dụ: email@domain.com"
+                />
+                {cvData.personalInfo.email && (
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                    {cvData.personalInfo.email.length} ký tự
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Số Điện Thoại
+
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                <span className="flex items-center gap-2">
+                  <span className="font-semibold">Số Điện Thoại</span>
+                </span>
               </label>
-              <input
-                type="tel"
-                value={cvData.personalInfo.phone}
-                onChange={(e) =>
-                  setCvData((prev) => ({
-                    ...prev,
-                    personalInfo: {
-                      ...prev.personalInfo,
-                      phone: e.target.value,
-                    },
-                  }))
-                }
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type="tel"
+                  value={cvData.personalInfo.phone}
+                  onChange={(e) =>
+                    setCvData((prev) => ({
+                      ...prev,
+                      personalInfo: {
+                        ...prev.personalInfo,
+                        phone: e.target.value,
+                      },
+                    }))
+                  }
+                  className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+            hover:border-blue-100 hover:bg-white"
+                  placeholder="Ví dụ: 0901234567"
+                />
+                {cvData.personalInfo.phone && (
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                    {cvData.personalInfo.phone.length} ký tự
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Địa Chỉ
+
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                <span className="flex items-center gap-2">
+                  <span className="font-semibold">Địa Chỉ</span>
+                </span>
               </label>
-              <input
-                type="text"
-                value={cvData.personalInfo.location}
-                onChange={(e) =>
-                  setCvData((prev) => ({
-                    ...prev,
-                    personalInfo: {
-                      ...prev.personalInfo,
-                      location: e.target.value,
-                    },
-                  }))
-                }
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={cvData.personalInfo.location}
+                  onChange={(e) =>
+                    setCvData((prev) => ({
+                      ...prev,
+                      personalInfo: {
+                        ...prev.personalInfo,
+                        location: e.target.value,
+                      },
+                    }))
+                  }
+                  className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+            hover:border-blue-100 hover:bg-white"
+                  placeholder="Ví dụ: Hà Nội, Việt Nam"
+                />
+                {cvData.personalInfo.location && (
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                    {cvData.personalInfo.location.length} ký tự
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* <CareerObjective
-          summary={cvData.personalInfo.summary}
-          setSummary={(newSummary) => {
-            setCvData((prev) => ({
-              ...prev,
-              personalInfo: {
-                ...prev.personalInfo,
-                summary: newSummary,
-              },
-            }));
-          }}
-          suggestObjective={() => {
-            setIsGenerating(true);
-            dispatch(suggestCareerObjective(cvData)).then((suggestion) => {
-              setAiSuggestions((prev) => ({
-                ...prev,
-                careerObjective: suggestion,
-              }));
-              setIsGenerating(false);
-            });
-          }}
-          isGenerating={isGenerating}
-          aiSuggestions={aiSuggestions}
-        /> */}
-
         {/* career */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Mục Tiêu Nghề Nghiệp</h2>
-          <div className="mb-4">
-            <textarea
-              value={cvData.careerObjective}
-              onChange={(e) =>
-                setCvData((prev) => ({
-                  ...prev,
-                  careerObjective: e.target.value,
-                }))
-              }
-              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
-              placeholder="Nhập mục tiêu nghề nghiệp của bạn..."
-            />
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
+              <span className="text-blue-500">🎯</span> Mục Tiêu Nghề Nghiệp
+            </h2>
+            <button
+              onClick={() => {
+                if (cvData.jobTitle && cvData.industry) {
+                  toast.success("Đã lấy gợi ý từ AI!");
+                }
+              }}
+              className="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            >
+              Gợi ý từ AI
+            </button>
           </div>
-          <button
-            onClick={handleCareerSuggestion}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2"
-            disabled={isGenerating}
-          >
-            {isGenerating ? (
-              <>
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Đang Tạo...
-              </>
-            ) : (
-              "Lấy Gợi Ý từ AI"
-            )}
-          </button>
-          {aiSuggestions.careerObjective && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="space-y-2">
-                <p className="text-blue-800 font-medium">
-                  Gợi Ý Mục Tiêu Nghề Nghiệp:
-                </p>
-                <div className="prose prose-blue max-w-none">
-                  <p>{aiSuggestions.careerObjective}</p>
+
+          <div className="space-y-4">
+            <div className="relative">
+              <textarea
+                value={cvData.careerObjective}
+                onChange={(e) =>
+                  setCvData((prev) => ({
+                    ...prev,
+                    careerObjective: e.target.value,
+                  }))
+                }
+                className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+          bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+          hover:border-blue-100 hover:bg-white"
+                placeholder="Nhập mục tiêu nghề nghiệp của bạn..."
+                rows={4}
+              />
+              {cvData.careerObjective && (
+                <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                  {cvData.careerObjective.length} ký tự
                 </div>
+              )}
+            </div>
+
+            <button
+              onClick={handleCareerSuggestion}
+              className="w-full flex items-center justify-center gap-2
+        bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700
+        text-white px-4 py-3 rounded-lg font-medium shadow-sm hover:shadow-md
+        transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span className="text-sm">Đang tạo...</span>
+                </>
+              ) : (
+                <span className="text-medium font-semibold flex items-center">
+                  <HiOutlineSparkles className="text-white text-xl " />
+                  Lấy Gợi Ý từ AI
+                </span>
+              )}
+            </button>
+
+            {aiSuggestions.careerObjective && (
+              <div className="mt-6 bg-blue-50 rounded-xl border border-blue-200 p-6">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-blue-800">
+                      Gợi Ý Mục Tiêu Nghề Nghiệp
+                    </h3>
+                    <button
+                      onClick={() =>
+                        setAiSuggestions((prev) => ({
+                          ...prev,
+                          careerObjective: "",
+                        }))
+                      }
+                      className="text-sm text-blue-600 hover:text-blue-800"
+                    >
+                      Xóa
+                    </button>
+                  </div>
+
+                  <div className="prose prose-blue max-w-none text-gray-700">
+                    <p>{aiSuggestions.careerObjective}</p>
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      setCvData((prev) => ({
+                        ...prev,
+                        careerObjective: aiSuggestions.careerObjective.trim(),
+                      }))
+                    }
+                    className="w-full flex items-center justify-center gap-2
+              bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-lg
+              transition-all duration-200"
+                  >
+                    <svg
+                      className="h-5 w-5 -ml-1 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Áp dụng gợi ý này
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Education */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
+              <span className="text-blue-500">🎓</span> Học Vấn
+            </h2>
+          </div>
+
+          {cvData.education.map((edu, index) => (
+            <div
+              key={index}
+              className="mb-6 p-6 bg-gray-50 rounded-xl border border-gray-200"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Trường Học</span>
+                    </span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={edu.institution}
+                      onChange={(e) => {
+                        const newEdu = [...cvData.education];
+                        newEdu[index] = {
+                          ...newEdu[index],
+                          institution: e.target.value,
+                        };
+                        setCvData((prev) => ({ ...prev, education: newEdu }));
+                      }}
+                      className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
+                      placeholder="Ví dụ: Đại học Bách Khoa Hà Nội"
+                    />
+                    {edu.institution && (
+                      <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                        {edu.institution.length} ký tự
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Bằng Cấp</span>
+                    </span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={edu.degree}
+                      onChange={(e) => {
+                        const newEdu = [...cvData.education];
+                        newEdu[index] = {
+                          ...newEdu[index],
+                          degree: e.target.value,
+                        };
+                        setCvData((prev) => ({ ...prev, education: newEdu }));
+                      }}
+                      className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
+                      placeholder="Ví dụ: Kỹ Sư Công Nghệ Thông Tin"
+                    />
+                    {edu.degree && (
+                      <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                        {edu.degree.length} ký tự
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Ngôn Ngữ</span>
+                    </span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={edu.language}
+                      onChange={(e) => {
+                        const newEdu = [...cvData.education];
+                        newEdu[index] = {
+                          ...newEdu[index],
+                          language: e.target.value,
+                        };
+                        setCvData((prev) => ({ ...prev, education: newEdu }));
+                      }}
+                      className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
+                      placeholder="Ví dụ: Tiếng Anh"
+                    />
+                    {edu.language && (
+                      <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                        {edu.language.length} ký tự
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Trình Độ</span>
+                    </span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={edu.level}
+                      onChange={(e) => {
+                        const newEdu = [...cvData.education];
+                        newEdu[index] = {
+                          ...newEdu[index],
+                          level: e.target.value,
+                        };
+                        setCvData((prev) => ({ ...prev, education: newEdu }));
+                      }}
+                      className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
+                    >
+                      <option value="beginner">Sơ Cấp</option>
+                      <option value="intermediate">Trung Cấp</option>
+                      <option value="advanced">Cao Cấp</option>
+                      <option value="fluent">Thành Thạo</option>
+                      <option value="native">Bản Địa</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-end">
                 <button
-                  onClick={() =>
-                    setCvData((prev) => ({
-                      ...prev,
-                      careerObjective: aiSuggestions.careerObjective
-                        .join("")
-                        .trim(),
-                    }))
-                  }
-                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={() => {
+                    const newEdu = [...cvData.education];
+                    newEdu.splice(index, 1);
+                    setCvData((prev) => ({ ...prev, education: newEdu }));
+                  }}
+                  className="text-red-600 hover:text-red-700 transition-colors duration-200"
                 >
                   <svg
-                    className="-ml-1 mr-2 h-5 w-5"
+                    className="w-5 h-5 inline mr-1"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -568,112 +832,15 @@ const CVBuilder = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M12 4v16m8-8H4"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                     />
                   </svg>
-                  Áp dụng gợi ý này
+                  Xóa Học Vấn
                 </button>
               </div>
             </div>
-          )}
-        </div>
-
-        {/* Education */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Học Vấn</h2>
-          {cvData.education.map((edu, index) => (
-            <div key={index} className="mb-4 p-4 bg-gray-50 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Trường Học
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.institution}
-                    onChange={(e) => {
-                      const newEdu = [...cvData.education];
-                      newEdu[index] = {
-                        ...newEdu[index],
-                        institution: e.target.value,
-                      };
-                      setCvData((prev) => ({ ...prev, education: newEdu }));
-                    }}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Bằng Cấp
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.degree}
-                    onChange={(e) => {
-                      const newEdu = [...cvData.education];
-                      newEdu[index] = {
-                        ...newEdu[index],
-                        degree: e.target.value,
-                      };
-                      setCvData((prev) => ({ ...prev, education: newEdu }));
-                    }}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ngôn Ngữ
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.language}
-                    onChange={(e) => {
-                      const newEdu = [...cvData.education];
-                      newEdu[index] = {
-                        ...newEdu[index],
-                        language: e.target.value,
-                      };
-                      setCvData((prev) => ({ ...prev, education: newEdu }));
-                    }}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Trình Độ
-                  </label>
-                  <select
-                    value={edu.level}
-                    onChange={(e) => {
-                      const newEdu = [...cvData.education];
-                      newEdu[index] = {
-                        ...newEdu[index],
-                        level: e.target.value,
-                      };
-                      setCvData((prev) => ({ ...prev, education: newEdu }));
-                    }}
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="beginner">Sơ Cấp</option>
-                    <option value="intermediate">Trung Cấp</option>
-                    <option value="advanced">Cao Cấp</option>
-                    <option value="fluent">Thành Thạo</option>
-                    <option value="native">Bản Địa</option>
-                  </select>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  const newEdu = [...cvData.education];
-                  newEdu.splice(index, 1);
-                  setCvData((prev) => ({ ...prev, education: newEdu }));
-                }}
-                className="mt-4 text-red-500 hover:text-red-700"
-              >
-                Xóa Học Vấn
-              </button>
-            </div>
           ))}
+
           <button
             onClick={() =>
               setCvData((prev) => ({
@@ -689,71 +856,144 @@ const CVBuilder = () => {
                 ],
               }))
             }
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            className="w-full flex items-center justify-center gap-3
+      bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700
+      text-white px-6 py-3 rounded-lg font-medium shadow-sm hover:shadow-md
+      transition-all duration-200"
           >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
             Thêm Học Vấn
           </button>
         </div>
 
         {/* Experience */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Kinh Nghiệm Làm Việc</h2>
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
+              <span className="text-blue-500">💼</span> Kinh Nghiệm Làm Việc
+            </h2>
+            <button
+              onClick={() => {
+                if (cvData.jobTitle && cvData.industry) {
+                  toast.success("Đã lấy gợi ý từ AI!");
+                }
+              }}
+              className="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            >
+              Gợi ý từ AI
+            </button>
+          </div>
           {cvData.experiences.map((exp, index) => (
-            <div key={index} className="mb-4 p-4 bg-gray-50 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Chức Vụ
+            <div
+              key={index}
+              className="mb-6 p-6 bg-gray-50 rounded-xl border border-gray-200"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Chức Vụ</span>
+                    </span>
                   </label>
-                  <input
-                    type="text"
-                    value={exp.title}
-                    onChange={(e) =>
-                      handleExperienceChange(index, "title", e.target.value)
-                    }
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={exp.title}
+                      onChange={(e) =>
+                        handleExperienceChange(index, "title", e.target.value)
+                      }
+                      className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
+                      placeholder="Ví dụ: Kỹ Sư Phần Mềm"
+                    />
+                    {exp.title && (
+                      <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                        {exp.title.length} ký tự
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Công Ty
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Công Ty</span>
+                    </span>
                   </label>
-                  <input
-                    type="text"
-                    value={exp.organization}
-                    onChange={(e) =>
-                      handleExperienceChange(
-                        index,
-                        "organization",
-                        e.target.value
-                      )
-                    }
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={exp.organization}
+                      onChange={(e) =>
+                        handleExperienceChange(
+                          index,
+                          "organization",
+                          e.target.value
+                        )
+                      }
+                      className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
+                      placeholder="Ví dụ: Công ty ABC"
+                    />
+                    {exp.organization && (
+                      <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                        {exp.organization.length} ký tự
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Thời gian
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Thời gian</span>
+                    </span>
                   </label>
-                  <input
-                    type="text"
-                    value={exp.time}
-                    onChange={(e) =>
-                      handleExperienceChange(index, "time", e.target.value)
-                    }
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={exp.time}
+                      onChange={(e) =>
+                        handleExperienceChange(index, "time", e.target.value)
+                      }
+                      className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
+                      placeholder="Ví dụ: 2022 - 2024"
+                    />
+                    {exp.time && (
+                      <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                        {exp.time.length} ký tự
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Loại Công Việc
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2">
+                      <span className="font-semibold">Loại Công Việc</span>
+                    </span>
                   </label>
                   <select
                     value={exp.type}
                     onChange={(e) =>
                       handleExperienceChange(index, "type", e.target.value)
                     }
-                    className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
                   >
                     <option value="full-time">Toàn Thời Gian</option>
                     <option value="part-time">Bán Thời Gian</option>
@@ -763,21 +1003,28 @@ const CVBuilder = () => {
                   </select>
                 </div>
               </div>
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mô Tả
+              <div className="space-y-4 mt-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  <span className="flex items-center gap-2">
+                    <span className="font-semibold">Mô Tả</span>
+                  </span>
                 </label>
                 <textarea
                   value={exp.description}
                   onChange={(e) =>
                     handleExperienceChange(index, "description", e.target.value)
                   }
-                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                  className="w-full border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
                 />
               </div>
               <button
                 onClick={() => handleExperienceSuggestion(index)}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2 w-full"
+                className="w-full flex items-center justify-center gap-2
+            bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700
+            text-white px-4 py-3 rounded-lg font-medium shadow-sm hover:shadow-md
+            transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isGenerating}
               >
                 {isGenerating ? (
@@ -805,12 +1052,17 @@ const CVBuilder = () => {
                     Đang Tạo...
                   </>
                 ) : (
-                  "Lấy Gợi Ý từ AI"
+                  <span className="text-medium font-semibold flex items-center">
+                    <HiOutlineSparkles className="text-white text-xl " />
+                    Lấy Gợi Ý từ AI
+                  </span>
                 )}
               </button>
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tóm tắt kinh nghiệm
+              <div className="space-y-4 mt-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  <span className="flex items-center gap-2">
+                    <span className="font-semibold">Tóm tắt kinh nghiệm</span>
+                  </span>
                 </label>
                 <textarea
                   value={cvData.experiences[index].summary}
@@ -822,18 +1074,35 @@ const CVBuilder = () => {
                       ),
                     }))
                   }
-                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                  className="w-full h-32 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
                 />
               </div>
               {aiSuggestions.experience && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="space-y-2">
-                    <p className="text-blue-800 font-medium">
-                      Gợi Ý Kinh Nghiệm:
-                    </p>
-                    <div className="prose prose-blue max-w-none">
+                <div className="mt-6 bg-blue-50 rounded-xl border border-blue-200 p-6">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-lg font-semibold text-blue-800">
+                        Gợi Ý Kinh Nghiệm
+                      </h3>
+                      <button
+                        onClick={() =>
+                          setAiSuggestions((prev) => ({
+                            ...prev,
+                            experience: "",
+                          }))
+                        }
+                        className="text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        Xóa
+                      </button>
+                    </div>
+
+                    <div className="prose prose-blue max-w-none text-gray-700">
                       <p>{aiSuggestions.experience}</p>
                     </div>
+
                     <button
                       onClick={() => {
                         setCvData((prev) => {
@@ -847,16 +1116,17 @@ const CVBuilder = () => {
                             experiences: updatedExperiences,
                           };
                         });
-                        // Clear the suggestion after applying
                         setAiSuggestions((prev) => ({
                           ...prev,
                           experience: "",
                         }));
                       }}
-                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="w-full flex items-center justify-center gap-2
+                  bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-lg
+                  transition-all duration-200"
                     >
                       <svg
-                        className="-ml-1 mr-2 h-5 w-5"
+                        className="h-5 w-5 -ml-1 mr-2"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -873,16 +1143,29 @@ const CVBuilder = () => {
                   </div>
                 </div>
               )}
-              <div className="mt-4 flex justify-end">
+              <div className="mt-6 flex justify-end">
                 <button
                   onClick={() => {
                     const newExps = [...cvData.experiences];
                     newExps.splice(index, 1);
                     setCvData((prev) => ({ ...prev, experiences: newExps }));
                   }}
-                  className="text-red-500 hover:text-red-700"
+                  className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors duration-200"
                 >
-                  Xóa
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  Xóa Kinh Nghiệm
                 </button>
               </div>
             </div>
@@ -907,15 +1190,46 @@ const CVBuilder = () => {
                 ],
               }))
             }
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            className="w-full flex items-center justify-center gap-3
+      bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700
+      text-white px-6 py-3 rounded-lg font-medium shadow-sm hover:shadow-md
+      transition-all duration-200"
           >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
             Thêm Kinh Nghiệm
           </button>
         </div>
 
         {/* Skills */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Kỹ Năng</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">
+              <span className="text-blue-500">🎯</span> Kỹ Năng
+            </h2>
+            <button
+              onClick={() => {
+                // Add AI suggestion for job title and industry
+                if (cvData.jobTitle && cvData.industry) {
+                  toast.success("Đã lấy gợi ý từ AI!");
+                }
+              }}
+              className="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            >
+              Gợi ý từ AI
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -931,14 +1245,16 @@ const CVBuilder = () => {
                       .filter((skill) => skill.trim()),
                   }))
                 }
-                className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                className="w-full h-32 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                bg-gray-50 placeholder-gray-400 text-gray-800 transition-all duration-200
+                hover:border-blue-100 hover:bg-white"
                 placeholder="Nhập kỹ năng, mỗi kỹ năng một dòng"
               />
             </div>
-            <div>
+            <div className="bg-blue-50 rounded-lg px-4 py-2">
               <button
                 onClick={handleSkillsSuggestion}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2 w-full"
+                className="text-blue-500 hover:text-blue-600 hover:font-bold underline rounded-full text-sm font-medium transition-colors"
                 disabled={isGenerating}
               >
                 {isGenerating ? (
@@ -966,23 +1282,25 @@ const CVBuilder = () => {
                     Đang Tạo...
                   </>
                 ) : (
-                  "Lấy Gợi Ý từ AI"
+                  <span className="text-medium font-semibold flex">
+                    <HiOutlineSparkles className="text-blue-500 text-xl" />
+                    Lấy Gợi Ý từ AI
+                  </span>
                 )}
               </button>
               {aiSuggestions.skills.length > 0 && (
                 <div className="mt-4 space-y-2">
-                  <h3 className="text-sm font-medium text-blue-700">
-                    AI gợi ý kỹ năng
-                  </h3>
                   <div className="flex flex-wrap gap-2">
-                    {aiSuggestions.skills.map((skill, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-                      >
-                        {skill}
-                      </span>
-                    ))}
+                    {aiSuggestions.skills.map((skill, i) =>
+                      i > 0 ? (
+                        <span
+                          key={i}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-blue-800"
+                        >
+                          {"+" + skill}
+                        </span>
+                      ) : null
+                    )}
                   </div>
                   <button
                     onClick={() =>
@@ -1054,7 +1372,11 @@ const CVBuilder = () => {
         {/* Preview Section */}
         {generatedCV && (
           <div className="mt-8" ref={previewRef}>
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">
+            <TemplateSelector
+              selectedTemplate={selectedTemplate}
+              setSelectedTemplate={setSelectedTemplate}
+            />
+            <h2 className="text-2xl font-bold my-6 text-gray-800">
               Xem Trước CV
             </h2>
             <div ref={previewRef}>
