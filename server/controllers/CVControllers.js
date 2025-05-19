@@ -254,28 +254,28 @@ const generateCV = async (req, res) => {
       for (const exp of workExperience) {
         try {
           // Create a mock request object for generateWorkExperience
-          const mockReq = { 
+          const mockReq = {
             body: {
-              title: exp.title || '',
-              organization: exp.organization || '',
-              description: exp.description || '',
-              type: exp.type || 'full-time'
-            } 
+              title: exp.title || "",
+              organization: exp.organization || "",
+              description: exp.description || "",
+              type: exp.type || "full-time",
+            },
           };
           const mockRes = {
             json: (data) => {
               if (data.success && data.experience) {
                 enhancedWorkExperience.push({
                   ...exp,
-                  generatedDescription: data.experience.join('\n')
+                  generatedDescription: data.experience.join("\n"),
                 });
               }
-            }
+            },
           };
-          
+
           await generateWorkExperience(mockReq, mockRes);
         } catch (error) {
-          console.error('Error generating work experience:', error);
+          console.error("Error generating work experience:", error);
           // If generation fails, keep the original experience
           enhancedWorkExperience.push(exp);
         }
@@ -334,13 +334,17 @@ const generateCV = async (req, res) => {
         location: personalInfo?.location || "",
         summary: careerObjective || "Career objective will appear here",
       },
-      experience: (enhancedWorkExperience.length > 0 ? enhancedWorkExperience : workExperience).map((exp, index) => ({
+      experience: (enhancedWorkExperience.length > 0
+        ? enhancedWorkExperience
+        : workExperience
+      ).map((exp, index) => ({
         jobTitle: exp.title || "",
         company: exp.organization || "",
         location: exp.location || "",
         startDate: exp.startDate || "",
         endDate: exp.endDate || "",
-        description: exp.generatedDescription || workExperienceBullets[index] || "",
+        description:
+          exp.generatedDescription || workExperienceBullets[index] || "",
       })),
       education: education.map((edu) => ({
         degree: edu.degree || "",
@@ -449,7 +453,7 @@ const generateWorkExperience = async (req, res) => {
       return res.json(cachedResponse);
     }
 
-        const prompt = `
+    const prompt = `
       You are a professional CV writer. Based on the following input, generate a concise and compelling experience paragraph in Vietnamese that summarizes the candidate's role and achievements.
       
       Job Title: ${title}
@@ -467,21 +471,26 @@ const generateWorkExperience = async (req, res) => {
       `;
 
     const response = await generateContent(prompt);
-    
+
     // Clean up the response to ensure we only get the content
     let cleanedResponse = response.trim();
     // Remove any markdown formatting or code blocks
-    cleanedResponse = cleanedResponse.replace(/```(?:[a-z]*\n)?([\s\S]*?)\n```/g, '$1');
+    cleanedResponse = cleanedResponse.replace(
+      /```(?:[a-z]*\n)?([\s\S]*?)\n```/g,
+      "$1"
+    );
     // Remove any surrounding quotes
-    cleanedResponse = cleanedResponse.replace(/^["']|["']$/g, '').trim();
+    cleanedResponse = cleanedResponse.replace(/^["']|["']$/g, "").trim();
     // Split into bullet points if multiple lines, otherwise return as a single paragraph
     let experienceContent;
-    if (cleanedResponse.includes('\n')) {
-      experienceContent = cleanedResponse.split('\n').filter(point => point.trim());
+    if (cleanedResponse.includes("\n")) {
+      experienceContent = cleanedResponse
+        .split("\n")
+        .filter((point) => point.trim());
     } else {
       experienceContent = [cleanedResponse];
     }
-    
+
     apiCache.set(cacheKey, { success: true, experience: experienceContent });
     res.json({
       success: true,
@@ -510,6 +519,8 @@ const suggestSkills = async (req, res) => {
       Generate a comprehensive list of skills relevant to the ${jobTitle} job title.
       Focus on technical and soft skills commonly required in this industry.
       Format: List of 3-5 key skills, including both technical and soft skills.
+      Each skill is a line.
+      Do not include any introductory text, bullet points, special characters, or formatting.
       Return the skills as a simple list without any markdown formatting or special characters.
       Return the result in Vietnamese
     `);
