@@ -6,6 +6,7 @@ const {
   oneJob,
   saveJob,
   getSavedJobs,
+  suggestJobsByAI,
 } = require("../controllers/JobControllers");
 const {
   jobValidator,
@@ -27,5 +28,7 @@ router
   .get(isAuthenticated, JobIdValidator(), validateHandler, saveJob);
 
 router.route("/getSavedJobs").get(isAuthenticated, getSavedJobs);
+
+router.route("/jobs/suggest-ai").post(isAuthenticated, suggestJobsByAI);
 
 module.exports = router;
