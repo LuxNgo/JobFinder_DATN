@@ -236,7 +236,7 @@ exports.suggestJobsByAI = async (req, res) => {
       3. The seniority level (e.g., Junior, Specialist, Senior, Team Lead, Manager, etc.).
       4. Relevant industries.
       5. A suitability score as a percentage (e.g., 70, 85, 100) indicating how closely the job matches the given skills. Just return only number.
-      6. The competitiveness level of this job compared to the applicant's current one (e.g., 1, 2, 3). Just return only number.
+      6. The competitiveness level of this job compared to the applicant's current one (e.g., 1/10, 2/10, 3/10). Just return only number.
 
       Formatting requirements:
 
