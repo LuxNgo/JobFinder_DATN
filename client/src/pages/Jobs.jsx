@@ -23,6 +23,10 @@ import {
 import { IoClose } from "react-icons/io5";
 import { IoLocationOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
+import MatchScore from "../components/MatchScore/MatchScore";
+import CompetitionLevel from "../components/CompetitionLevel/CompetitionLevel";
+import MatchAndCompetition from "../components/MatchAndCompetition/MatchAndCompetition";
+import JobAISection from "../components/JobAISection/JobAISection";
 
 export const Jobs = () => {
   const dispatch = useDispatch();
@@ -455,43 +459,8 @@ export const Jobs = () => {
                           )}
                         </button>
                         {aiSuggestions.length > 0 && (
-                          <div className="mt-4 space-y-2">
-                            <h3 className="text-sm font-medium text-blue-700">
-                              AI gợi ý công việc
-                            </h3>
-                            <div className="px-2 py-1 bg-blue-50 rounded-lg">
-                              {aiSuggestions.map((line, index) => {
-                                if (index % 5 === 0) {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="text-blue-600 font-semibold"
-                                    >
-                                      {line}
-                                    </div>
-                                  );
-                                } else if (index % 5 === 4) {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="text-green-600 font-semibold pb-4"
-                                    >
-                                      {line}
-                                    </div>
-                                  );
-                                }
-                                return (
-                                  <div
-                                    className="text-blue-800 font-medium"
-                                    key={index}
-                                  >
-                                    {line}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}{" "}
+                          <JobAISection aiSuggestions={aiSuggestions} />
+                        )}
                       </div>
                     )}
                   </div>
