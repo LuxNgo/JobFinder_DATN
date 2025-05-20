@@ -86,7 +86,7 @@ export const ApplicationDetails = () => {
                 className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
               >
                 <FaArrowLeft className="mr-2" />
-                Back to Applications
+                Back to
               </Link>
 
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">

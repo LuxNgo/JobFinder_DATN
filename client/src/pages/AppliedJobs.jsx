@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { MetaData } from "../components/MetaData";
 import { useDispatch, useSelector } from "react-redux";
 import { getAppliedJob } from "../actions/ApplicationActions";
@@ -13,16 +13,23 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { deleteApplication } from "../actions/ApplicationActions";
+import Dialog from "../components/Dialog/Dialog";
 
 export const AppliedJobs = () => {
   const dispatch = useDispatch();
   const { loading, appliedJobs } = useSelector((state) => state.application);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getAppliedJob());
   }, []);
 
   const handleDelete = (id) => {
+    setIsConfirmOpen(true);
+  };
+
+  const confirmApply = (id) => {
+    setIsConfirmOpen(false);
     dispatch(deleteApplication(id)).then(() => {
       dispatch(getAppliedJob());
     });
@@ -135,13 +142,23 @@ export const AppliedJobs = () => {
                         <FaExternalLinkAlt className="ml-2" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(application._id)}
+                        onClick={() => handleDelete()}
                         className="inline-flex items-center text-red-600 hover:text-red-800"
                       >
                         <FaTrash className="mr-2" />
                         Xóa
                       </button>
                     </div>
+                    <Dialog
+                      isOpen={isConfirmOpen}
+                      onClose={() => setIsConfirmOpen(false)}
+                      title="Hủy đơn ứng tuyển"
+                      description={`Bạn có chắc chắn muốn xóa đơn ứng tuyển`}
+                      onConfirm={() => confirmApply(application._id)}
+                      confirmText="Xác nhận"
+                      cancelText="Hủy"
+                      type="error"
+                    />
                   </div>
                 </div>
               ))}

@@ -4,7 +4,8 @@ import { MetaData } from "../components/MetaData";
 import { Loader } from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { getSingleJob, saveJob } from "../actions/JobActions";
-import { BiBriefcase, BiBuildings, BiRupee } from "react-icons/bi";
+import { createApplication } from "../actions/ApplicationActions";
+import { BiBriefcase, BiBuildings } from "react-icons/bi";
 import { AiOutlineSave } from "react-icons/ai";
 import { HiStatusOnline } from "react-icons/hi";
 import { BsPersonWorkspace, BsSend } from "react-icons/bs";
@@ -12,7 +13,7 @@ import { TbLoader2 } from "react-icons/tb";
 import { toast } from "react-toastify";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { createApplication } from "../actions/ApplicationActions";
+import Dialog from "../components/Dialog/Dialog";
 
 export const JobDetails = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export const JobDetails = () => {
   const { me, isLogin } = useSelector((state) => state.user);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getSingleJob(id));
@@ -37,6 +39,15 @@ export const JobDetails = () => {
   const appliedJobHandler = () => {
     const isUnapply = me.appliedJobs && me.appliedJobs.includes(jobDetails._id);
     dispatch(createApplication(id, isUnapply));
+  };
+
+  const handleApply = () => {
+    setIsConfirmOpen(true);
+  };
+
+  const confirmApply = () => {
+    setIsConfirmOpen(false);
+    appliedJobHandler();
   };
 
   const saveJobHandler = () => {
@@ -171,17 +182,26 @@ export const JobDetails = () => {
                   <div className="flex gap-4 mt-8">
                     <button
                       onClick={() => {
-                        isLogin
-                          ? appliedJobHandler()
-                          : notLoginHandler("ứng tuyển");
+                        isLogin ? handleApply() : notLoginHandler("ứng tuyển");
                       }}
                       className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                     >
                       <BsSend />
                       {me.appliedJobs && me.appliedJobs.includes(jobDetails._id)
-                        ? "Đã ứng tuyển"
+                        ? "Huỷ ứng tuyển"
                         : "Ứng tuyển"}
                     </button>
+
+                    <Dialog
+                      isOpen={isConfirmOpen}
+                      onClose={() => setIsConfirmOpen(false)}
+                      title="Xác nhận ứng tuyển"
+                      description={`Bạn có chắc chắn muốn ứng tuyển cho vị trí`}
+                      message={jobDetails.title}
+                      onConfirm={confirmApply}
+                      confirmText="Xác nhận"
+                      cancelText="Hủy"
+                    />
 
                     <button
                       onClick={() => {
