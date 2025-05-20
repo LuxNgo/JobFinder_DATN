@@ -15,6 +15,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { motion } from "framer-motion";
+import Dialog from "../components/Dialog/Dialog";
 
 // Export PDF function
 const exportToPDF = (data) => {
@@ -94,12 +95,18 @@ export const ViewAllUsersAdmin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getAllUsersAdmin());
   }, []);
 
-  const deleteUserHandler = async (id) => {
+  const deleteUserHandler = async () => {
+    setIsConfirmOpen(true);
+  };
+
+  const confirmApply = async (id) => {
+    setIsConfirmOpen(false);
     try {
       await dispatch(deleteUser(id));
       toast.success("Xóa người dùng thành công");
@@ -315,13 +322,23 @@ export const ViewAllUsersAdmin = () => {
                               <span>Edit</span>
                             </Link>
                             <button
-                              onClick={() => deleteUserHandler(user._id)}
+                              onClick={() => deleteUserHandler()}
                               className="text-red-500 hover:text-red-400 cursor-pointer flex items-center gap-2"
                             >
                               <AiOutlineDelete size={20} />
                               <span>Delete</span>
                             </button>
                           </td>
+                          <Dialog
+                            isOpen={isConfirmOpen}
+                            onClose={() => setIsConfirmOpen(false)}
+                            title="Xóa tài khoản người dùng"
+                            description={`Bạn có chắc chắn muốn xóa tài khoản người dùng`}
+                            onConfirm={() => confirmApply(user._id)}
+                            confirmText="Xác nhận"
+                            cancelText="Hủy"
+                            type="error"
+                          />
                         </tr>
                       ))
                   )}

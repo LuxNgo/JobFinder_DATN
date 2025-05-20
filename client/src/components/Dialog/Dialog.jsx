@@ -107,14 +107,14 @@ const Dialog = ({
         <div className="flex justify-center gap-4 w-full">
           <button
             onClick={onConfirm}
-            className={`px-6 py-3 w-full rounded-lg font-medium transition-all duration-200 transform ${getButtonColor()}`}
+            className={`px-6 py-3 w-full rounded-lg font-bold transition-all duration-200 transform ${getButtonColor()}`}
           >
             {confirmText}
           </button>
 
           <button
             onClick={onClose}
-            className={`px-6 py-3 w-full rounded-lg font-medium transition-all duration-200 transform ${cancelButtonClassName}`}
+            className={`px-6 py-3 w-full rounded-lg font-bold transition-all duration-200 transform ${cancelButtonClassName}`}
           >
             {cancelText}
           </button>

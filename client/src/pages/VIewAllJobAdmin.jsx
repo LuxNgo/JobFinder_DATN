@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import Dialog from "../components/Dialog/Dialog";
 
 // Export PDF function
 const exportToPDF = (data) => {
@@ -102,10 +103,27 @@ export const ViewAllJobAdmin = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getAllJobsAdmin());
   }, []);
+
+  const deleteJobHandler = async () => {
+    setIsConfirmOpen(true);
+  };
+
+  const confirmApply = async (id) => {
+    setIsConfirmOpen(false);
+    try {
+      setIsDeleting(true);
+      await dispatch(deleteJobData(id));
+    } catch (error) {
+      toast.error("Xóa công việc thất bại !");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const filteredJobs = allJobs?.filter((job) => {
     const matchesSearch =
@@ -130,18 +148,6 @@ export const ViewAllJobAdmin = () => {
       month: "2-digit",
       year: "numeric",
     });
-  };
-
-  const deleteJobHandler = async (id) => {
-    try {
-      setIsDeleting(true);
-      await dispatch(deleteJobData(id));
-      toast.success("Xóa công việc thành công !");
-    } catch (error) {
-      toast.error("Xóa công việc thất bại !");
-    } finally {
-      setIsDeleting(false);
-    }
   };
 
   return (
@@ -413,7 +419,7 @@ export const ViewAllJobAdmin = () => {
                                   </div>
                                 </Link>
                                 <button
-                                  onClick={() => deleteJobHandler(job._id)}
+                                  onClick={() => deleteJobHandler()}
                                   className={`text-red-500 hover:text-red-600 transition-colors duration-300 cursor-pointer ${
                                     isDeleting
                                       ? "opacity-50 cursor-not-allowed"
@@ -427,6 +433,16 @@ export const ViewAllJobAdmin = () => {
                                   </div>
                                 </button>
                               </div>
+                              <Dialog
+                                isOpen={isConfirmOpen}
+                                onClose={() => setIsConfirmOpen(false)}
+                                title="Xóa bài đăng công việc"
+                                description={`Bạn có chắc chắn muốn xóa bài đăng công việc`}
+                                onConfirm={() => confirmApply(job._id)}
+                                confirmText="Xác nhận"
+                                cancelText="Hủy"
+                                type="error"
+                              />
                             </td>
                           </motion.tr>
                         ))

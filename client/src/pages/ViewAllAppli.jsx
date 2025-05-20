@@ -15,6 +15,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { motion } from "framer-motion";
+import Dialog from "../components/Dialog/Dialog";
 
 // Export PDF function
 const exportToPDF = (data) => {
@@ -102,6 +103,7 @@ export const ViewAllAppli = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getAllAppAdmin());
@@ -134,11 +136,18 @@ export const ViewAllAppli = () => {
   };
 
   const deleteApplication = async (id) => {
+    setIsConfirmOpen(true);
+  };
+
+  const confirmApply = async (id) => {
+    setIsConfirmOpen(false);
     try {
+      setIsDeleting(true);
       await dispatch(deleteApp(id));
-      toast.success("Ứng tuyển đã được xóa");
     } catch (error) {
-      toast.error("Không thể xóa ứng tuyển");
+      toast.error("Xóa ứng tuyển thất bại !");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -380,13 +389,23 @@ export const ViewAllAppli = () => {
                               <span>Edit</span>
                             </Link>
                             <button
-                              onClick={() => deleteApplication(app._id)}
+                              onClick={() => deleteApplication()}
                               className="text-red-500 hover:text-red-400 cursor-pointer flex items-center gap-2"
                             >
                               <AiOutlineDelete size={20} />
                               <span>Delete</span>
                             </button>
                           </td>
+                          <Dialog
+                            isOpen={isConfirmOpen}
+                            onClose={() => setIsConfirmOpen(false)}
+                            title="Xóa đơn ứng tuyển"
+                            description={`Bạn có chắc chắn muốn xóa đơn ứng tuyển`}
+                            onConfirm={() => confirmApply(app._id)}
+                            confirmText="Xác nhận"
+                            cancelText="Hủy"
+                            type="error"
+                          />
                         </tr>
                       ))
                   )}
