@@ -22,6 +22,8 @@ Here're some of the project's best features:
 *   Application Tracking
 *   Messaging and Notifications
 *   Responsive Design
+*   Write CV using AI
+*   Suggest Job using AI
 
 <h2>🔥 Getting Started</h2>
 
