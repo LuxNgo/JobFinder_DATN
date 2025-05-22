@@ -6,7 +6,7 @@ import {
   AiOutlineTwitter,
   AiTwotoneMail,
 } from "react-icons/ai";
-import { MdEmail, MdPhone, MdLocationOn, MdSend } from 'react-icons/md';
+import { MdEmail, MdPhone, MdLocationOn, MdSend } from "react-icons/md";
 
 export const Contact = () => {
   const handleSubmit = (e) => {
@@ -21,9 +21,12 @@ export const Contact = () => {
         {/* Phần tiêu đề */}
         <div className="bg-primary-800 text-white py-20">
           <div className="container mx-auto px-4 text-center mt-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Liên Hệ Với Chúng Tôi</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Liên Hệ Với Chúng Tôi
+            </h1>
             <p className="text-white text-lg max-w-2xl mx-auto">
-              Chúng tôi rất mong nhận được phản hồi từ bạn! Hãy liên hệ với chúng tôi nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ.
+              Chúng tôi rất mong nhận được phản hồi từ bạn! Hãy liên hệ với
+              chúng tôi nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ.
             </p>
           </div>
         </div>
@@ -36,7 +39,7 @@ export const Contact = () => {
                 <MdLocationOn className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Địa Chỉ</h3>
-              <p className="text-gray-2">JobLane, Phố Wall</p>
+              <p className="text-gray-2">JobFinder, Phố Wall</p>
               <p className="text-gray-2">New York, 123, Hoa Kỳ</p>
             </div>
 
@@ -45,8 +48,8 @@ export const Contact = () => {
                 <MdEmail className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Email</h3>
-              <p className="text-gray-2">info@joblane.com</p>
-              <p className="text-gray-2">support@joblane.com</p>
+              <p className="text-gray-2">info@JobFinder.com</p>
+              <p className="text-gray-2">support@JobFinder.com</p>
             </div>
 
             <div className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -63,7 +66,9 @@ export const Contact = () => {
         {/* Biểu mẫu liên hệ */}
         <div className="container mx-auto px-4 py-20">
           <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-3xl font-bold mb-8 text-center">Gửi Tin Nhắn Cho Chúng Tôi</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center">
+              Gửi Tin Nhắn Cho Chúng Tôi
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -113,7 +118,9 @@ export const Contact = () => {
         {/* Mạng xã hội */}
         <div className="container mx-auto px-4 pb-20">
           <div className="text-center">
-            <h3 className="text-2xl font-semibold mb-6">Kết Nối Với Chúng Tôi</h3>
+            <h3 className="text-2xl font-semibold mb-6">
+              Kết Nối Với Chúng Tôi
+            </h3>
             <div className="flex justify-center gap-6">
               <BsFacebook className="w-8 h-8 text-gray-600 hover:text-primary-3 cursor-pointer transition-colors" />
               <AiFillInstagram className="w-8 h-8 text-gray-600 hover:text-primary-3 cursor-pointer transition-colors" />

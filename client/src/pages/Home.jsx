@@ -30,7 +30,7 @@ export const Home = () => {
 
   return (
     <>
-      <MetaData title="JobLane - Tìm Việc Làm Mơ Ước Của Bạn" />
+      <MetaData title="JobFinder - Tìm Việc Làm Mơ Ước Của Bạn" />
       <div className="min-h-screen flex flex-col text-black">
         {/* Hero Section */}
         <div className="relative w-full bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 overflow-hidden">
