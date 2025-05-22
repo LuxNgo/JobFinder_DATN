@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getStats } from "../actions/StatsActions";
 import { MetaData } from "../components/MetaData";
 import { getAllJobs } from "../actions/JobActions";
 import Testimonials from "../components/Testimonials/Testimonials.jsx";
 import jobSearchImage from "../assets/images/image.job.search.svg";
 import coporateImage from "../assets/images/image.coperate.png";
+import { fetchStats } from "../slices/StatsSlice.js";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ export const Home = () => {
 
   useEffect(() => {
     dispatch(getAllJobs());
-    dispatch(getStats());
+    dispatch(fetchStats());
   }, [dispatch]);
 
   const convertDateFormat = (inputDate) => {
@@ -137,25 +137,25 @@ export const Home = () => {
                 <>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-blue-500 mb-2">
-                      {stats?.activeJobs || "10K+"}
+                      {stats?.data?.activeJobs + "+" || "10K+"}
                     </div>
                     <div className="text-gray-600">Công Việc Đang Tuyển</div>
                   </div>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-blue-500 mb-2">
-                      {stats?.companies || "5K+"}
+                      {stats?.data?.companies + "+" || "5K+"}
                     </div>
                     <div className="text-gray-600">Doanh Nghiệp</div>
                   </div>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-blue-500 mb-2">
-                      {stats?.applicants || "1M+"}
+                      {stats?.data?.applicants + "+" || "1M+"}
                     </div>
                     <div className="text-gray-600">Ứng Viên</div>
                   </div>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-blue-500 mb-2">
-                      {stats?.hires || "8K+"}
+                      {stats?.data?.hires + "+" || "8K+"}
                     </div>
                     <div className="text-gray-600">Đã Tuyển Dụng</div>
                   </div>
