@@ -11,7 +11,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(
   cors({
-    origin: "*",
+    origin: "https://job-finder-frontend.vercel.app",
     credentials: true,
   })
 );
