@@ -20,6 +20,26 @@ const CVBuilder = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { me } = useSelector((state) => state.user);
+  // Add state for avatar image
+  const [avatar, setAvatar] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+
+  // Handle avatar upload
+  const handleAvatarUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size <= 5 * 1024 * 1024) {
+      // 5MB limit
+      setAvatar(file);
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      toast.error("Ảnh phải nhỏ hơn 5MB");
+    }
+  };
 
   // CV Data State
   const [cvData, setCvData] = useState({
@@ -405,6 +425,72 @@ const CVBuilder = () => {
             <h2 className="text-xl font-semibold text-gray-800">
               <span className="text-blue-500">👤</span> Thông Tin Cá Nhân
             </h2>
+          </div>
+
+          {/* Avatar Upload */}
+          <div className="mb-6 flex flex-col gap-4">
+            <label className="block text-sm font-medium text-gray-700">
+              <span className="flex items-center gap-2">
+                <span className="font-semibold">Ảnh Đại Diện</span>
+              </span>
+            </label>
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200">
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                  style={{
+                    filter:
+                      selectedTemplate === "professional"
+                        ? "grayscale(0)"
+                        : selectedTemplate === "elegant"
+                        ? "grayscale(0.2)"
+                        : selectedTemplate === "techy"
+                        ? "grayscale(0) brightness(1.1)"
+                        : selectedTemplate === "bold"
+                        ? "grayscale(0) contrast(1.2)"
+                        : "grayscale(0)",
+                  }}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full bg-gray-100">
+                  <svg
+                    className="w-12 h-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
+              )}
+              <label
+                htmlFor="avatar-upload"
+                className="absolute inset-0 flex items-center justify-center rounded-full cursor-pointer hover:bg-gray-100 transition-colors duration-200"
+              >
+                <span className="text-gray-600 bg-white px-3 py-1 rounded-full text-sm font-medium">
+                  {avatar ? "Thay đổi" : "Chọn ảnh"}
+                </span>
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+              />
+            </div>
+            {avatar && (
+              <div className="text-xs text-gray-500">
+                Định dạng: JPG, PNG (Dưới 5MB)
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1381,465 +1467,449 @@ const CVBuilder = () => {
             </h2>
             <div ref={previewRef}>
               <div
-                className={`rounded-xl shadow-xl p-8 ${
+                className={`p-6 bg-white ${
                   selectedTemplate
                     ? templates.find((t) => t.id === selectedTemplate)?.styles
-                        .layout === "structured" && "border border-gray-200"
-                    : ""
-                }`}
-                style={{
-                  backgroundColor: selectedTemplate
-                    ? templates.find((t) => t.id === selectedTemplate)?.styles
                         .backgroundColor
-                    : "#ffffff",
-                  fontFamily: selectedTemplate
-                    ? templates.find((t) => t.id === selectedTemplate)?.styles
-                        .font
-                    : "Arial, sans-serif",
-                  borderColor: selectedTemplate
-                    ? templates.find((t) => t.id === selectedTemplate)?.styles
-                        .sectionBorderColor
-                    : "#e0e0e0",
-                  borderStyle: selectedTemplate
-                    ? templates.find((t) => t.id === selectedTemplate)?.styles
-                        .borderStyle
-                    : "solid",
-                }}
+                    : "#ffffff"
+                }`}
               >
-                {/* Header Section */}
-                <div className="text-center mb-12">
-                  <div className="flex flex-col items-center space-y-2">
-                    <h1
-                      className="text-4xl font-bold"
-                      style={{
-                        color: selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerColor
-                          : "#3498db",
-                      }}
-                    >
-                      {cvData.personalInfo?.fullName}
-                    </h1>
-                    <h2
-                      className="text-xl font-semibold"
-                      style={{
-                        color: selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.sectionHeaderColor
-                          : "#2c3e50",
-                      }}
-                    >
-                      {cvData.jobTitle}
-                    </h2>
-                  </div>
-                  <div className="mt-4 flex flex-col flex-wrap justify-center gap-4">
-                    {["industry", "email", "phone", "location"].map(
-                      (field, index) => (
-                        <div
-                          key={field}
-                          className={`flex items-center space-x-2 ${
-                            (selectedTemplate === "professional" &&
-                              "border-b border-gray-200 pb-2",
-                            selectedTemplate === "elegant" && "opacity-90",
-                            selectedTemplate === "techy" &&
-                              "bg-blue-50 rounded-lg p-2",
-                            selectedTemplate === "bold" && "shadow-md")
-                          }`}
-                        >
-                          <svg
-                            className={`w-5 h-5 ${
-                              (selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.iconStyle === "outline" &&
-                                  "stroke-current"
-                                : "",
-                              selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.iconStyle === "classic" &&
-                                  "fill-current"
-                                : "",
-                              selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.iconStyle === "line" &&
-                                  "stroke-current"
-                                : "",
-                              selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.iconStyle === "filled" &&
-                                  "fill-current"
-                                : "")
-                            }`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            style={{
-                              color: selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.primaryColor
-                                : "#3498db",
-                            }}
-                          >
-                            {(() => {
-                              switch (field) {
-                                case "industry":
-                                  return (
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                    />
-                                  );
-                                case "email":
-                                  return (
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                    />
-                                  );
-                                case "phone":
-                                  return (
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                                    />
-                                  );
-                                case "location":
-                                  return (
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                    />
-                                  );
-                                default:
-                                  return null;
-                              }
-                            })()}
-                          </svg>
-                          <p
-                            style={{
-                              color: selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.textSecondary
-                                : "#666666",
-                            }}
-                          >
-                            {field === "industry" &&
-                              `Ngành nghề: ${cvData.industry}`}
-                            {field === "email" &&
-                              `Email: ${cvData.personalInfo?.email}`}
-                            {field === "phone" &&
-                              `Số điện thoại: ${cvData.personalInfo?.phone}`}
-                            {field === "location" &&
-                              `Địa chỉ: ${cvData.personalInfo?.location}`}
-                          </p>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-                <div
-                  className={`p-6 rounded-lg shadow-md`}
-                  style={{
-                    backgroundColor: selectedTemplate
-                      ? templates.find((t) => t.id === selectedTemplate)?.styles
-                          .backgroundColor
-                      : "#ffffff",
-                    fontFamily: selectedTemplate
-                      ? templates.find((t) => t.id === selectedTemplate)?.styles
-                          .font
-                      : "Arial, sans-serif",
-                  }}
-                >
-                  {/* Render CV preview based on selected template */}
+                <div className="flex ">
                   <div
-                    className={`mb-12 ${
-                      (selectedTemplate
-                        ? templates.find((t) => t.id === selectedTemplate)
-                            ?.styles.sectionSpacing === "sm" && "mb-6"
-                        : "",
-                      selectedTemplate
-                        ? templates.find((t) => t.id === selectedTemplate)
-                            ?.styles.sectionSpacing === "md" && "mb-8"
-                        : "",
-                      selectedTemplate
-                        ? templates.find((t) => t.id === selectedTemplate)
-                            ?.styles.sectionSpacing === "lg" && "mb-10"
-                        : "",
-                      selectedTemplate
-                        ? templates.find((t) => t.id === selectedTemplate)
-                            ?.styles.sectionSpacing === "xl" && "mb-12"
-                        : "")
+                    className={`p-4 ${
+                      selectedTemplate === "professional"
+                        ? "bg-white/70 text-gray-800 border-r-4 border-gray-200"
+                        : selectedTemplate === "elegant"
+                        ? "bg-white/70 shadow-sm backdrop-blur-md text-gray-700 border-r-4 border-gray-200"
+                        : selectedTemplate === "techy"
+                        ? "bg-gradient-to-b from-blue-50 to-blue-200 text-blue-800 font-medium"
+                        : selectedTemplate === "bold"
+                        ? "bg-black text-white font-bold shadow-lg"
+                        : "text-white"
                     }`}
                   >
-                    <h3
-                      className={`text-xl ${
-                        (selectedTemplate === "professional" &&
-                          "uppercase tracking-wide",
-                        selectedTemplate === "elegant" && "italic",
-                        selectedTemplate === "techy" && "font-mono uppercase",
-                        selectedTemplate === "bold" && "font-bold text-2xl")
-                      }`}
-                      style={{
-                        color: selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.sectionHeaderColor
-                          : "#2c3e50",
-                      }}
+                    {/* Header Section with Avatar */}
+                    <div className="text-left mb-12">
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-white mb-4">
+                          {avatarPreview ? (
+                            <img
+                              src={avatarPreview}
+                              alt="Avatar"
+                              className="w-full h-full object-cover"
+                              style={{
+                                filter:
+                                  selectedTemplate === "professional"
+                                    ? "grayscale(0)"
+                                    : selectedTemplate === "elegant"
+                                    ? "grayscale(0.2)"
+                                    : selectedTemplate === "techy"
+                                    ? "grayscale(0) brightness(1.1)"
+                                    : selectedTemplate === "bold"
+                                    ? "grayscale(0) contrast(1.2)"
+                                    : "grayscale(0)",
+                              }}
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full bg-gray-100">
+                              <svg
+                                className="w-12 h-12 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <h1
+                          className="text-4xl font-bold"
+                          style={{
+                            color: selectedTemplate
+                              ? templates.find((t) => t.id === selectedTemplate)
+                                  ?.styles.headerColor
+                              : "#3498db",
+                          }}
+                        >
+                          {cvData.personalInfo?.fullName}
+                        </h1>
+                        <h2
+                          className="text-xl font-semibold"
+                          style={{
+                            color: selectedTemplate
+                              ? templates.find((t) => t.id === selectedTemplate)
+                                  ?.styles.sectionHeaderColor
+                              : "#2c3e50",
+                          }}
+                        >
+                          {cvData.jobTitle}
+                        </h2>
+                      </div>
+                    </div>
+                    {/* Contact Information */}
+                    <div
+                      className={`mt-4 flex flex-col flex-wrap justify-center gap-4 `}
                     >
-                      Mục Tiêu Nghề Nghiệp
-                    </h3>
-                    <div className="prose prose-gray max-w-none">
-                      <p
+                      {["industry", "email", "phone", "location"].map(
+                        (field, index) => (
+                          <div
+                            key={field}
+                            className={`flex items-center gap-x-3 transition-all duration-200 ease-in-out`}
+                          >
+                            <svg
+                              className={`w-5 h-5 ${
+                                (selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.iconStyle === "outline" &&
+                                    "stroke-current"
+                                  : "",
+                                selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.iconStyle === "classic" &&
+                                    "fill-current"
+                                  : "",
+                                selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.iconStyle === "line" &&
+                                    "stroke-current"
+                                  : "",
+                                selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.iconStyle === "filled" &&
+                                    "fill-current"
+                                  : "")
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              style={{
+                                color: selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.primaryColor
+                                  : "#3498db",
+                              }}
+                            >
+                              {(() => {
+                                switch (field) {
+                                  case "industry":
+                                    return (
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                      />
+                                    );
+                                  case "email":
+                                    return (
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                      />
+                                    );
+                                  case "phone":
+                                    return (
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                      />
+                                    );
+                                  case "location":
+                                    return (
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                      />
+                                    );
+                                  default:
+                                    return null;
+                                }
+                              })()}
+                            </svg>
+                            <p
+                              style={{
+                                color: selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.textSecondary
+                                  : "#666666",
+                              }}
+                            >
+                              {field === "industry" && cvData.industry}
+                              {field === "email" && cvData.personalInfo?.email}
+                              {field === "phone" && cvData.personalInfo?.phone}
+                              {field === "location" &&
+                                cvData.personalInfo?.location}
+                            </p>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  {/* Experience Section */}
+                  <div className={`p-6 shadow-sm`}>
+                    {/* Render CV preview based on selected template */}
+                    <div
+                      className={`mb-12 ${
+                        selectedTemplate === "professional"
+                          ? "mb-6"
+                          : selectedTemplate === "elegant"
+                          ? "mb-8"
+                          : selectedTemplate === "techy"
+                          ? "mb-10"
+                          : selectedTemplate === "bold"
+                          ? "mb-12"
+                          : ""
+                      }`}
+                    >
+                      <h3
+                        className={`text-xl ${
+                          selectedTemplate === "professional"
+                            ? "uppercase tracking-wide"
+                            : selectedTemplate === "elegant"
+                            ? "italic"
+                            : selectedTemplate === "techy"
+                            ? "font-mono uppercase"
+                            : selectedTemplate === "bold"
+                            ? "font-bold text-2xl"
+                            : ""
+                        }`}
                         style={{
                           color: selectedTemplate
                             ? templates.find((t) => t.id === selectedTemplate)
-                                ?.styles.textPrimary
-                            : "#333333",
+                                ?.styles.sectionHeaderColor
+                            : "#2c3e50",
                         }}
                       >
-                        {cvData.personalInfo?.summary ||
-                          "Mục tiêu nghề nghiệp sẽ hiển thị ở đây"}
-                      </p>
+                        Mục Tiêu Nghề Nghiệp
+                      </h3>
+                      <div className="prose prose-gray max-w-none">
+                        <p
+                          style={{
+                            color: selectedTemplate
+                              ? templates.find((t) => t.id === selectedTemplate)
+                                  ?.styles.textPrimary
+                              : "#333333",
+                          }}
+                        >
+                          {cvData.personalInfo?.summary ||
+                            "Mục tiêu nghề nghiệp sẽ hiển thị ở đây"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="mb-12">
-                    <h3
-                      className={`text-xl mb-4 ${
-                        (selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "uppercase" &&
-                            "uppercase tracking-wide"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "italic" && "italic"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "capslock" &&
-                            "font-mono uppercase"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "bold-caps" &&
-                            "font-bold text-2xl"
-                          : "")
-                      }`}
-                      style={{
-                        color: selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.sectionHeaderColor
-                          : "#2c3e50",
-                      }}
-                    >
-                      Học Vấn
-                    </h3>
-                    {Array.isArray(cvData.education) &&
-                    cvData.education.length > 0 ? (
-                      <div className="space-y-6">
-                        {cvData.education.map((edu, index) => (
-                          <div
-                            key={index}
-                            className="border-l-4 pl-4"
-                            style={{
-                              borderColor: selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.primaryColor
-                                : "#3498db",
-                            }}
-                          >
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4
-                                  className="font-semibold text-lg text-gray-900"
-                                  style={{
-                                    color: selectedTemplate
-                                      ? templates.find(
-                                          (t) => t.id === selectedTemplate
-                                        )?.styles.secondaryColor
-                                      : "#2c3e50",
-                                  }}
-                                >
-                                  Chứng chỉ: {edu.degree}
-                                </h4>
-                                <p className="text-gray-600 mt-1">
-                                  Đại học: {edu.institution}
-                                </p>
-                                <p className="text-gray-600 mt-1">
-                                  Ngôn ngữ: {edu.language} - {edu.level}
+                    <div className="mb-12">
+                      <h3
+                        className={`text-xl mb-4 ${
+                          selectedTemplate === "professional"
+                            ? "uppercase tracking-wide"
+                            : selectedTemplate === "elegant"
+                            ? "italic"
+                            : selectedTemplate === "techy"
+                            ? "font-mono uppercase"
+                            : selectedTemplate === "bold"
+                            ? "font-bold text-2xl"
+                            : ""
+                        }`}
+                        style={{
+                          color: selectedTemplate
+                            ? templates.find((t) => t.id === selectedTemplate)
+                                ?.styles.sectionHeaderColor
+                            : "#2c3e50",
+                        }}
+                      >
+                        Học Vấn
+                      </h3>
+                      {Array.isArray(cvData.education) &&
+                      cvData.education.length > 0 ? (
+                        <div className="space-y-6">
+                          {cvData.education.map((edu, index) => (
+                            <div
+                              key={index}
+                              className="border-l-4 pl-4"
+                              style={{
+                                borderColor: selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.primaryColor
+                                  : "#3498db",
+                              }}
+                            >
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4
+                                    className="font-semibold text-lg text-gray-900"
+                                    style={{
+                                      color: selectedTemplate
+                                        ? templates.find(
+                                            (t) => t.id === selectedTemplate
+                                          )?.styles.secondaryColor
+                                        : "#2c3e50",
+                                    }}
+                                  >
+                                    Chứng chỉ: {edu.degree}
+                                  </h4>
+                                  <p className="text-gray-600 mt-1">
+                                    Đại học: {edu.institution}
+                                  </p>
+                                  <p className="text-gray-600 mt-1">
+                                    Ngôn ngữ: {edu.language} - {edu.level}
+                                  </p>
+                                </div>
+                                <p className="text-gray-500 text-sm">
+                                  {edu.startDate} - {edu.endDate}
                                 </p>
                               </div>
-                              <p className="text-gray-500 text-sm">
-                                {edu.startDate} - {edu.endDate}
-                              </p>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 italic">
-                        Chưa thêm thông tin học vấn
-                      </p>
-                    )}
-                  </div>
-                  <div className="mb-12">
-                    <h3
-                      className={`text-xl mb-4 ${
-                        (selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "uppercase" &&
-                            "uppercase tracking-wide"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "italic" && "italic"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "capslock" &&
-                            "font-mono uppercase"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "bold-caps" &&
-                            "font-bold text-2xl"
-                          : "")
-                      }`}
-                      style={{
-                        color: selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.sectionHeaderColor
-                          : "#2c3e50",
-                      }}
-                    >
-                      Kinh Nghiệm
-                    </h3>
-                    {Array.isArray(cvData.experiences) &&
-                    cvData.experiences.length > 0 ? (
-                      <div className="space-y-6">
-                        {cvData.experiences.map((exp, index) => (
-                          <div
-                            key={index}
-                            className="border-l-4 pl-4"
-                            style={{
-                              borderColor: selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.primaryColor
-                                : "#3498db",
-                            }}
-                          >
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4
-                                  className="font-semibold text-lg text-gray-900"
-                                  style={{
-                                    color: selectedTemplate
-                                      ? templates.find(
-                                          (t) => t.id === selectedTemplate
-                                        )?.styles.secondaryColor
-                                      : "#2c3e50",
-                                  }}
-                                >
-                                  {exp.title}
-                                </h4>
-                                <p className="text-gray-600 mt-1">
-                                  Công ty: {exp.organization}
-                                </p>
-                                <p className="text-gray-600 mt-1">
-                                  Thời gian: {exp.time}
-                                </p>
-                                {exp.summary && (
-                                  <div className="mt-4 space-y-2">
-                                    <p className="text-gray-700">
-                                      {exp.summary}
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 italic">
-                        Chưa thêm thông tin kinh nghiệm
-                      </p>
-                    )}
-                  </div>
-                  <div className="mb-12">
-                    <h3
-                      className={`text-xl mb-4 ${
-                        (selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "uppercase" &&
-                            "uppercase tracking-wide"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "italic" && "italic"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "capslock" &&
-                            "font-mono uppercase"
-                          : "",
-                        selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.headerStyle === "bold-caps" &&
-                            "font-bold text-2xl"
-                          : "")
-                      }`}
-                      style={{
-                        color: selectedTemplate
-                          ? templates.find((t) => t.id === selectedTemplate)
-                              ?.styles.sectionHeaderColor
-                          : "#2c3e50",
-                      }}
-                    >
-                      Kỹ Năng
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {Array.isArray(cvData.skills) &&
-                      cvData.skills.length > 0 ? (
-                        cvData.skills.map((skill, i) => (
-                          <div
-                            key={i}
-                            className="relative p-3 rounded-lg"
-                            style={{
-                              backgroundColor: selectedTemplate
-                                ? templates.find(
-                                    (t) => t.id === selectedTemplate
-                                  )?.styles.primaryColor
-                                : "#3498db",
-                              color: "#ffffff",
-                            }}
-                          >
-                            <span className="absolute -top-2 -right-2 bg-white text-xs px-1.5 py-0.5 rounded-full text-gray-600">
-                              {i + 1}
-                            </span>
-                            <p className="text-sm font-medium">{skill}</p>
-                          </div>
-                        ))
+                          ))}
+                        </div>
                       ) : (
                         <p className="text-gray-500 italic">
-                          Chưa thêm kỹ năng
+                          Chưa thêm thông tin học vấn
                         </p>
                       )}
+                    </div>
+                    <div className="mb-12">
+                      <h3
+                        className={`text-xl mb-4 ${
+                          selectedTemplate === "professional"
+                            ? "uppercase tracking-wide"
+                            : selectedTemplate === "elegant"
+                            ? "italic"
+                            : selectedTemplate === "techy"
+                            ? "font-mono uppercase"
+                            : selectedTemplate === "bold"
+                            ? "font-bold text-2xl"
+                            : ""
+                        }`}
+                        style={{
+                          color: selectedTemplate
+                            ? templates.find((t) => t.id === selectedTemplate)
+                                ?.styles.sectionHeaderColor
+                            : "#2c3e50",
+                        }}
+                      >
+                        Kinh Nghiệm
+                      </h3>
+                      {Array.isArray(cvData.experiences) &&
+                      cvData.experiences.length > 0 ? (
+                        <div className="space-y-6">
+                          {cvData.experiences.map((exp, index) => (
+                            <div
+                              key={index}
+                              className="border-l-4 pl-4"
+                              style={{
+                                borderColor: selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.primaryColor
+                                  : "#3498db",
+                              }}
+                            >
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4
+                                    className="font-semibold text-lg text-gray-900"
+                                    style={{
+                                      color: selectedTemplate
+                                        ? templates.find(
+                                            (t) => t.id === selectedTemplate
+                                          )?.styles.secondaryColor
+                                        : "#2c3e50",
+                                    }}
+                                  >
+                                    {exp.title}
+                                  </h4>
+                                  <p className="text-gray-600 mt-1">
+                                    Công ty: {exp.organization}
+                                  </p>
+                                  <p className="text-gray-600 mt-1">
+                                    Thời gian: {exp.time}
+                                  </p>
+                                  {exp.summary && (
+                                    <div className="mt-4 space-y-2">
+                                      <p className="text-gray-700">
+                                        {exp.summary}
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 italic">
+                          Chưa thêm thông tin kinh nghiệm
+                        </p>
+                      )}
+                    </div>
+                    <div className="mb-12">
+                      <h3
+                        className={`text-xl mb-4 ${
+                          selectedTemplate === "professional"
+                            ? "uppercase tracking-wide"
+                            : selectedTemplate === "elegant"
+                            ? "italic"
+                            : selectedTemplate === "techy"
+                            ? "font-mono uppercase"
+                            : selectedTemplate === "bold"
+                            ? "font-bold text-2xl"
+                            : ""
+                        }`}
+                        style={{
+                          color: selectedTemplate
+                            ? templates.find((t) => t.id === selectedTemplate)
+                                ?.styles.sectionHeaderColor
+                            : "#2c3e50",
+                        }}
+                      >
+                        Kỹ Năng
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {Array.isArray(cvData.skills) &&
+                        cvData.skills.length > 0 ? (
+                          cvData.skills.map((skill, i) => (
+                            <div
+                              key={i}
+                              className="relative p-3 rounded-lg"
+                              style={{
+                                backgroundColor: selectedTemplate
+                                  ? templates.find(
+                                      (t) => t.id === selectedTemplate
+                                    )?.styles.primaryColor
+                                  : "#3498db",
+                                color: "#ffffff",
+                              }}
+                            >
+                              <span className="absolute -top-2 -right-2 bg-white text-xs px-1.5 py-0.5 rounded-full text-gray-600">
+                                {i + 1}
+                              </span>
+                              <p className="text-sm font-medium">{skill}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-gray-500 italic">
+                            Chưa thêm kỹ năng
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
