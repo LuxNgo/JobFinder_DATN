@@ -19,16 +19,41 @@ const DownloadButton = ({ previewRef }) => {
         throw new Error("Không tìm thấy phần xem trước");
       }
 
-      const canvas = await html2canvas(previewElement, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-      });
+      const contentElement = previewElement.querySelector(".p-6");
+      if (!contentElement) {
+        throw new Error("Không tìm thấy nội dung CV");
+      }
 
-      const link = document.createElement("a");
-      link.download = `cv-${new Date().toISOString().split("T")[0]}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+      // Get dimensions of the content
+      const width = contentElement.offsetWidth;
+      const height = contentElement.offsetHeight;
+
+      // Create a temporary container to capture
+      const tempContainer = document.createElement("div");
+      tempContainer.style.width = `${width}px`;
+      tempContainer.style.height = `${height}px`;
+      tempContainer.appendChild(contentElement.cloneNode(true));
+      document.body.appendChild(tempContainer);
+
+      try {
+        const canvas = await html2canvas(tempContainer, {
+          scale: 2,
+          logging: true,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#ffffff",
+          width: width,
+          height: height,
+        });
+
+        const link = document.createElement("a");
+        link.download = `cv-${new Date().toISOString().split("T")[0]}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch (error) {
+        document.body.removeChild(tempContainer);
+        throw error;
+      }
     } catch (error) {
       toast.error(error.message || "Không thể tạo ảnh CV");
     } finally {

@@ -1457,7 +1457,7 @@ const CVBuilder = () => {
 
         {/* Preview Section */}
         {generatedCV && (
-          <div className="mt-8" ref={previewRef}>
+          <div className="mt-8">
             <TemplateSelector
               selectedTemplate={selectedTemplate}
               setSelectedTemplate={setSelectedTemplate}
