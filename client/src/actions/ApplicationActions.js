@@ -2,7 +2,8 @@ import axios from 'axios'
 import {createApplicationRequest , createApplicationSuccess, createApplicationFail,
     allAppliedJobsRequest, allAppliedJobsSuccess, allAppliedJobsFail,
     applicationDetailsRequest, applicationDetailsSuccess, applicationDetailsFail,
-    deleteApplicationRequest, deleteApplicationSuccess, deleteApplicationFail} from '../slices/ApplicationSlice'
+    deleteApplicationRequest, deleteApplicationSuccess, deleteApplicationFail,
+    removeAppliedJobRequest, removeAppliedJobSuccess, removeAppliedJobFail} from '../slices/ApplicationSlice'
     
 import {me} from '../actions/UserActions'
 import {toast} from 'react-toastify'
@@ -14,25 +15,43 @@ export const createApplication = (id) => async (dispatch) => {
 
         const config = {
             headers: {
+                "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem('userToken')}`
             }
         }
 
-        const { data } = await axios.post(`${API_BASE_URL}/createApplication/${id}`, {}, config);
-        
-        // Check if the response has the correct structure
-        if (data && data.success) {
-            dispatch(createApplicationSuccess())
-            dispatch(me())
-            toast.success(data.message)
-        } else {
-            throw new Error(data?.message || 'Lỗi không xác định')
-        }
+        const { data } = await axios.post(`${API_BASE_URL}/createApplication/${id}`, {}, config)
+
+        dispatch(me())
+        dispatch(createApplicationSuccess())
+        toast.success(data.message)
 
     } catch (err) {
         dispatch(createApplicationFail(err.response?.data?.message || 'Lỗi khi xử lý ứng tuyển'))
         toast.error(err.response?.data?.message || 'Lỗi khi xử lý ứng tuyển')
+    }
+}
+
+export const removeAppliedJob = (jobId) => async (dispatch) => {
+    try {
+        dispatch(removeAppliedJobRequest())
+
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem('userToken')}`
+            }
+        }
+
+        const { data } = await axios.post(`${API_BASE_URL}/remove-applied-job`, { jobId }, config)
+
+        dispatch(removeAppliedJobSuccess())
         dispatch(me())
+        toast.success(data.message)
+
+    } catch (err) {
+        dispatch(removeAppliedJobFail(err.response.data.message))
+        toast.error(err.response?.data?.message || 'Lỗi khi hủy ứng tuyển')
     }
 }
 

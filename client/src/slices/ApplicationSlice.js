@@ -28,8 +28,9 @@ const ApplicationSlice = createSlice({
         createApplicationRequest: (state)=>{
             state.loading = true 
         },
-        createApplicationSuccess: (state)=>{
+        createApplicationSuccess: (state, action)=>{
             state.loading = false 
+            state.appliedJobs = action.payload
         },
         createApplicationFail: (state, action)=>{
             state.loading = false
@@ -62,6 +63,19 @@ const ApplicationSlice = createSlice({
         },
 
 
+        removeAppliedJobRequest: (state) => {
+            state.loading = true;
+        },
+        removeAppliedJobSuccess: (state, action) => {
+            state.loading = false;
+            state.appliedJobs = action.payload;
+        },
+        removeAppliedJobFail: (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
+
         deleteApplicationRequest: (state)=>{
             state.loading = true ;
         },
@@ -71,15 +85,14 @@ const ApplicationSlice = createSlice({
         deleteApplicationFail: (state, action)=>{
             state.loading = false ;
             state.error = action.payload
-        },
-
-
+        }
     }
 })
 
 export const {createApplicationRequest ,createApplicationSuccess, createApplicationFail,
     allAppliedJobsRequest, allAppliedJobsSuccess, allAppliedJobsFail,
     applicationDetailsRequest, applicationDetailsSuccess, applicationDetailsFail,
+    removeAppliedJobRequest, removeAppliedJobSuccess, removeAppliedJobFail,
     deleteApplicationRequest, deleteApplicationSuccess, deleteApplicationFail } = ApplicationSlice.actions
 
 export default ApplicationSlice.reducer

@@ -70,7 +70,7 @@ export const AppliedJobs = () => {
 
           {loading ? (
             <Loader />
-          ) : appliedJobs.length === 0 ? (
+          ) : appliedJobs && appliedJobs.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-500 mb-4">
                 Không tìm thấy đơn ứng tuyển
@@ -84,84 +84,85 @@ export const AppliedJobs = () => {
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {appliedJobs.map((application) => (
-                <div
-                  key={application._id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:border-blue-500 transition-all duration-300"
-                >
-                  <div className="p-6">
-                    {/* Job Title and Company */}
-                    <div className="mb-4">
-                      <h2 className="text-xl font-semibold text-gray-900 mb-1">
-                        {application.jobTitle}
-                      </h2>
-                      <div className="flex items-center text-gray-600">
-                        <FaBuilding className="mr-2" />
-                        {application.jobCompany}
+              {appliedJobs &&
+                appliedJobs.map((application) => (
+                  <div
+                    key={application._id}
+                    className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:border-blue-500 transition-all duration-300"
+                  >
+                    <div className="p-6">
+                      {/* Job Title and Company */}
+                      <div className="mb-4">
+                        <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                          {application.jobTitle}
+                        </h2>
+                        <div className="flex items-center text-gray-600">
+                          <FaBuilding className="mr-2" />
+                          {application.jobCompany}
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Job Details */}
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-gray-600">
-                        <FaMapMarkerAlt className="mr-2" />
-                        {application.jobLocation}
+                      {/* Job Details */}
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-gray-600">
+                          <FaMapMarkerAlt className="mr-2" />
+                          {application.jobLocation}
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                          <FaMoneyBillWave className="mr-2" />
+                          {application.jobSalary}
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                          <FaClock className="mr-2" />
+                          Đã ứng tuyển vào {formatDate(application.createdAt)}
+                        </div>
                       </div>
-                      <div className="flex items-center text-gray-600">
-                        <FaMoneyBillWave className="mr-2" />
-                        {application.jobSalary}
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <FaClock className="mr-2" />
-                        Đã ứng tuyển vào {formatDate(application.createdAt)}
-                      </div>
-                    </div>
 
-                    {/* Status Badge */}
-                    <div className="mb-4">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          application.status
-                        )}`}
-                      >
-                        {application.status === "pending"
-                          ? "Đang xử lý"
-                          : application.status === "accepted"
-                          ? "Đã chấp nhận"
-                          : "Đã từ chối"}
-                      </span>
-                    </div>
+                      {/* Status Badge */}
+                      <div className="mb-4">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                            application.status
+                          )}`}
+                        >
+                          {application.status === "pending"
+                            ? "Đang xử lý"
+                            : application.status === "accepted"
+                            ? "Đã chấp nhận"
+                            : "Đã từ chối"}
+                        </span>
+                      </div>
 
-                    {/* Actions */}
-                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-                      <Link
-                        to={`/Application/Details/${application._id}`}
-                        className="inline-flex items-center text-blue-600 hover:text-blue-800"
-                      >
-                        Xem chi tiết
-                        <FaExternalLinkAlt className="ml-2" />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete()}
-                        className="inline-flex items-center text-red-600 hover:text-red-800"
-                      >
-                        <FaTrash className="mr-2" />
-                        Xóa
-                      </button>
+                      {/* Actions */}
+                      <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
+                        <Link
+                          to={`/Application/Details/${application._id}`}
+                          className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                        >
+                          Xem chi tiết
+                          <FaExternalLinkAlt className="ml-2" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete()}
+                          className="inline-flex items-center text-red-600 hover:text-red-800"
+                        >
+                          <FaTrash className="mr-2" />
+                          Xóa
+                        </button>
+                      </div>
+                      <Dialog
+                        isOpen={isConfirmOpen}
+                        onClose={() => setIsConfirmOpen(false)}
+                        title="Hủy đơn ứng tuyển"
+                        description={`Bạn có chắc chắn muốn xóa đơn ứng tuyển`}
+                        onConfirm={() => confirmApply(application._id)}
+                        confirmText="Xác nhận"
+                        cancelText="Hủy"
+                        type="error"
+                      />
                     </div>
-                    <Dialog
-                      isOpen={isConfirmOpen}
-                      onClose={() => setIsConfirmOpen(false)}
-                      title="Hủy đơn ứng tuyển"
-                      description={`Bạn có chắc chắn muốn xóa đơn ứng tuyển`}
-                      onConfirm={() => confirmApply(application._id)}
-                      confirmText="Xác nhận"
-                      cancelText="Hủy"
-                      type="error"
-                    />
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </div>

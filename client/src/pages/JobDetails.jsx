@@ -4,7 +4,7 @@ import { MetaData } from "../components/MetaData";
 import { Loader } from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { getSingleJob, saveJob } from "../actions/JobActions";
-import { createApplication } from "../actions/ApplicationActions";
+import { createApplication, removeAppliedJob } from "../actions/ApplicationActions";
 import { BiBriefcase, BiBuildings } from "react-icons/bi";
 import { AiOutlineSave } from "react-icons/ai";
 import { HiStatusOnline } from "react-icons/hi";
@@ -38,11 +38,21 @@ export const JobDetails = () => {
 
   const appliedJobHandler = () => {
     const isUnapply = me.appliedJobs && me.appliedJobs.includes(jobDetails._id);
-    dispatch(createApplication(id, isUnapply));
+    if (isUnapply) {
+      dispatch(removeAppliedJob(jobDetails._id));
+    } else {
+      dispatch(createApplication(jobDetails._id));
+    }
   };
 
   const handleApply = () => {
-    setIsConfirmOpen(true);
+    if (me.appliedJobs && me.appliedJobs.includes(jobDetails._id)) {
+      // User has already applied, cancel application
+      dispatch(removeAppliedJob(jobDetails._id));
+    } else {
+      // User hasn't applied yet, show confirmation dialog
+      setIsConfirmOpen(true);
+    }
   };
 
   const confirmApply = () => {
