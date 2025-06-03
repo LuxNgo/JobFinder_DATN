@@ -157,7 +157,7 @@ exports.removeAppliedJob = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Đã xóa công việc khỏi danh sách đã ứng tuyển",
+      message: "Xóa thành công !",
     });
   } catch (err) {
     res.status(500).json({
