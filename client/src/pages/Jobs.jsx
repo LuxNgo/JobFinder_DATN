@@ -8,6 +8,7 @@ import {
   getAllJobs,
   getSingleJob,
   suggestJobsByAI,
+  searchJobs, // <-- Import the new searchJobs action
 } from "../actions/JobActions";
 import { Slider } from "@mantine/core";
 import { RxCross2 } from "react-icons/rx";
@@ -32,12 +33,12 @@ export const Jobs = () => {
   const dispatch = useDispatch();
   const { allJobs, loading } = useSelector((state) => state.job);
 
-  const [baseJobs, setBaseJobs] = useState([]); // New state for base jobs
+  // const [baseJobs, setBaseJobs] = useState([]); // REMOVED: Base jobs no longer needed for client-side filtering
   const [jobs, setJobs] = useState([]);
   // Add this state at the top of your component
   const [isSkillsSectionVisible, setIsSkillsSectionVisible] = useState(false);
   const [category, setCategory] = useState("");
-  const [salary, setSalary] = useState(0);
+  const [selectedSalaryRanges, setSelectedSalaryRanges] = useState([]);
   const [company, setCompany] = useState("");
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
@@ -61,13 +62,31 @@ export const Jobs = () => {
     "BIDV",
   ];
 
-  useEffect(() => {
-    dispatch(getAllJobs());
-  }, []);
+  // Salary Range Options and Handler
+  const salaryRangeOptions = [
+    "Trợ cấp 2 triệu",
+    "8 - 12 triệu",
+    "12 - 15 triệu",
+    "20 - 25 triệu",
+    "25 - 35 triệu",
+    "Trên 50 triệu",
+  ];
+
+  const handleSalaryRangeChange = (rangeValue) => {
+    setSelectedSalaryRanges((prev) =>
+      prev.includes(rangeValue)
+        ? prev.filter((r) => r !== rangeValue)
+        : [...prev, rangeValue]
+    );
+    // searchHandler will be called by useEffect due to state change
+  };
 
   useEffect(() => {
-    setJobs(allJobs);
-    setBaseJobs(allJobs); // Set base jobs when allJobs changes
+    dispatch(getAllJobs()); // Fetches all jobs on initial load
+  }, [dispatch]);
+
+  useEffect(() => {
+    setJobs(allJobs || []); // Update local jobs state when allJobs from Redux store changes
   }, [allJobs]);
 
   // AI Suggestions State
@@ -92,136 +111,77 @@ export const Jobs = () => {
     }
   };
 
+  // useEffect to trigger search when filter states change
+  useEffect(() => {
+    // Optional: Add a condition to prevent search on initial mount if all filters are empty
+    // For example, if (!search && !location && selectedTypes.length === 0 && ... etc. ) return;
+    searchHandler();
+  }, [
+    search,
+    location,
+    selectedTypes,
+    selectedExperience,
+    category,
+    company,
+    selectedSalaryRanges,
+    dispatch,
+  ]); // dispatch is included if searchHandler dispatches
+
   const searchHandler = () => {
-    let searchResults = [...baseJobs];
+    const params = {
+      keyword: search.trim() || undefined,
+      location: location.trim() || undefined,
+      types: selectedTypes.length > 0 ? selectedTypes : undefined,
+      experienceLevels:
+        selectedExperience.length > 0 ? selectedExperience : undefined,
+      category: category || undefined,
+      company: company || undefined,
+      salaryRanges:
+        selectedSalaryRanges.length > 0 ? selectedSalaryRanges : undefined,
+    };
+    // Remove undefined keys to keep query params clean
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
-    // Filter by title/keyword search
-    if (search.trim()) {
-      searchResults = searchResults.filter((job) =>
-        job.title.toLowerCase().includes(search.toLowerCase().trim())
-      );
-    }
-
-    // Filter by location
-    if (location.trim()) {
-      searchResults = searchResults.filter(
-        (job) =>
-          job.location &&
-          job.location.toLowerCase().includes(location.toLowerCase().trim())
-      );
-    }
-
-    // Filter by job type
-    if (selectedTypes.length > 0) {
-      searchResults = searchResults.filter((job) =>
-        selectedTypes.includes(job.type)
-      );
-    }
-
-    // Filter by experience level
-    if (selectedExperience.length > 0) {
-      searchResults = searchResults.filter((job) =>
-        selectedExperience.includes(job.experienceLevel)
-      );
-    }
-
-    // Filter by category
-    if (category) {
-      searchResults = searchResults.filter(
-        (job) => job.category.toLowerCase() === category.toLowerCase()
-      );
-    }
-
-    // Filter by company
-    if (company) {
-      searchResults = searchResults.filter(
-        (job) => job.companyName.toLowerCase() === company.toLowerCase()
-      );
-    }
-
-    // Filter by salary
-    if (salary > 0) {
-      searchResults = searchResults.filter(
-        (job) => parseInt(job.salary) >= salary
-      );
-    }
-
-    setJobs(searchResults);
+    dispatch(searchJobs(params));
     setCurrentPage(1); // Reset to first page after search
   };
 
-  const leftFilter = (jobsList) => {
-    if (category == "" && salary == 0) {
-      setJobs(allJobs);
-      return;
-    }
-    const leftFilArr = jobsList.filter(
-      (item) =>
-        item.category.toLowerCase() === category.toLowerCase() &&
-        parseInt(item.salary) >= salary
-    );
-    setJobs(leftFilArr);
-  };
+  // REMOVED: leftFilter, removeLeftFilter, rightFilter, removeRightFilter
+  // This logic is now handled by searchHandler and clearAllFilters
 
-  const removeLeftFilter = () => {
+  const clearAllFilters = () => {
+    setSearch("");
+    setLocation("");
+    setSelectedTypes([]);
+    setSelectedExperience([]);
     setCategory("");
-    setSalary(0);
-    rightFilter(allJobs);
-    setCurrentPage(1);
-  };
-
-  const rightFilter = (jobsList) => {
-    if (company == "") {
-      setJobs(allJobs);
-      return;
-    }
-    const rightFilArr = jobsList.filter(
-      (item) => item.companyName.toLowerCase() === company.toLowerCase()
-    );
-    setJobs(rightFilArr);
-  };
-  const removeRightFilter = () => {
     setCompany("");
-    leftFilter(allJobs);
+    setSelectedSalaryRanges([]);
+
+    // Dispatch searchJobs with empty parameters to fetch all or default jobs
+    // Or dispatch(getAllJobs()) if that's preferred for fetching all jobs
+    dispatch(searchJobs({}));
     setCurrentPage(1);
   };
 
   const handleJobTypeChange = (type) => {
-    setSelectedTypes((prev) => {
-      const newTypes = prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type];
-
-      // Store the new types temporarily
-      const updatedTypes = newTypes;
-
-      // Update the state and then trigger search
-      setTimeout(() => {
-        setSelectedTypes(updatedTypes);
-        searchHandler();
-      }, 0);
-
-      return newTypes;
+    setSelectedTypes((prevSelectedTypes) => {
+      return prevSelectedTypes.includes(type)
+        ? prevSelectedTypes.filter((t) => t !== type)
+        : [...prevSelectedTypes, type];
     });
+    // searchHandler will be called by useEffect
   };
 
   const handleExperienceChange = (level) => {
-    setSelectedExperience((prev) => {
-      const newLevels = prev.includes(level)
-        ? prev.filter((l) => l !== level)
-        : [...prev, level];
-
-      // Store the new levels temporarily
-      const updatedLevels = newLevels;
-
-      // Update the state and then trigger search
-      setTimeout(() => {
-        setSelectedExperience(updatedLevels);
-        searchHandler();
-      }, 0);
-
-      return newLevels;
+    setSelectedExperience((prevSelectedLevels) => {
+      return prevSelectedLevels.includes(level)
+        ? prevSelectedLevels.filter((l) => l !== level)
+        : [...prevSelectedLevels, level];
     });
+    // searchHandler will be called by useEffect
   };
 
   // Pagination
@@ -359,7 +319,7 @@ export const Jobs = () => {
                     {/* Search Button */}
                     <div className="flex items-end">
                       <button
-                        onClick={searchHandler}
+                        onClick={() => searchHandler()} // Keep this if you want the button to explicitly trigger a search too, or remove if useEffect is sufficient.
                         className="bg-blue-600 text-white px-8 py-3.5 rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap font-medium"
                       >
                         <BiSearch className="w-5 h-5" />
@@ -503,10 +463,7 @@ export const Jobs = () => {
                         Bộ lọc
                       </h2>
                       <button
-                        onClick={() => {
-                          removeLeftFilter();
-                          removeRightFilter();
-                        }}
+                        onClick={clearAllFilters} // Use the new clearAllFilters function
                         className="text-sm text-blue-600 hover:text-blue-700"
                       >
                         Xóa tất cả
@@ -520,30 +477,35 @@ export const Jobs = () => {
                       </h3>
                       <div className="space-y-3">
                         {[
-                          "Fresher",
-                          "Intermediate",
-                          "Senior",
-                          "Manager",
-                          "Director",
-                        ].map((level) => (
-                          <label
-                            key={level}
-                            className="flex items-center gap-3 cursor-pointer group"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedExperience.includes(level)}
-                              onChange={() => {
-                                handleExperienceChange(level);
-                                searchHandler();
-                              }}
-                              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="text-sm text-gray-600 group-hover:text-gray-900">
-                              {level}
-                            </span>
-                          </label>
-                        ))}
+                          "6 tháng",
+                          "Tối thiểu 1 năm",
+                          "2 - 3 năm",
+                          "3 - 5 năm",
+                          "Trên 5 năm",
+                        ].map((displayLevel) => {
+                          const queryValue = displayLevel.toLowerCase();
+                          return (
+                            <label
+                              key={displayLevel} // Key uses original displayLevel for UI uniqueness
+                              className="flex items-center gap-3 cursor-pointer group"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedExperience.includes(
+                                  queryValue
+                                )}
+                                onChange={() =>
+                                  handleExperienceChange(queryValue)
+                                }
+                                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              />
+                              <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                                {displayLevel}{" "}
+                                {/* Show mixed-case displayLevel to user */}
+                              </span>
+                            </label>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -561,15 +523,16 @@ export const Jobs = () => {
                           "Internship",
                         ].map((type) => (
                           <label
-                            key={type}
+                            key={type.toLowerCase()}
                             className="flex items-center gap-3 cursor-pointer group"
                           >
                             <input
                               type="checkbox"
-                              checked={selectedTypes.includes(type)}
+                              checked={selectedTypes.includes(
+                                type.toLowerCase()
+                              )}
                               onChange={() => {
-                                handleJobTypeChange(type);
-                                searchHandler();
+                                handleJobTypeChange(type.toLowerCase()); // This function internally calls searchHandler via setTimeout
                               }}
                               className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                             />
@@ -587,24 +550,28 @@ export const Jobs = () => {
                         Ngành nghề
                       </h3>
                       <div className="space-y-3">
-                        {data.map((category) => (
-                          <label
-                            key={category}
-                            className="flex items-center gap-3 cursor-pointer group"
-                          >
-                            <input
-                              type="radio"
-                              name="category"
-                              value={category}
-                              checked={category === category}
-                              onChange={(e) => setCategory(e.target.value)}
-                              className="w-5 h-5 border-gray-300 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="text-sm text-gray-600 group-hover:text-gray-900">
-                              {category}
-                            </span>
-                          </label>
-                        ))}
+                        {data.map(
+                          (
+                            categoryOption // Renamed map variable to avoid conflict with state variable
+                          ) => (
+                            <label
+                              key={categoryOption}
+                              className="flex items-center gap-3 cursor-pointer group"
+                            >
+                              <input
+                                type="radio"
+                                name="category"
+                                value={categoryOption}
+                                checked={category === categoryOption} // Corrected: state `category` vs map item `categoryOption`
+                                onChange={(e) => setCategory(e.target.value)}
+                                className="w-5 h-5 border-gray-300 text-blue-600 focus:ring-blue-500"
+                              />
+                              <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                                {categoryOption}
+                              </span>
+                            </label>
+                          )
+                        )}
                       </div>
                     </div>
 
@@ -635,25 +602,29 @@ export const Jobs = () => {
                       </div>
                     </div>
 
+                    {/* Salary Range Checkboxes */}
                     {/* Salary Range */}
                     <div>
                       <h3 className="text-sm font-medium text-gray-900 mb-4">
                         Mức lương
                       </h3>
-                      <input
-                        type="range"
-                        min="0"
-                        max="200000"
-                        step="10000"
-                        value={salary}
-                        onChange={(e) => setSalary(e.target.value)}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                      />
-                      <div className="flex justify-between mt-2">
-                        <span className="text-sm text-gray-600">0₫</span>
-                        <span className="text-sm text-gray-600">
-                          {salary.toLocaleString()}₫
-                        </span>
+                      <div className="space-y-3">
+                        {salaryRangeOptions.map((range) => (
+                          <label
+                            key={range}
+                            className="flex items-center gap-3 cursor-pointer group"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedSalaryRanges.includes(range)}
+                              onChange={() => handleSalaryRangeChange(range)}
+                              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                              {range}
+                            </span>
+                          </label>
+                        ))}
                       </div>
                     </div>
                   </div>

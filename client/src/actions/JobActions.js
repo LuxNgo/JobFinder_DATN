@@ -14,6 +14,10 @@ import {
   getSavedJobsRequest,
   getSavedJobsSuccess,
   getSavedJobsFail,
+  // Add new action creators for search
+  searchJobsRequest,
+  searchJobsSuccess,
+  searchJobsFail,
 } from "../slices/JobSlice";
 import { toast } from "react-toastify";
 import { me } from "../actions/UserActions";
@@ -23,6 +27,11 @@ import { API_BASE_URL } from "../config/api.config";
 export const SUGGEST_JOBS_BY_AI_REQUEST = "SUGGEST_JOBS_BY_AI_REQUEST";
 export const SUGGEST_JOBS_BY_AI_SUCCESS = "SUGGEST_JOBS_BY_AI_SUCCESS";
 export const SUGGEST_JOBS_BY_AI_FAIL = "SUGGEST_JOBS_BY_AI_FAIL";
+
+// Action types for searching jobs
+export const SEARCH_JOBS_REQUEST = "SEARCH_JOBS_REQUEST";
+export const SEARCH_JOBS_SUCCESS = "SEARCH_JOBS_SUCCESS";
+export const SEARCH_JOBS_FAIL = "SEARCH_JOBS_FAIL";
 
 export const suggestJobsByAIRequest = () => ({
   type: SUGGEST_JOBS_BY_AI_REQUEST,
@@ -167,5 +176,54 @@ export const suggestJobsByAI = (skills) => async (dispatch) => {
     );
     toast.error("Thất bại");
     throw error;
+  }
+};
+
+// New action to search/filter jobs via backend API
+export const searchJobs = (params) => async (dispatch) => {
+  try {
+    dispatch(searchJobsRequest());
+
+    // Construct query string from params
+    // Example: { keyword: 'developer', location: 'remote' } -> "keyword=developer&location=remote"
+    // Filter out undefined/null params before creating URLSearchParams
+    const filteredParams = {};
+    for (const key in params) {
+      if (
+        params[key] !== undefined &&
+        params[key] !== null &&
+        String(params[key]).trim() !== ""
+      ) {
+        filteredParams[key] = params[key];
+      }
+    }
+    const queryParams = new URLSearchParams(filteredParams).toString();
+    const apiUrl = `${API_BASE_URL}/jobs/search${
+      queryParams ? `?${queryParams}` : ""
+    }`;
+
+    const { data } = await axios.get(apiUrl);
+
+    // Assuming the server returns data in the format { success: true, Jobs: [] }
+    if (data && data.success && data.Jobs) {
+      dispatch(searchJobsSuccess(data.Jobs));
+    } else if (data && data.Jobs) {
+      // Fallback if success flag is missing but Jobs array is present
+      dispatch(searchJobsSuccess(data.Jobs));
+    } else if (Array.isArray(data)) {
+      // Fallback if data is directly the array of jobs
+      dispatch(searchJobsSuccess(data));
+    } else {
+      dispatch(
+        searchJobsFail(
+          "Định dạng dữ liệu tìm kiếm không hợp lệ hoặc không có kết quả"
+        )
+      );
+    }
+  } catch (err) {
+    const errorMessage =
+      err.response?.data?.message || "Lỗi khi tìm kiếm công việc";
+    dispatch(searchJobsFail(errorMessage));
+    toast.error(errorMessage);
   }
 };
