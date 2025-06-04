@@ -7,7 +7,10 @@ import {
   FaCreditCard,
   FaArrowLeft,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { purchasePackageAction } from "../actions/UserActions";
+import { clearPackagePurchaseError } from "../slices/UserSlice"; // For clearing errors
 
 const packages = [
   {
@@ -89,6 +92,56 @@ const packages = [
 ];
 
 const Payment = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { me, packagePurchaseLoading, packagePurchaseError } =
+    useSelector((state) => state.User) || {};
+  // It's good practice to clear previous errors when the component mounts or a new action is initiated.
+  React.useEffect(() => {
+    // Clear error when component mounts
+    dispatch(clearPackagePurchaseError());
+    return () => {
+      // Optionally clear error when component unmounts
+      dispatch(clearPackagePurchaseError());
+    };
+  }, [dispatch]);
+
+  const parsePrice = (priceStr) => {
+    if (!priceStr) return 0;
+    return parseInt(priceStr.replace(/[^0-9]/g, ""), 10);
+  };
+
+  const parseDurationInMonths = (durationStr) => {
+    if (!durationStr) return 0;
+    const match = durationStr.match(/(\d+)\s*tháng/);
+    return match ? parseInt(match[1], 10) : 0;
+  };
+
+  const handlePurchase = (pkg) => {
+    // No longer async here, the action is async
+    if (!pkg || packagePurchaseLoading) return;
+    // Clear previous error before new attempt
+    dispatch(clearPackagePurchaseError());
+
+    const payload = {
+      packageId: pkg.id,
+      packageTitle: pkg.title,
+      amount: parsePrice(pkg.price),
+      durationInMonths: parseDurationInMonths(pkg.duration),
+    };
+
+    dispatch(purchasePackageAction(payload)).then((result) => {
+      if (result && result.payload && result.payload.success) {
+        // Check if action was successful
+        if (!packagePurchaseError) {
+          // If no error after dispatch, assume success for navigation
+          navigate("/dashboard/recruiter"); // Navigate to recruiter dashboard
+        }
+      }
+      // Error display is handled by useSelector and rendered below
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <MetaData title="Gói thanh toán" />
@@ -143,16 +196,25 @@ const Payment = () => {
                 ))}
               </div>
 
+              {packagePurchaseError && (
+                <p className="text-red-500 text-center mb-4">
+                  Lỗi:{" "}
+                  {typeof packagePurchaseError === "string"
+                    ? packagePurchaseError
+                    : JSON.stringify(packagePurchaseError)}
+                </p>
+              )}
               <div className="mt-8">
-                <Link
-                  to="/payment/checkout"
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-lg hover:from-blue-700 hover:to-blue-800 transition duration-300 flex items-center justify-center"
+                <button
+                  onClick={() => handlePurchase(pkg)}
+                  disabled={packagePurchaseLoading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-lg hover:from-blue-700 hover:to-blue-800 transition duration-300 flex items-center justify-center disabled:opacity-50"
                 >
                   <span className="mr-2">
                     <FaCreditCard />
                   </span>
-                  Chọn gói này
-                </Link>
+                  {packagePurchaseLoading ? "Đang xử lý..." : "Chọn gói này"}
+                </button>
               </div>
             </div>
           ))}

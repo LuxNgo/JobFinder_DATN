@@ -91,7 +91,7 @@ export const UpgradeToRecruiter = () => {
     <div className="min-h-screen bg-gray-50">
       <MetaData title="Nâng cấp tài khoản" />
       <div className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto mt-32">
+        <div className="max-w-5xl mx-auto mt-8">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <div className="flex flex-col items-center mb-8">
               <div className="flex items-center justify-center mb-4">

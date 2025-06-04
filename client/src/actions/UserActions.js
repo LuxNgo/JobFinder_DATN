@@ -24,6 +24,9 @@ import {
   roleUpgradeRequest,
   roleUpgradeSuccess,
   roleUpgradeFail,
+  packagePurchaseRequest,
+  packagePurchaseSuccess,
+  packagePurchaseFail,
 } from "../slices/UserSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -250,5 +253,45 @@ export const updateRoleToRecruiter = () => async (dispatch) => {
   } catch (error) {
     dispatch(roleUpgradeFail(error.response?.data?.message || "Có lỗi xảy ra"));
     toast.error(error.response?.data?.message || "Có lỗi xảy ra");
+  }
+};
+
+export const purchasePackageAction = (packageData) => async (dispatch) => {
+  try {
+    dispatch(packagePurchaseRequest());
+
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      dispatch(packagePurchaseFail("Vui lòng đăng nhập để thực hiện giao dịch."));
+      toast.error("Vui lòng đăng nhập để thực hiện giao dịch.");
+      return;
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    // Assuming API_BASE_URL is defined and you want to use it.
+    // The backend route is /api/v1/user/purchase-package.
+    // If API_BASE_URL is just 'http://localhost:3000', then the path should be '/api/v1/user/purchase-package'.
+    // If API_BASE_URL includes '/api/v1', then it should be '/user/purchase-package'.
+    // Using the full path to be safe, assuming API_BASE_URL does not include /api/v1
+    const { data } = await axios.post(`${API_BASE_URL}/user/purchase-package`, packageData, config);
+
+    if (data.success) {
+      dispatch(packagePurchaseSuccess(data)); // data should contain { success, message, user, transactionId }
+      toast.success(data.message || "Thanh toán thành công! Tài khoản của bạn đã được nâng cấp.");
+      dispatch(me()); // Refresh user data to get the latest role and package info
+    } else {
+      dispatch(packagePurchaseFail(data.message || "Thanh toán không thành công."));
+      toast.error(data.message || "Thanh toán không thành công.");
+    }
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message || "Lỗi máy chủ trong quá trình thanh toán.";
+    dispatch(packagePurchaseFail(errorMessage));
+    toast.error(errorMessage);
   }
 };

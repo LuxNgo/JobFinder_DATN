@@ -10,7 +10,9 @@ import {
     deleteUserRequest,deleteUserSuccess,deleteUserFail,
     getJobRequest, getJobSuccess, getJobFail,
     updateJobRequest, updateJobSuccess, updateJobFail,
-    deleteJobRequest, deleteJobSuccess, deleteJobFail
+    deleteJobRequest, deleteJobSuccess, deleteJobFail,
+    getSalesStatsRequest, getSalesStatsSuccess, getSalesStatsFail,
+    getAllTransactionsRequest, getAllTransactionsSuccess, getAllTransactionsFail
 } from '../slices/AdminSlice'
 import axios from 'axios'
 import {toast} from 'react-toastify'
@@ -281,3 +283,45 @@ export const deleteJobData = (id) => async (dispatch) => {
         toast.error(err.response?.data?.message || 'Lỗi khi xóa dữ liệu job')
     }
 }
+
+export const getSalesStatsAdmin = () => async (dispatch) => {
+    try {
+        dispatch(getSalesStatsRequest());
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('userToken')}`
+            }
+        };
+
+        const { data } = await axios.get(`${API_BASE_URL}/admin/stats/sales`, config);
+
+        dispatch(getSalesStatsSuccess(data));
+
+    } catch (err) {
+        const errorMessage = err.response?.data?.message || 'Lỗi khi lấy dữ liệu thống kê doanh thu';
+        dispatch(getSalesStatsFail(errorMessage));
+        toast.error(errorMessage);
+    }
+};
+
+export const getAllTransactionsAdminAction = () => async (dispatch) => {
+    try {
+        dispatch(getAllTransactionsRequest());
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('userToken')}`
+            }
+        };
+
+        const { data } = await axios.get(`${API_BASE_URL}/admin/transactions`, config);
+
+        dispatch(getAllTransactionsSuccess(data));
+
+    } catch (err) {
+        const errorMessage = err.response?.data?.message || 'Lỗi khi lấy danh sách giao dịch';
+        dispatch(getAllTransactionsFail(errorMessage));
+        toast.error(errorMessage);
+    }
+};

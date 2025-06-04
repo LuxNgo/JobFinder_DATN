@@ -27,6 +27,7 @@ import { ViewAllJobAdmin } from "./pages/VIewAllJobAdmin";
 import { ViewAllAppli } from "./pages/ViewAllAppli";
 import { ViewAllUsersAdmin } from "./pages/ViewAllUsersAdmin";
 import { EditAppAdmin } from "./pages/EditAppAdmin";
+import { RecruiterSales } from "./pages/RecruiterSales";
 import { EditUserAdmin } from "./pages/EditUserAdmin";
 import { EditJobAdmin } from "./pages/EditJobAdmin";
 import { Test } from "./pages/Test";
@@ -132,6 +133,7 @@ function App() {
             <Route path="allUsers" element={<ViewAllUsersAdmin />} />
             <Route path="update/application/:id" element={<EditAppAdmin />} />
             <Route path="user/role/:id" element={<EditUserAdmin />} />
+            <Route path="recruiter-sales" element={<RecruiterSales />} />
           </Route>
         </Route>
 

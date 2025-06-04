@@ -14,6 +14,7 @@ import { RiLogoutBoxFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { logOrNot } from "../actions/UserActions";
+import { FaHistory } from "react-icons/fa";
 
 const { Sider, Header, Content } = Layout;
 
@@ -102,6 +103,11 @@ export const AdminLayout = () => {
               key: "allUsers",
               label: "Xem người dùng",
               icon: <AiOutlineUser size={22} />,
+            },
+            {
+              key: "recruiter-sales",
+              label: "Lịch sử Giao dịch",
+              icon: <FaHistory size={20} />,
             },
           ].map((item) => (
             <Menu.Item

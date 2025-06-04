@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { MetaData } from "../components/MetaData";
-import { FaUser, FaBriefcase, FaFileAlt } from "react-icons/fa";
+import { FaUser, FaBriefcase, FaFileAlt, FaDollarSign } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllJobsAdmin,
   getAllUsersAdmin,
   getAllAppAdmin,
+  getSalesStatsAdmin,
 } from "../actions/AdminActions";
 import CountUp from "react-countup";
 import { BarChart } from "../components/Chart";
@@ -15,15 +16,21 @@ import { HiOutlineSparkles } from "react-icons/hi";
 export const Dashboard = () => {
   const dispatch = useDispatch();
 
-  const { loading, allJobs, allApplications, allUsers } = useSelector(
-    (state) => state.admin
-  );
+  const {
+    loading,
+    allJobs,
+    allApplications,
+    allUsers,
+    totalSales,
+    salesLoading,
+  } = useSelector((state) => state.admin);
 
   useEffect(() => {
     dispatch(getAllJobsAdmin());
     dispatch(getAllUsersAdmin());
     dispatch(getAllAppAdmin());
-  }, []);
+    dispatch(getSalesStatsAdmin());
+  }, [dispatch]);
 
   return (
     <>
@@ -41,7 +48,7 @@ export const Dashboard = () => {
                 </h1>
               </div>
 
-              <div className="grid md:grid-cols-3 grid-cols-1 gap-6 md:pt-10 pt-4 pb-10">
+              <div className="grid md:grid-cols-4 grid-cols-1 gap-6 md:pt-10 pt-4 pb-10">
                 {[
                   {
                     title: "Người dùng",
@@ -58,6 +65,11 @@ export const Dashboard = () => {
                     value: allApplications?.length,
                     icon: <FaFileAlt className="text-blue-500" size={24} />,
                   },
+                  {
+                    title: "Doanh thu (VND)",
+                    value: totalSales,
+                    icon: <FaDollarSign className="text-green-500" size={24} />,
+                  },
                 ].map((stat, index) => (
                   <div
                     key={index}
@@ -67,11 +79,24 @@ export const Dashboard = () => {
                       {stat.icon}
                     </div>
                     <div className="text-center">
-                      <h3 className="text-3xl font-bold text-blue-600">
+                      <h3
+                        className={`text-3xl font-bold ${
+                          stat.title === "Doanh thu (VND)"
+                            ? "text-green-600"
+                            : "text-blue-600"
+                        }`}
+                      >
                         <CountUp
                           start={0}
-                          end={stat.value}
-                          className="text-blue-600"
+                          end={stat.value || 0} // Ensure value is not undefined for CountUp
+                          duration={2.5}
+                          separator="."
+                          decimals={stat.title === "Doanh thu (VND)" ? 0 : 0} // No decimals for sales, can be adjusted
+                          className={`${
+                            stat.title === "Doanh thu (VND)"
+                              ? "text-green-600"
+                              : "text-blue-600"
+                          }`}
                         />
                       </h3>
                       <p className="text-gray-600 mt-2 uppercase tracking-wider">

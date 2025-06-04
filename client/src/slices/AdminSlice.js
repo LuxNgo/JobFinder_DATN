@@ -8,6 +8,13 @@ const AdminSlice = createSlice({
         allApplications: null,
         allUsers: null,
         error: null,
+        totalSales: 0,
+        totalTransactions: 0,
+        salesLoading: false,
+        salesError: null,
+        allTransactionsList: [],
+        transactionsLoading: false,
+        transactionsError: null,
         applicationData: {
             job: {
                 title: "",
@@ -195,6 +202,32 @@ const AdminSlice = createSlice({
             state.error = action.payload
         },
 
+        getSalesStatsRequest: (state) => {
+            state.salesLoading = true;
+            state.salesError = null;
+        },
+        getSalesStatsSuccess: (state, action) => {
+            state.salesLoading = false;
+            state.totalSales = action.payload.totalSales;
+            state.totalTransactions = action.payload.totalTransactions;
+        },
+        getSalesStatsFail: (state, action) => {
+            state.salesLoading = false;
+            state.salesError = action.payload;
+        },
+
+        getAllTransactionsRequest: (state) => {
+            state.transactionsLoading = true;
+        },
+        getAllTransactionsSuccess: (state, action) => {
+            state.transactionsLoading = false;
+            state.allTransactionsList = action.payload.transactions;
+            state.transactionsError = null;
+        },
+        getAllTransactionsFail: (state, action) => {
+            state.transactionsLoading = false;
+            state.transactionsError = action.payload;
+        },
     }
 })
 
@@ -213,7 +246,10 @@ export const {
     
     getJobRequest, getJobSuccess, getJobFail,
     updateJobRequest, updateJobSuccess, updateJobFail,
-    deleteJobRequest, deleteJobSuccess, deleteJobFail
+    deleteJobRequest, deleteJobSuccess, deleteJobFail,
+
+    getSalesStatsRequest, getSalesStatsSuccess, getSalesStatsFail,
+    getAllTransactionsRequest, getAllTransactionsSuccess, getAllTransactionsFail
 
 } = AdminSlice.actions;
 export default AdminSlice.reducer;

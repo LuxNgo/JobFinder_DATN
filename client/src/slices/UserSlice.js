@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const UserSlice = createSlice({
   name: "User",
   initialState: {
+    packagePurchaseLoading: false,
+    packagePurchaseError: null,
     loading: false,
     error: null,
     isLogin: false,
@@ -128,6 +130,27 @@ const UserSlice = createSlice({
       state.error = action.payload;
     },
 
+    packagePurchaseRequest: (state) => {
+      state.packagePurchaseLoading = true;
+      state.packagePurchaseError = null;
+    },
+    packagePurchaseSuccess: (state, action) => {
+      state.packagePurchaseLoading = false;
+      state.me = action.payload.user; // Assuming payload.user contains the updated user object
+      // If your backend doesn't return the full user object with activePackage, 
+      // you might need to manually set state.me.role and state.me.activePackage here
+      // e.g., state.me.role = 'recruiter'; 
+      // state.me.activePackage = action.payload.activePackageData; 
+      state.isLogin = true; // Ensure user is still considered logged in
+    },
+    packagePurchaseFail: (state, action) => {
+      state.packagePurchaseLoading = false;
+      state.packagePurchaseError = action.payload;
+    },
+    clearPackagePurchaseError: (state) => {
+      state.packagePurchaseError = null;
+    },
+
     logoutClearState: (state) => {
       state.me = {
         avatar: {
@@ -193,6 +216,10 @@ export const {
   deleteAccountSuccess,
   deleteAccountFail,
   logoutClearState,
+  packagePurchaseRequest,
+  packagePurchaseSuccess,
+  packagePurchaseFail,
+  clearPackagePurchaseError,
 } = UserSlice.actions;
 
 export default UserSlice.reducer;

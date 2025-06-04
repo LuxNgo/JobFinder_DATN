@@ -36,16 +36,32 @@ export const EditUserAdmin = () => {
   const updateRolehandler = () => {
     if (role === "not") {
       toast.info("Vui lòng chọn vai trò !");
-    } else {
-      if (userData.role === "admin") {
-        toast.info("Admin không thể thay đổi vai trò của mình !");
-      } else {
-        // Normalize role to lowercase before sending to server
-        const normalizedRole = role.toLowerCase();
-        dispatch(updateUser(id, { role: normalizedRole }));
-        setRole("not");
-        toast.success("Vai trò đã được cập nhật");
+      return;
+    }
+
+    const newRoleSelected = role.toLowerCase();
+
+    // Prevent changing an Admin's role to something else
+    if (userData.role === "admin" && newRoleSelected !== "admin") {
+      toast.warn("Không thể thay đổi vai trò của Quản trị viên.");
+    } 
+    // Prevent downgrading a Recruiter to an Applicant directly via this form
+    else if (userData.role === "recruiter" && newRoleSelected === "applicant") {
+      toast.warn(
+        "Không thể trực tiếp hạ cấp Nhà tuyển dụng thành Ứng viên. Vui lòng quản lý gói dịch vụ của họ hoặc sử dụng quy trình khác nếu cần thu hồi vai trò."
+      );
+    } 
+    // Proceed with the update if no specific restrictions are met
+    else {
+      // Check if the role is actually changing to avoid unnecessary dispatch and toast
+      if (userData.role === newRoleSelected) {
+        toast.info("Người dùng đã có vai trò này.");
+        setRole("not"); // Reset dropdown
+        return;
       }
+      dispatch(updateUser(id, { role: newRoleSelected }));
+      setRole("not"); // Reset dropdown
+      toast.success("Vai trò đã được cập nhật thành công!");
     }
   };
 
