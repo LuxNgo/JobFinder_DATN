@@ -7,6 +7,7 @@ const {
   saveJob,
   getSavedJobs,
   suggestJobsByAI,
+  searchAllJobs, // <-- Import the new controller function
 } = require("../controllers/JobControllers");
 const {
   jobValidator,
@@ -30,5 +31,8 @@ router
 router.route("/getSavedJobs").get(isAuthenticated, getSavedJobs);
 
 router.route("/jobs/suggest-ai").post(isAuthenticated, suggestJobsByAI);
+
+// New route for searching jobs
+router.route("/jobs/search").get(searchAllJobs); // No authentication for public search, adjust if needed
 
 module.exports = router;
