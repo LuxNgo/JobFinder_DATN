@@ -1,7 +1,72 @@
 const User = require("../models/UserModel");
+const Transaction = require('../models/Transaction'); // Import Transaction model
 const bcrypt = require("bcrypt");
 const { createToken } = require("../middlewares/auth");
 const cloudinary = require("cloudinary");
+
+exports.purchaseRecruiterPackage = async (req, res) => {
+  try {
+    const { packageId, packageTitle, amount, durationInMonths } = req.body;
+    const userId = req.user._id;
+
+    if (!packageId || !packageTitle || amount === undefined || !durationInMonths) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp đầy đủ thông tin gói (packageId, packageTitle, amount, durationInMonths).'
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Người dùng không tồn tại.' });
+    }
+
+    // --- Payment Gateway Integration Point ---
+    // In a real application, you would integrate with a payment gateway here.
+    // For this example, we'll assume payment is successful.
+    // --- End Payment Gateway Integration Point ---
+
+    // Create Transaction record
+    const transaction = await Transaction.create({
+      user: userId,
+      packageId,
+      packageTitle,
+      amount,
+      // currency: 'VND', // Default is VND as per model
+    });
+
+    // Update User's role and active package
+    const purchaseDate = new Date();
+    const expiryDate = new Date(purchaseDate);
+    expiryDate.setMonth(expiryDate.getMonth() + parseInt(durationInMonths, 10));
+
+    user.role = 'recruiter';
+    user.activePackage = {
+      packageId,
+      packageTitle,
+      purchaseDate,
+      expiryDate,
+      amountPaid: amount,
+    };
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Gói đã được mua thành công! Tài khoản của bạn đã được nâng cấp thành Nhà tuyển dụng.',
+      user,
+      transactionId: transaction._id,
+    });
+
+  } catch (error) {
+    console.error('Error purchasing package:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi hệ thống khi mua gói.',
+      error: error.message,
+    });
+  }
+};
 
 exports.upgradeToRecruiter = async (req, res) => {
   try {

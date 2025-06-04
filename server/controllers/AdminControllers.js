@@ -1,6 +1,7 @@
 const Job = require("../models/JobModel");
 const User = require("../models/UserModel");
 const Application = require("../models/AppModel");
+const Transaction = require("../models/Transaction"); // Added Transaction model
 const cloudinary = require("cloudinary");
 
 // Get all jobs
@@ -208,6 +209,58 @@ exports.getJob = async (req, res) => {
       success: true,
       job,
     });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+// Get All Transactions for Admin
+exports.getAllTransactions = async (req, res) => {
+  try {
+    const transactions = await Transaction.find().populate('user', 'name email').sort({ paymentDate: -1 });
+
+    res.status(200).json({
+      success: true,
+      transactions,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+// Get Sales Statistics
+exports.getSalesStatistics = async (req, res) => {
+  try {
+    const salesData = await Transaction.aggregate([
+      {
+        $group: {
+          _id: null, // Group all transactions together
+          totalSales: { $sum: "$amount" },
+          totalTransactions: { $sum: 1 }
+        }
+      }
+    ]);
+
+    if (salesData.length > 0) {
+      res.status(200).json({
+        success: true,
+        totalSales: salesData[0].totalSales,
+        totalTransactions: salesData[0].totalTransactions
+      });
+    } else {
+      // No transactions found
+      res.status(200).json({
+        success: true,
+        totalSales: 0,
+        totalTransactions: 0
+      });
+    }
   } catch (err) {
     res.status(500).json({
       success: false,

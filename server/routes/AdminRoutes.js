@@ -12,6 +12,8 @@ const {
   getJob,
   updateJob,
   deleteJob,
+  getSalesStatistics,
+  getAllTransactions,
 } = require("../controllers/AdminControllers");
 const { isAuthenticated, authorizationRoles } = require("../middlewares/auth");
 const {
@@ -115,5 +117,13 @@ router
     validateHandler,
     deleteJob
   );
+
+router
+  .route("/admin/stats/sales")
+  .get(isAuthenticated, authorizationRoles("admin"), getSalesStatistics);
+
+router
+  .route("/admin/transactions")
+  .get(isAuthenticated, authorizationRoles("admin"), getAllTransactions);
 
 module.exports = router;

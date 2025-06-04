@@ -8,7 +8,8 @@ const {
   updateProfile,
   deleteAccount,
   upgradeToRecruiter,
-} = require("../controllers/UserControllers");
+  purchaseRecruiterPackage, // Added purchaseRecruiterPackage here
+} = require("../controllers/UserControllers"); // Corrected path
 const { isAuthenticated } = require("../middlewares/auth");
 const {
   registerValidator,
@@ -49,5 +50,8 @@ router
     deleteAccount
   );
 router.route("/upgrade-to-recruiter").put(isAuthenticated, upgradeToRecruiter);
+
+// Purchase Recruiter Package
+router.post('/user/purchase-package', isAuthenticated, purchaseRecruiterPackage);
 
 module.exports = router;

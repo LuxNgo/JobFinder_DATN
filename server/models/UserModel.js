@@ -70,6 +70,18 @@ const UserSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    role: {
+        type: String,
+        enum: ['user', 'recruiter', 'admin'],
+        default: 'user'
+    },
+    activePackage: {
+        packageId: Number, // Corresponds to pkg.id from frontend
+        packageTitle: String,
+        purchaseDate: Date,
+        expiryDate: Date,
+        amountPaid: Number
     }
 
 })
